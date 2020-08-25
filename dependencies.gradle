@@ -1,0 +1,38 @@
+ext {
+    projectTargetSdkVersion = 28
+    projectMinSdkVersion = 22
+
+    mockableAndroidVersion = '26'
+
+    junitVersion = '4.12'
+    assertJVersion = '2.8.0'
+    openCsvVersion = '5.2'
+    mockitoVersion = '3.3.3'
+
+    gsonVersion = '2.8.6'
+    zxingVersion = '3.4.0'
+
+    appFlowVersion = '2.2.2-SNAPSHOT'
+    appFlowConstantsVersion = '2.3.5'
+    appFlowPrintVersion = '1.1.5'
+
+    xpapVersion = '4.2.4'
+
+    domainDependencies = [
+            appFlowServiceApi: "com.aevi.sdk.pos.flow:payment-flow-service-api:$appFlowVersion",
+            appFlowPaymentApi: "com.aevi.sdk.pos.flow:payment-initiation-api:$appFlowVersion",
+            appFlowConstants : "com.aevi.sdk.flow:api-constants:$appFlowConstantsVersion",
+            appFlowPrintApi  : "com.aevi.print:print-api:$appFlowPrintVersion",
+            zxing            : "com.google.zxing:core:$zxingVersion",
+            gson             : "com.google.code.gson:gson:$gsonVersion"
+    ]
+
+    testDependencies = [
+            junit          : "junit:junit:$junitVersion",
+            mockableAndroid: "com.google:android-mockable-default-values:$mockableAndroidVersion",
+            assertJ        : "org.assertj:assertj-core:$assertJVersion",
+            opencsv        : "com.opencsv:opencsv:$openCsvVersion",
+            mockito        : "org.mockito:mockito-core:$mockitoVersion",
+            xpay           : "com.aevi.sdk.mpos:xpay-library:$xpapVersion" // this is here only to ensure that our new library will work with XPay clients
+    ]
+}

@@ -1,0 +1,45 @@
+apply plugin: 'java'
+apply plugin: 'java-library'
+apply plugin: 'org.unbroken-dome.xjc'
+
+group = 'com.aevi.nexo'
+version = "${apiVersion}"
+
+apply from: '../publish-repo.gradle'
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+    jcenter()
+    maven {
+        url "http://dl.bintray.com/aevi/aevi-uk"
+    }
+}
+
+xjcGenerate {
+    extension = true
+}
+
+sourceSets.main.java.srcDirs = ['src/main/java']
+
+sourceCompatibility = "1.8"
+targetCompatibility = "1.8"
+
+dependencies {
+    implementation domainDependencies.gson
+    implementation domainDependencies.appFlowServiceApi
+    implementation domainDependencies.appFlowConstants
+    implementation domainDependencies.appFlowPaymentApi
+    implementation domainDependencies.appFlowPrintApi
+    implementation domainDependencies.zxing
+    compileOnly testDependencies.mockableAndroid
+
+    testImplementation testDependencies.junit
+    testImplementation testDependencies.assertJ
+    testImplementation testDependencies.mockableAndroid
+    testImplementation testDependencies.opencsv
+    testImplementation testDependencies.xpay
+    testImplementation testDependencies.mockito
+}
+
+apply from: '../jar-publisher.gradle'

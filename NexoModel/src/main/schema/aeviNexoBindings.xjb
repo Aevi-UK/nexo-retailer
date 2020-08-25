@@ -1,0 +1,708 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bindings xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:xsi="http://www.w3.org/2000/10/XMLSchema-instance" version="2.1"
+    xmlns="http://java.sun.com/xml/ns/jaxb"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/jaxb http://java.sun.com/xml/ns/jaxb/bindingschema_2_0.xsd">
+    <globalBindings>
+        <xjc:simple />
+    </globalBindings>
+
+    <bindings node="/xs:schema" schemaLocation="nexoCMS.xsd">
+        <bindings node="//xs:complexType[@name='AuthenticatedDataType']">
+            <class name="AuthenticatedData" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='ContentInformationType']">
+            <class name="ContentInformation" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='DigestedDataType']">
+            <class name="DigestedData" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='EncapsulatedContentType']">
+            <class name="EncapsulatedContent" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='EncryptedContentType']">
+            <class name="EncryptedContent" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='EnvelopedDataType']">
+            <class name="EnvelopedData" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='IssuerAndSerialNumberType']">
+            <class name="IssuerAndSerialNumber" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='IssuerType']">
+            <class name="Issuer" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='KEKIdentifierType']">
+            <class name="KEKIdentifier" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='KEKType']">
+            <class name="KEK" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='KeyTransportType']">
+            <class name="KeyTransport" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='NamedKeyEncryptedDataType']">
+            <class name="NamedKeyEncryptedData" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='ParameterType']">
+            <class name="Parameter" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='RecipientIdentifierType']">
+            <class name="RecipientIdentifier" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='RelativeDistinguishedNameType']">
+            <class name="RelativeDistinguishedName" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='SignedDataType']">
+            <class name="SignedData" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='SignerIdentifierType']">
+            <class name="SignerIdentifier" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='SignerType']">
+            <class name="Signer" />
+        </bindings>
+
+        <bindings node="//xs:simpleType[@name='AlgorithmEnumeration']">
+            <typesafeEnumClass name="Algorithm"/>
+        </bindings>
+        <bindings node="//xs:simpleType[@name='AttributeTypeEnumeration']">
+            <typesafeEnumClass name="AttributeType"/>
+        </bindings>
+        <bindings node="//xs:simpleType[@name='ContentTypeEnumeration']">
+            <typesafeEnumClass name="ContentType"/>
+        </bindings>
+        <bindings node="//xs:simpleType[@name='VersionEnumeration']">
+            <typesafeEnumClass name="Version"/>
+        </bindings>
+    </bindings>
+
+    <bindings node="/xs:schema" schemaLocation="nexoCommonTypes.xsd">
+    </bindings>
+
+    <bindings node="/xs:schema" schemaLocation="nexoSaleToPOIMessages.xsd">
+        <schemaBindings>
+            <package name="com.aevi.sdk.nexo.model" />
+        </schemaBindings>
+        <bindings node="//xs:complexType[@name='AbortRequestType']">
+            <class name="AbortRequest" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='AdminRequestType']">
+            <class name="AdminRequest" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='AdminResponseType']">
+            <class name="AdminResponse" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='AllowedProductType']">
+            <class name="AllowedProduct" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='AmountsReqType']">
+            <class name="AmountsReq" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='AmountsRespType']">
+            <class name="AmountsResp" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='AmountType']">
+            <class name="Amount" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='AreaSizeType']">
+            <class name="AreaSize" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='BalanceInquiryRequestType']">
+            <class name="BalanceInquiryRequest" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='BalanceInquiryResponseType']">
+            <class name="BalanceInquiryResponse" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='BatchRequestType']">
+            <class name="BatchRequest" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='BatchResponseType']">
+            <class name="BatchResponse" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='CapturedSignatureType']">
+            <class name="CapturedSignature" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='CardAcquisitionRequestType']">
+            <class name="CardAcquisitionRequest" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='CardAcquisitionResponseType']">
+            <class name="CardAcquisitionResponse" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='CardAcquisitionTransactionType']">
+            <class name="CardAcquisitionTransaction" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='CardDataType']">
+            <class name="CardData" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='CardholderPINType']">
+            <class name="CardholderPIN" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='CardReaderAPDURequestType']">
+            <class name="CardReaderAPDURequest" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='CardReaderAPDUResponseType']">
+            <class name="CardReaderAPDUResponse" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='CardReaderInitRequestType']">
+            <class name="CardReaderInitRequest" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='CardReaderInitResponseType']">
+            <class name="CardReaderInitResponse" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='CardReaderPowerOffRequestType']">
+            <class name="CardReaderPowerOffRequest" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='CardReaderPowerOffResponseType']">
+            <class name="CardReaderPowerOffResponse" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='CashHandlingDeviceType']">
+            <class name="CashHandlingDevice" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='CheckDataType']">
+            <class name="CheckData" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='CoinsOrBillsType']">
+            <class name="CoinsOrBills" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='CriteriaOrderType']">
+            <class name="CriteriaOrder" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='CurrencyConversionType']">
+            <class name="CurrencyConversion" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='CustomerOrderType']">
+            <class name="CustomerOrder" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='DiagnosisRequestType']">
+            <class name="DiagnosisRequest" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='DiagnosisResponseType']">
+            <class name="DiagnosisResponse" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='DisplayOutputType']">
+            <class name="DisplayOutput" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='DisplayRequestType']">
+            <class name="DisplayRequest" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='DisplayResponseType']">
+            <class name="DisplayResponse" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='EnableServiceRequestType']">
+            <class name="EnableServiceRequest" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='EnableServiceResponseType']">
+            <class name="EnableServiceResponse" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='EventNotificationType']">
+            <class name="EventNotification" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='GeographicCoordinatesType']">
+            <class name="GeographicCoordinates" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='GeolocationType']">
+            <class name="Geolocation" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='GetTotalsRequestType']">
+            <class name="GetTotalsRequest" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='GetTotalsResponseType']">
+            <class name="GetTotalsResponse" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='HostStatusType']">
+            <class name="HostStatus" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='ICCResetDataType']">
+            <class name="ICCResetData" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='InputDataType']">
+            <class name="InputData" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='InputRequestType']">
+            <class name="InputRequest" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='InputResponseType']">
+            <class name="InputResponse" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='InputResultType']">
+            <class name="InputResult" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='InputType']">
+            <class name="Input" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='InputUpdateType']">
+            <class name="InputUpdate" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='InstalmentType']">
+            <class name="Instalment" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='LoginRequestType']">
+            <class name="LoginRequest" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='LoginResponseType']">
+            <class name="LoginResponse" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='LogoutRequestType']">
+            <class name="LogoutRequest" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='LogoutResponseType']">
+            <class name="LogoutResponse" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='LoyaltyAccountIDType']">
+            <class name="LoyaltyAccountID" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='LoyaltyAccountReqType']">
+            <class name="LoyaltyAccountReq" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='LoyaltyAccountStatusType']">
+            <class name="LoyaltyAccountStatus" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='LoyaltyAccountType']">
+            <class name="LoyaltyAccount" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='LoyaltyAcquirerDataType']">
+            <class name="LoyaltyAcquirerData" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='LoyaltyAmountType']">
+            <class name="LoyaltyAmount" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='LoyaltyDataType']">
+            <class name="LoyaltyData" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='LoyaltyRequestType']">
+            <class name="LoyaltyRequest" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='LoyaltyResponseType']">
+            <class name="LoyaltyResponse" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='LoyaltyResultType']">
+            <class name="LoyaltyResult" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='LoyaltyTotalsType']">
+            <class name="LoyaltyTotals" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='LoyaltyTransactionType']">
+            <class name="LoyaltyTransaction" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='MenuEntryType']">
+            <class name="MenuEntry" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='MessageHeaderType']">
+            <class name="MessageHeader" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='MessageReferenceType']">
+            <class name="MessageReference" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='MobileDataType']">
+            <class name="MobileData" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='OriginalPOITransactionType']">
+            <class name="OriginalPOITransaction" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='OutputBarcodeType']">
+            <class name="OutputBarcode" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='OutputContentType']">
+            <class name="OutputContent" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='OutputResultType']">
+            <class name="OutputResult" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='OutputTextType']">
+            <class name="OutputText" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='PaymentAccountReqType']">
+            <class name="PaymentAccountReq" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='PaymentAccountStatusType']">
+            <class name="PaymentAccountStatus" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='PaymentAcquirerDataType']">
+            <class name="PaymentAcquirerData" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='PaymentDataType']">
+            <class name="PaymentData" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='PaymentInstrumentDataType']">
+            <class name="PaymentInstrumentData" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='PaymentReceiptType']">
+            <class name="PaymentReceipt" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='PaymentRequestType']">
+            <class name="PaymentRequest" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='PaymentResponseType']">
+            <class name="PaymentResponse" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='PaymentResultType']">
+            <class name="PaymentResult" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='PaymentTokenType']">
+            <class name="PaymentToken" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='PaymentTotalsType']">
+            <class name="PaymentTotals" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='PaymentTransactionType']">
+            <class name="PaymentTransaction" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='PerformedTransactionType']">
+            <class name="PerformedTransaction" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='PINRequestType']">
+            <class name="PINRequest" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='PINResponseType']">
+            <class name="PINResponse" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='POIDataType']">
+            <class name="POIData" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='POIProfileType']">
+            <class name="POIProfile" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='POISoftwareType']">
+            <class name="POISoftware" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='POIStatusType']">
+            <class name="POIStatus" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='POISystemDataType']">
+            <class name="POISystemData" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='POITerminalDataType']">
+            <class name="POITerminalData" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='PredefinedContentType']">
+            <class name="PredefinedContent" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='PrintOutputType']">
+            <class name="PrintOutput" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='PrintRequestType']">
+            <class name="PrintRequest" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='PrintResponseType']">
+            <class name="PrintResponse" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='RawSignatureType']">
+            <class name="RawSignature" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='RebatesType']">
+            <class name="Rebates" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='ReconciliationRequestType']">
+            <class name="ReconciliationRequest" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='ReconciliationResponseType']">
+            <class name="ReconciliationResponse" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='RepeatedMessageResponseType']">
+            <class name="RepeatedMessageResponse" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='ResponseType']">
+            <class name="Response" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='ReversalRequestType']">
+            <class name="ReversalRequest" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='ReversalResponseType']">
+            <class name="ReversalResponse" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='SaleDataType']">
+            <class name="SaleData" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='SaleItemRebateType']">
+            <class name="SaleItemRebate" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='SaleItemType']">
+            <class name="SaleItem" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='SaleProfileType']">
+            <class name="SaleProfile" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='SaleSoftwareType']">
+            <class name="SaleSoftware" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='SaleTerminalDataType']">
+            <class name="SaleTerminalData" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='SaleToIssuerDataType']">
+            <class name="SaleToIssuerData" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='SearchANDType']">
+            <class name="SearchAND" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='SearchCriteriasType']">
+            <class name="SearchCriteria" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='SearchORType']">
+            <class name="SearchOR" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='SearchOutputOrderType']">
+            <class name="SearchOutputOrder" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='SensitiveCardDataType']">
+            <class name="SensitiveCardData" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='SensitiveMobileDataType']">
+            <class name="SensitiveMobileData" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='SignatureImageType']">
+            <class name="SignatureImage" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='SignaturePointType']">
+            <class name="SignaturePoint" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='SoundContentType']">
+            <class name="SoundContent" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='SoundRequestType']">
+            <class name="SoundRequest" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='SoundResponseType']">
+            <class name="SoundResponse" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='SponsoredMerchantType']">
+            <class name="SponsoredMerchant" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='StoredValueAccountIDType']">
+            <class name="StoredValueAccountID" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='StoredValueAccountStatusType']">
+            <class name="StoredValueAccountStatus" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='StoredValueDataType']">
+            <class name="StoredValueData" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='StoredValueRequestType']">
+            <class name="StoredValueRequest" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='StoredValueResponseType']">
+            <class name="StoredValueResponse" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='StoredValueResultType']">
+            <class name="StoredValueResult" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='TotalFilterType']">
+            <class name="TotalFilter" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='TrackDataType']">
+            <class name="TrackData" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='TransactionConditionsType']">
+            <class name="TransactionConditions" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='TransactionIdentificationType']">
+            <class name="TransactionIdentification" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='TransactionReportRequestType']">
+            <class name="TransactionReportRequest" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='TransactionReportResponseType']">
+            <class name="TransactionReportResponse" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='TransactionReportType']">
+            <class name="TransactionReport" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='TransactionStatusRequestType']">
+            <class name="TransactionStatusRequest" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='TransactionStatusResponseType']">
+            <class name="TransactionStatusResponse" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='TransactionToPerformType']">
+            <class name="TransactionToPerform" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='TransactionTotalsType']">
+            <class name="TransactionTotals" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='TransmitRequestType']">
+            <class name="TransmitRequest" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='TransmitResponseType']">
+            <class name="TransmitResponse" />
+        </bindings>
+        <bindings node="//xs:complexType[@name='UTMCoordinatesType']">
+            <class name="UTMCoordinates" />
+        </bindings>
+
+        <bindings node="//xs:simpleType[@name='AccountTypeEnumeration']">
+            <typesafeEnumClass name="AccountType"/>
+        </bindings>
+        <bindings node="//xs:simpleType[@name='AlignmentEnumeration']">
+            <typesafeEnumClass name="Alignment"/>
+        </bindings>
+        <bindings node="//xs:simpleType[@name='AuthenticationMethodEnumeration']">
+            <typesafeEnumClass name="AuthenticationMethod"/>
+        </bindings>
+        <bindings node="//xs:simpleType[@name='BarcodeTypeEnumeration']">
+            <typesafeEnumClass name="BarcodeType"/>
+        </bindings>
+        <bindings node="//xs:simpleType[@name='CharacterHeightEnumeration']">
+            <typesafeEnumClass name="CharacterHeight"/>
+        </bindings>
+        <bindings node="//xs:simpleType[@name='CharacterStyleEnumeration']">
+            <typesafeEnumClass name="CharacterStyle"/>
+        </bindings>
+        <bindings node="//xs:simpleType[@name='CharacterWidthEnumeration']">
+            <typesafeEnumClass name="CharacterWidth"/>
+        </bindings>
+        <bindings node="//xs:simpleType[@name='CheckTypeCodeEnumeration']">
+            <typesafeEnumClass name="CheckTypeCode"/>
+        </bindings>
+        <bindings node="//xs:simpleType[@name='ColorEnumeration']">
+            <typesafeEnumClass name="Color"/>
+        </bindings>
+        <bindings node="//xs:simpleType[@name='CustomerOrderReqEnumeration']">
+            <typesafeEnumClass name="CustomerOrderReq"/>
+        </bindings>
+        <bindings node="//xs:simpleType[@name='DeviceEnumeration']">
+            <typesafeEnumClass name="DeviceType"/>
+        </bindings>
+        <bindings node="//xs:simpleType[@name='DocumentQualifierEnumeration']">
+            <typesafeEnumClass name="DocumentQualifier"/>
+        </bindings>
+        <bindings node="//xs:simpleType[@name='EntryModeEnumeration']">
+            <typesafeEnumClass name="EntryMode"/>
+        </bindings>
+        <bindings node="//xs:simpleType[@name='ErrorConditionEnumeration']">
+            <typesafeEnumClass name="ErrorCondition"/>
+        </bindings>
+        <bindings node="//xs:simpleType[@name='EventToNotifyEnumeration']">
+            <typesafeEnumClass name="EventToNotify"/>
+        </bindings>
+        <bindings node="//xs:simpleType[@name='ForceEntryModeEnumeration']">
+            <typesafeEnumClass name="ForceEntryMode"/>
+        </bindings>
+        <bindings node="//xs:simpleType[@name='GenericProfileEnumeration']">
+            <typesafeEnumClass name="GenericProfile"/>
+        </bindings>
+        <bindings node="//xs:simpleType[@name='GlobalStatusEnumeration']">
+            <typesafeEnumClass name="GlobalStatus"/>
+        </bindings>
+        <bindings node="//xs:simpleType[@name='IdentificationSupportEnumeration']">
+            <typesafeEnumClass name="IdentificationSupport"/>
+        </bindings>
+        <bindings node="//xs:simpleType[@name='IdentificationTypeEnumeration']">
+            <typesafeEnumClass name="IdentificationType"/>
+        </bindings>
+        <bindings node="//xs:simpleType[@name='InfoQualifyEnumeration']">
+            <typesafeEnumClass name="InfoQualify"/>
+        </bindings>
+        <bindings node="//xs:simpleType[@name='InputCommandEnumeration']">
+            <typesafeEnumClass name="InputCommand"/>
+        </bindings>
+        <bindings node="//xs:simpleType[@name='InstalmentTypeEnumeration']">
+            <typesafeEnumClass name="InstalmentType"/>
+        </bindings>
+        <bindings node="//xs:simpleType[@name='LoyaltyHandlingEnumeration']">
+            <typesafeEnumClass name="LoyaltyHandling"/>
+        </bindings>
+        <bindings node="//xs:simpleType[@name='LoyaltyTransactionTypeEnumeration']">
+            <typesafeEnumClass name="LoyaltyTransactionType"/>
+        </bindings>
+        <bindings node="//xs:simpleType[@name='LoyaltyUnitEnumeration']">
+            <typesafeEnumClass name="LoyaltyUnit"/>
+        </bindings>
+        <bindings node="//xs:simpleType[@name='MenuEntryTagEnumeration']">
+            <typesafeEnumClass name="MenuEntryTag"/>
+        </bindings>
+        <bindings node="//xs:simpleType[@name='MessageCategoryEnumeration']">
+            <typesafeEnumClass name="MessageCategory"/>
+        </bindings>
+        <bindings node="//xs:simpleType[@name='MessageClassEnumeration']">
+            <typesafeEnumClass name="MessageClass"/>
+        </bindings>
+        <bindings node="//xs:simpleType[@name='MessageTypeEnumeration']">
+            <typesafeEnumClass name="MessageType"/>
+        </bindings>
+        <bindings node="//xs:simpleType[@name='OperatorEnumeration']">
+            <typesafeEnumClass name="Operator"/>
+        </bindings>
+        <bindings node="//xs:simpleType[@name='OutputFormatEnumeration']">
+            <typesafeEnumClass name="OutputFormat"/>
+        </bindings>
+        <bindings node="//xs:simpleType[@name='PaymentInstrumentTypeEnumeration']">
+            <typesafeEnumClass name="PaymentInstrumentType"/>
+        </bindings>
+        <bindings node="//xs:simpleType[@name='PaymentTypeEnumeration']">
+            <typesafeEnumClass name="PaymentType"/>
+        </bindings>
+        <bindings node="//xs:simpleType[@name='PeriodUnitEnumeration']">
+            <typesafeEnumClass name="PeriodUnit"/>
+        </bindings>
+        <bindings node="//xs:simpleType[@name='PINFormatEnumeration']">
+            <typesafeEnumClass name="PINFormat"/>
+        </bindings>
+        <bindings node="//xs:simpleType[@name='PINRequestTypeEnumeration']">
+            <typesafeEnumClass name="PINRequestType"/>
+        </bindings>
+        <bindings node="//xs:simpleType[@name='POICapabilitiesEnumeration']">
+            <typesafeEnumClass name="POICapabilities"/>
+        </bindings>
+        <bindings node="//xs:simpleType[@name='PrinterStatusEnumeration']">
+            <typesafeEnumClass name="PrinterStatus"/>
+        </bindings>
+        <bindings node="//xs:simpleType[@name='QRCodeEncodingModeEnumeration']">
+            <typesafeEnumClass name="QRCodeEncodingMode"/>
+        </bindings>
+        <bindings node="//xs:simpleType[@name='ReconciliationTypeEnumeration']">
+            <typesafeEnumClass name="ReconciliationType"/>
+        </bindings>
+        <bindings node="//xs:simpleType[@name='ResponseModeEnumeration']">
+            <typesafeEnumClass name="ResponseMode"/>
+        </bindings>
+        <bindings node="//xs:simpleType[@name='ResultEnumeration']">
+            <typesafeEnumClass name="Result"/>
+        </bindings>
+        <bindings node="//xs:simpleType[@name='ReversalReasonEnumeration']">
+            <typesafeEnumClass name="ReversalReason"/>
+        </bindings>
+        <bindings node="//xs:simpleType[@name='SaleCapabilitiesEnumeration']">
+            <typesafeEnumClass name="SaleCapabilities"/>
+        </bindings>
+        <bindings node="//xs:simpleType[@name='ServiceProfilesEnumeration']">
+            <typesafeEnumClass name="ServiceProfiles"/>
+        </bindings>
+        <bindings node="//xs:simpleType[@name='ServicesEnabledEnumeration']">
+            <typesafeEnumClass name="ServicesEnabled"/>
+        </bindings>
+        <bindings node="//xs:simpleType[@name='SoundActionEnumeration']">
+            <typesafeEnumClass name="SoundAction"/>
+        </bindings>
+        <bindings node="//xs:simpleType[@name='SoundFormatEnumeration']">
+            <typesafeEnumClass name="SoundFormat"/>
+        </bindings>
+        <bindings node="//xs:simpleType[@name='StoredValueAccountTypeEnumeration']">
+            <typesafeEnumClass name="StoredValueAccountType"/>
+        </bindings>
+        <bindings node="//xs:simpleType[@name='StoredValueTransactionTypeEnumeration']">
+            <typesafeEnumClass name="StoredValueTransactionType"/>
+        </bindings>
+        <bindings node="//xs:simpleType[@name='TerminalEnvironmentEnumeration']">
+            <typesafeEnumClass name="TerminalEnvironment"/>
+        </bindings>
+        <bindings node="//xs:simpleType[@name='TokenRequestedTypeEnumeration']">
+            <typesafeEnumClass name="TokenRequestedType"/>
+        </bindings>
+        <bindings node="//xs:simpleType[@name='TotalDetailsEnumeration']">
+            <typesafeEnumClass name="TotalDetails"/>
+        </bindings>
+        <bindings node="//xs:simpleType[@name='TrackFormatEnumeration']">
+            <typesafeEnumClass name="TrackFormat"/>
+        </bindings>
+        <bindings node="//xs:simpleType[@name='TransactionActionEnumeration']">
+            <typesafeEnumClass name="TransactionAction"/>
+        </bindings>
+        <bindings node="//xs:simpleType[@name='TransactionTypeEnumeration']">
+            <typesafeEnumClass name="TransactionType"/>
+        </bindings>
+        <bindings node="//xs:simpleType[@name='UnitOfMeasureEnumeration']">
+            <typesafeEnumClass name="UnitOfMeasure"/>
+        </bindings>
+    </bindings>
+</bindings>

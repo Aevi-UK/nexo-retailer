@@ -1,0 +1,2736 @@
+nexoSaleToPOIProtocol
+DEFINITIONS IMPLICIT TAGS ::=
+BEGIN
+  IMPORTS ContentInformationType FROM nexoCMS ;
+
+  --
+  -- 1. Messages Definition (PDU)
+  --
+
+  --Request message of the nexo Sale To POI protocol.
+  SaleToPOIRequest ::= [APPLICATION 10] SEQUENCE{
+     messageHeader       MessageHeader,
+     requestMessageBody  RequestMessageBody,
+     securityTrailer     SecurityTrailer OPTIONAL
+  }
+
+  --Response message of the nexo Sale To POI protocol.
+  SaleToPOIResponse ::= [APPLICATION 11] SEQUENCE{
+     messageHeader        MessageHeader,
+     responseMessageBody  ResponseMessageBody,
+     securityTrailer      SecurityTrailer OPTIONAL
+  }
+
+  --
+  -- 2. Message Components Definition
+  --
+
+  --Reason of aborting a transaction
+  AbortReason ::= [APPLICATION 12] UTF8String
+
+  --Body of the Abort Request message.
+  AbortRequest ::= [APPLICATION 13] SEQUENCE{
+     messageReference  MessageReference,
+     abortReason       AbortReason,
+     displayOutput     DisplayOutput OPTIONAL
+  }
+
+  --Identification of an entity accessing data to perform an operation.
+  AccessedBy ::= [APPLICATION 421] UTF8String
+
+  --Identification of the customer account.
+  AccountNumber ::= [APPLICATION 338] UTF8String
+
+  --Type of cardholder account used for the transaction
+  AccountType ::= [APPLICATION 14] ENUMERATED{
+     default(0),     --Default account
+     savings(1),     --Savings account
+     checking(2),    --Checking account
+     creditCard(3),  --Credit card account
+     universal(4),   --Universal account
+     investment(5),  --Investment account
+     cardTotals(6),  --Card totals
+     epurseCard(7)   --e-Purse card account
+  }
+
+  --Identification of the Acquirer
+  AcquirerID ::= [APPLICATION 17] NumericString
+
+  --Identification of the POI for the payment Acquirer
+  AcquirerPOIID ::= [APPLICATION 15] UTF8String
+
+  --Identification of the Transaction for the Acquirer.
+  AcquirerTransactionID ::= [APPLICATION 16] TransactionIdentificationType
+
+  --Unqualified information.
+  AdditionalInformation ::= [APPLICATION 422] UTF8String
+
+  --Additional information required to verify the PIN like part of the PAN, or driver ID.
+  AdditionalInput ::= [APPLICATION 18] UTF8String
+
+  --Additionl information related to the line item.
+  AdditionalProductInfo ::= [APPLICATION 19] UTF8String
+
+  --Additional information related to processing status of a message request .
+  AdditionalResponse ::= [APPLICATION 20] UTF8String
+
+  --Unformatted address of the merchant.
+  Address ::= [APPLICATION 431] UTF8String
+  
+  --Content of the Custom Admin Request message.
+  AdminRequest ::= [APPLICATION 314] SEQUENCE{
+     serviceIdentification  ServiceIdentification OPTIONAL
+  }
+
+  --Content of the Custom Admin Response message.
+  AdminResponse ::= [APPLICATION 315] SEQUENCE{
+     response  Response
+  }
+
+  --Alignment of the text string on the display line or print line
+  Alignment ::= [APPLICATION 21] ENUMERATED{
+     left(0),      
+     right(1),     
+     centred(2),   
+     justified(3)  
+  }
+
+  --Loyalty brands or programs allowed by the Sale System for the loyalty transaction.
+  AllowedLoyaltyBrand ::= [APPLICATION 22] UTF8String
+
+  --Card payment brands allowed by the Sale System for the payment transaction.
+  AllowedPaymentBrand ::= [APPLICATION 23] UTF8String
+
+  --Product that are payable by the payment card.
+  AllowedProduct ::= [APPLICATION 394] SEQUENCE{
+     productCode            ProductCode,
+     eanUpc                 EanUpc OPTIONAL,
+     productLabel           ProductLabel OPTIONAL,
+     additionalProductInfo  AdditionalProductInfo OPTIONAL
+  }
+
+  --Product codes that are payable by the payment card.
+  AllowedProductCode ::= [APPLICATION 24] NumericString (SIZE(1..20))
+
+  --Various amounts related to the payment and loyalty request from the Sale System.
+  AmountsReq ::= [APPLICATION 26] SEQUENCE{
+     currency                Currency,
+     requestedAmount         RequestedAmount OPTIONAL,
+     cashBackAmount          CashBackAmount OPTIONAL,
+     tipAmount               TipAmount OPTIONAL,
+     paidAmount              PaidAmount OPTIONAL,
+     minimumAmountToDeliver  MinimumAmountToDeliver OPTIONAL,
+     maximumCashBackAmount   MaximumCashBackAmount OPTIONAL,
+     minimumSplitAmount      MinimumSplitAmount OPTIONAL
+  }
+
+  --Various amounts related to the payment response from the POI System.
+  AmountsResp ::= [APPLICATION 27] SEQUENCE{
+     currency            Currency OPTIONAL,
+     authorizedAmount    AuthorizedAmount,
+     totalRebatesAmount  TotalRebatesAmount OPTIONAL,
+     totalFeesAmount     TotalFeesAmount OPTIONAL,
+     cashBackAmount      CashBackAmount OPTIONAL,
+     tipAmount           TipAmount OPTIONAL
+  }
+
+  --Value of an amount.
+  AmountValue ::= [APPLICATION 28] SimpleAmountType
+
+  --Class field of the APDU command (CLA)
+  APDUClass ::= [APPLICATION 29] OCTET STRING (SIZE(1))
+
+  --Data field of the APDU command (Lc + Data)
+  APDUData ::= [APPLICATION 30] OCTET STRING
+
+  --Expected length of the data field of the APDU response to the command (Le)
+  APDUExpectedLength ::= [APPLICATION 31] OCTET STRING (SIZE(1))
+
+  --Instruction field of the APDU command (INS)
+  APDUInstruction ::= [APPLICATION 32] OCTET STRING (SIZE(1))
+
+  --Parameter 1 field of the APDU command (P1)
+  APDUPar1 ::= [APPLICATION 33] OCTET STRING (SIZE(1))
+
+  --Parameter 2 field of the APDU command(P2)
+  APDUPar2 ::= [APPLICATION 34] OCTET STRING (SIZE(1))
+
+  --Name of the software product.
+  ApplicationName ::= [APPLICATION 219] UTF8String
+
+  --Code assigned to a transaction approval by the Acquirer.
+  ApprovalCode ::= [APPLICATION 35] UTF8String
+
+  --Size of an area
+  AreaSize ::= [APPLICATION 343] SEQUENCE{
+     x  X,
+     y  Y
+  }
+
+  --Value of the Answer To Reset of a chip card
+  ATRValue ::= [APPLICATION 36] OCTET STRING (SIZE(1..100))
+
+  --Method for customer authentication.
+  AuthenticationMethod ::= [APPLICATION 347] BIT STRING{
+     bypass(0),                  --Authentication bypassed by the merchant.
+     manualVerification(1),      --Manual verification, for example passport or drivers license.
+     merchantAuthentication(2),  --Merchant-related authentication.
+     offlinePIN(3),              --Off-line PIN authentication (Personal Identification Number).
+     onLinePIN(4),               --On-line PIN authentication (Personal Identification Number).
+     paperSignature(5),          --Handwritten paper signature.
+     securedChannel(6),          --Channel-encrypted transaction.
+     secureCertificate(7),       --Secure electronic transaction with cardholder X.509 certificate.
+     secureNoCertificate(8),     --Secure electronic transaction without cardholder certificate.
+     signatureCapture(9),        --Electronic signature capture (handwritten signature).
+     unknownMethod(10)            --Authentication method is performed unknown.
+  }
+
+  --The amount authorized by the Acquirer for the payment transaction.
+  AuthorizedAmount ::= [APPLICATION 37] SimpleAmountType
+
+  --Content of the Balance Inquiry Request message.
+  BalanceInquiryRequest ::= [APPLICATION 39] SEQUENCE{
+     paymentAccountReq  PaymentAccountReq OPTIONAL,
+     loyaltyAccountReq  LoyaltyAccountReq OPTIONAL
+  }
+
+  --Content of the Balance Inquiry Response message.
+  BalanceInquiryResponse ::= [APPLICATION 40] SEQUENCE{
+     response              Response,
+     paymentAccountStatus  PaymentAccountStatus OPTIONAL,
+     loyaltyAccountStatus  LoyaltyAccountStatus OPTIONAL
+  }
+
+  --Identification of the bank.
+  BankID ::= [APPLICATION 337] UTF8String
+
+  --Type of BarCode coding.
+  BarcodeType ::= [APPLICATION 41] ENUMERATED{
+     eAN8(0),    
+     eAN13(1),   
+     uPCA(2),    
+     code25(3),  
+     code128(4), 
+     pDF417(5),  
+     QRCode (6) 
+  }
+
+  --Value with a BarCode coding.
+  BarcodeValue ::= [APPLICATION 42] UTF8String
+
+  --Content of the Batch Request message.
+  BatchRequest ::= [APPLICATION 378] SEQUENCE{
+     removeAllFlag         RemoveAllFlag DEFAULT FALSE,
+     transactionToPerform  SEQUENCE (SIZE(0..MAX)) OF TransactionToPerform
+  }
+
+  --Content of the Batch Response message.
+  BatchResponse ::= [APPLICATION 380] SEQUENCE{
+     response              Response,
+     performedTransaction  SEQUENCE (SIZE(0..MAX)) OF PerformedTransaction
+  }
+
+  --Indicates, when the user press a key, if a beep has to be generated (value True).
+  BeepKeyFlag ::= [APPLICATION 389] BOOLEAN
+
+  --Numeric value of a handwritten signature.
+  CapturedSignature ::= [APPLICATION 440] SEQUENCE{
+     rawSignature  SEQUENCE (SIZE(0..1)) OF RawSignature OPTIONAL,
+	 signatureImage  SEQUENCE (SIZE(0..1)) OF SignatureImage OPTIONAL
+  }
+  
+  --Reference to the last CardAcquisition, to use the same card.
+  CardAcquisitionReference ::= [APPLICATION 44] TransactionIdentificationType
+
+  --Content of the Card Acquisition Request message.
+  CardAcquisitionRequest ::= [APPLICATION 45] SEQUENCE{
+     saleData                    SaleData,
+     cardAcquisitionTransaction  CardAcquisitionTransaction
+  }
+
+  --Content of the Card Acquisition Response message.
+  CardAcquisitionResponse ::= [APPLICATION 46] SEQUENCE{
+     response               Response,
+     saleData               SaleData,
+     pOIData                POIData,
+     paymentBrand           SEQUENCE (SIZE(0..MAX)) OF PaymentBrand,
+     paymentInstrumentData  PaymentInstrumentData OPTIONAL,
+     loyaltyAccount         SEQUENCE (SIZE(0..MAX)) OF LoyaltyAccount,
+     customerOrder          SEQUENCE (SIZE(0..MAX)) OF CustomerOrder
+  }
+
+  --Data related to the payment and loyalty card acquisition.
+  CardAcquisitionTransaction ::= [APPLICATION 47] SEQUENCE{
+     allowedPaymentBrand         SEQUENCE (SIZE(0..MAX)) OF AllowedPaymentBrand,
+     allowedLoyaltyBrand         SEQUENCE (SIZE(0..MAX)) OF AllowedLoyaltyBrand,
+     loyaltyHandling             LoyaltyHandling DEFAULT allowed,
+     customerLanguage            CustomerLanguage OPTIONAL,
+     forceEntryMode              SEQUENCE (SIZE(0..MAX)) OF ForceEntryMode,
+     forceCustomerSelectionFlag  ForceCustomerSelectionFlag DEFAULT FALSE,
+     totalAmount                 TotalAmount OPTIONAL,
+     paymentType                 PaymentType OPTIONAL,
+     cashBackFlag                CashBackFlag OPTIONAL
+  }
+
+  --Type of payment or loyalty card
+  CardBrand ::= [APPLICATION 48] UTF8String
+
+  --Country Code attached to the card (3 numerics).
+  CardCountryCode ::= [APPLICATION 319] NumericString (SIZE(3))
+
+  --Information related to the payment card used for the transaction.
+  CardData ::= [APPLICATION 49] SEQUENCE{
+     paymentBrand        PaymentBrand OPTIONAL,
+     maskedPAN           MaskedPAN OPTIONAL,
+     paymentAccountRef   PaymentAccountRef OPTIONAL,
+     entryMode           EntryMode OPTIONAL,
+     cardCountryCode     CardCountryCode OPTIONAL,
+     protectedCardData   ProtectedCardData OPTIONAL,
+     sensitiveCardData   SensitiveCardData OPTIONAL,
+     allowedProductCode  SEQUENCE (SIZE(0..MAX)) OF AllowedProductCode,
+     allowedProduct      SEQUENCE (SIZE(0..MAX)) OF AllowedProduct,
+     paymentToken        PaymentToken OPTIONAL,
+     customerOrder       SEQUENCE (SIZE(0..MAX)) OF CustomerOrder
+  }
+
+  --Encrypted PIN and related information
+  CardholderPIN ::= [APPLICATION 51] SEQUENCE{
+     encrPINBlock     EncrPINBlock,
+     pINFormat        PINFormat,
+     additionalInput  AdditionalInput OPTIONAL
+  }
+
+  --Content of the Card Reader APDU Request message.
+  CardReaderAPDURequest ::= [APPLICATION 53] SEQUENCE{
+     aPDUClass           APDUClass,
+     aPDUInstruction     APDUInstruction,
+     aPDUPar1            APDUPar1,
+     aPDUPar2            APDUPar2,
+     aPDUData            APDUData OPTIONAL,
+     aPDUExpectedLength  APDUExpectedLength OPTIONAL
+  }
+
+  --Content of the Card Reader APDU Response message.
+  CardReaderAPDUResponse ::= [APPLICATION 54] SEQUENCE{
+     response         Response,
+     aPDUData         APDUData OPTIONAL,
+     cardStatusWords  CardStatusWords
+  }
+
+  --Content of the Card Reader Init Request message.
+  CardReaderInitRequest ::= [APPLICATION 55] SEQUENCE{
+     warmResetFlag   WarmResetFlag OPTIONAL,
+     forceEntryMode  SEQUENCE (SIZE(0..MAX)) OF ForceEntryMode,
+     leaveCardFlag   LeaveCardFlag DEFAULT TRUE,
+     maxWaitingTime  MaxWaitingTime OPTIONAL,
+     displayOutput   DisplayOutput OPTIONAL
+  }
+
+  --Content of the Card Reader Init Response message.
+  CardReaderInitResponse ::= [APPLICATION 56] SEQUENCE{
+     response      Response,
+     entryMode     EntryMode OPTIONAL,
+     trackData     SEQUENCE (SIZE(0..4)) OF TrackData,
+     iCCResetData  ICCResetData OPTIONAL
+  }
+
+  --Indicates if the card readers are working and usable.
+  CardReaderOKFlag ::= [APPLICATION 57] BOOLEAN
+
+  --Content of the Card Reader Power-Off Request message.
+  CardReaderPowerOffRequest ::= [APPLICATION 58] SEQUENCE{
+     maxWaitingTime  MaxWaitingTime OPTIONAL,
+     displayOutput   DisplayOutput OPTIONAL
+  }
+
+  --Content of the Card Reader Power-Off Response message.
+  CardReaderPowerOffResponse ::= [APPLICATION 59] SEQUENCE{
+     response  Response
+  }
+
+  --Card Sequence Number
+  CardSeqNumb ::= [APPLICATION 60] NumericString (SIZE(2..3))
+
+  --Status of a smartcard response to a command (SW1-SW2)
+  CardStatusWords ::= [APPLICATION 61] OCTET STRING (SIZE(2))
+
+  --The cash-back part of the amount requested by the Sale for the payment.
+  CashBackAmount ::= [APPLICATION 62] SimpleAmountType
+
+  --Cash back has been requested with the payment transaction.
+  CashBackFlag ::= [APPLICATION 411] BOOLEAN
+
+  --Status of cash handling device.
+  CashHandlingDevice ::= [APPLICATION 362] SEQUENCE{
+     cashHandlingOKFlag  CashHandlingOKFlag,
+     currency            Currency,
+     coinsOrBills        SEQUENCE (SIZE(1..MAX)) OF CoinsOrBills
+  }
+
+  --Indicates if the cash handling device is working and usable.
+  CashHandlingOKFlag ::= [APPLICATION 363] BOOLEAN
+
+  --Certification code of the software which manages the Sale to POI protocol.
+  CertificationCode ::= [APPLICATION 65] UTF8String
+
+  --Character height of the text string to display or print.
+  CharacterHeight ::= [APPLICATION 66] ENUMERATED{
+     singleHeight(0), 
+     doubleHeight(1), 
+     halfHeight(2)    
+  }
+
+  --The character encoding of the text string.
+  CharacterSet ::= [APPLICATION 67] INTEGER (3..2000)
+
+  --Typographic style of the sequence of characters to display or print.
+  CharacterStyle ::= [APPLICATION 68] ENUMERATED{
+     normal(0),     
+     bold(1),       
+     italic(2),     
+     underlined(3),
+     reverse(4)	 
+  }
+
+  --Character width of the text string to display or print.
+  CharacterWidth ::= [APPLICATION 69] ENUMERATED{
+     singleWidth(0), 
+     doubleWidth(1)  
+  }
+
+  --Charges related to a transaction.
+  Charges ::= [APPLICATION 377] SimpleAmountType
+
+  --Check guarantee card number.
+  CheckCardNumber ::= [APPLICATION 340] UTF8String
+
+  --Country of the bank check.
+  CheckCountry ::= [APPLICATION 341] ISOCountry3A
+
+  --Information related to the paper check used for the transaction.
+  CheckData ::= [APPLICATION 70] SEQUENCE{
+     bankID           BankID OPTIONAL,
+     accountNumber    AccountNumber OPTIONAL,
+     checkNumber      CheckNumber OPTIONAL,
+     trackData        TrackData OPTIONAL,
+     checkCardNumber  CheckCardNumber OPTIONAL,
+     typeCode         CheckTypeCode DEFAULT personal,
+     country          CheckCountry OPTIONAL
+  }
+
+  --Identification of the bank check.
+  CheckNumber ::= [APPLICATION 339] UTF8String
+
+  --Type of bank check.
+  CheckTypeCode ::= [APPLICATION 336] ENUMERATED{
+     personal(0), 
+     company(1)   
+  }
+
+  
+  --Number of coins or bills of a given value.
+  CoinsOrBills ::= [APPLICATION 346] SEQUENCE{
+     unitValue  UnitValue,
+     number     Number
+  }
+
+  --Color of the text string to display or print.
+  Color ::= [APPLICATION 71] ENUMERATED{
+     white(0),   
+     black(1),   
+     red(2),     
+     green(3),   
+     blue(4),    
+     yellow(5),  
+     magenta(6), 
+     cyan(7)     
+  }
+
+  --Commission for a service.
+  Commission ::= [APPLICATION 414] SimpleAmountType
+
+  --Unformatted name of the merchant.
+  CommonName ::= [APPLICATION 430] UTF8String
+  
+  --Indicates if the communication infrastructure is working and usable.
+  CommunicationOKFlag ::= [APPLICATION 72] BOOLEAN
+
+  --Description of the component of the sales system.
+  ComponentDescription ::= [APPLICATION 449]  UTF8String
+  
+  --Type of a component of the software which manages the Sale to POI protocol.
+  ComponentType ::= [APPLICATION 450]  ENUMERATED{
+     SERV(0),   
+     MDWR(1),   
+     OPST(2),     
+     APPL(3),   
+     SECM(4)     
+  }
+  
+  --Confirmation or not of what has been requested to the user in a GetConfirmation input command.
+  ConfirmedFlag ::= [APPLICATION 73] BOOLEAN
+
+  --Amount after a currency conversion.
+  ConvertedAmount ::= [APPLICATION 334] AmountType
+
+  --Country of the merchant.
+  CountryCode ::= [APPLICATION 432] NumericString
+  
+  --Ordering criteria for the transaction report.
+  CriteriaOrder ::= [APPLICATION 451] SEQUENCE {
+    target              Target,
+	descendingOrder     DescendingOrder OPTIONAL
+  }
+  
+  --Sum of a collection of amounts.
+  CumulativeAmount ::= [APPLICATION 375] SimpleAmountType
+
+  --Currency of a monetary amount.
+  Currency ::= [APPLICATION 74] ISOCurrency3A
+
+  --Information related to a currency conversion
+  CurrencyConversion ::= [APPLICATION 333] SEQUENCE{
+     customerApprovedFlag  CustomerApprovedFlag OPTIONAL,
+     convertedAmount       ConvertedAmount,
+     rate                  Rate OPTIONAL,
+     markup                Markup OPTIONAL,
+     commission            Commission OPTIONAL,
+     declaration           Declaration OPTIONAL
+  }
+
+--total amount of all completed transactions of a customer order.
+  CurrentAmount ::= [APPLICATION 420] SimpleAmountType
+
+  --Balance of an account.
+  CurrentBalance ::= [APPLICATION 38] SimpleAmountType
+
+  --Notify if the customer has approved something.
+  CustomerApprovedFlag ::= [APPLICATION 412] BOOLEAN
+
+  --Language of the Customer
+  CustomerLanguage ::= [APPLICATION 75] ISOLanguage2A
+
+  --Customer order attached to a card, recorded in the POI system.
+  CustomerOrder ::= [APPLICATION 415] SEQUENCE{
+     customerOrderID        CustomerOrderID OPTIONAL,
+     SaleReferenceID        SaleReferenceID,
+     OpenOrderState         OpenOrderStateFlag DEFAULT TRUE,
+     startDate              StartDate,
+     endDate                EndDate OPTIONAL,
+     ForecastedAmount       ForecastedAmount,
+     CurrentAmount          CurrentAmount OPTIONAL,
+     currency               Currency OPTIONAL,
+     accessedBy             AccessedBy OPTIONAL,
+     additionalInformation  AdditionalInformation OPTIONAL
+  }
+
+  --Identification of a customer order.
+  CustomerOrderID ::= [APPLICATION 416] UTF8String
+
+  --List of customer orders must be sent in response message.
+  CustomerOrderReq ::= [APPLICATION 423] BIT STRING{
+     open(0),    --Customer order not completed.
+     closed(1),   --Completed customer orders.
+     Both(2)      --All type of CustomerOrder should be listed
+  }
+
+  --Indicates if supports the CustomerOrder functionality.
+  CustomerOrderStatus ::= [APPLICATION 447] BOOLEAN
+  
+  --Date and Time
+  DateTime ::= [APPLICATION 76] GeneralizedTime
+
+  --The preferred type of payment is a debit transaction rather a credit transaction.
+  DebitPreferredFlag ::= [APPLICATION 348] BOOLEAN
+
+  --Declaration to present to the customer or the cashier for validation.
+  Declaration ::= [APPLICATION 335] UTF8String
+
+  --Default string value for an input command.
+  DefaultInputString ::= [APPLICATION 77] UTF8String
+
+  --Transport address containing the IP address or the DNS (Domain Name Server) address, followed by the character ':' and the port number if the default port is not used.
+  DestinationAddress ::= [APPLICATION 311] UTF8String
+
+  --Selection of a menu entry to be displayed.
+  DefaultSelectedFlag ::= [APPLICATION 390] BOOLEAN
+
+  --Logical device located on a Sale Terminal or a POI Terminal, in term of class of information to output (display, print or store), or input (keyboard) for the Cashier or the Customer.
+  Device ::= [APPLICATION 78] ENUMERATED{
+     cashierDisplay(0),   --Used by the POI System (or the Sale System when the device is managed by the...
+     customerDisplay(1),  --Used by the Sale System (or the POI System when the device is managed by the...
+     cashierInput(2),     --Any kind of keyboard allowing all or part of the commands of the Input message...
+     customerInput(3)     --Any kind of keyboard allowing all or part of the commands of the Input message...
+  }
+
+  --Identification of a device message pair
+  DeviceID ::= [APPLICATION 79] UTF8String (SIZE(1..10))
+
+  --Content of the Diagnosis Request message.
+  DiagnosisRequest ::= [APPLICATION 80] SEQUENCE{
+     pOIID              POIID OPTIONAL,
+     hostDiagnosisFlag  HostDiagnosisFlag DEFAULT FALSE,
+     acquirerID         SEQUENCE (SIZE(0..MAX)) OF AcquirerID
+  }
+
+  --Content of the Diagnosis Response message.
+  DiagnosisResponse ::= [APPLICATION 81] SEQUENCE{
+     response      Response,
+     loggedSaleID  SEQUENCE (SIZE(0..MAX)) OF LoggedSaleID,
+     pOIStatus     POIStatus OPTIONAL,
+     hostStatus    SEQUENCE (SIZE(0..MAX)) OF HostStatus
+  }
+
+  --The digits which are typed by the Customer on the POI or the Cashier on the Sale Terminal.
+  DigitInput ::= [APPLICATION 82] NumericString
+
+  --Indicates if the Cancel function key has to be desactived (value True).
+  DisableCancelFlag ::= [APPLICATION 383] BOOLEAN
+
+  --Indicates if the Correct function key has to be desactived (value True).
+  DisableCorrectFlag ::= [APPLICATION 384] BOOLEAN
+
+  --Indicates if the Valid function key has to be desactived (value True).
+  DisableValidFlag ::= [APPLICATION 385] BOOLEAN
+
+  --Information to display and the way to process the display.
+  DisplayOutput ::= [APPLICATION 83] SEQUENCE{
+     responseRequiredFlag  ResponseRequiredFlag DEFAULT TRUE,
+     minimumDisplayTime    MinimumDisplayTime DEFAULT 0,
+     device                Device,
+     infoQualify           InfoQualify,
+     outputContent         OutputContent,
+     menuEntry             SEQUENCE (SIZE(0..MAX)) OF MenuEntry,
+     outputSignature       OutputSignature OPTIONAL
+  }
+
+  --Content of the Display Request message.
+  DisplayRequest ::= [APPLICATION 84] SEQUENCE{
+     displayOutput  SEQUENCE (SIZE(1..MAX)) OF DisplayOutput
+  }
+
+  --Content of the Display Response message.
+  DisplayResponse ::= [APPLICATION 85] SEQUENCE{
+     outputResult  SEQUENCE (SIZE(1..MAX)) OF OutputResult
+  }
+
+  --Qualification of the document to print to the Cashier or the Customer.
+  DocumentQualifier ::= [APPLICATION 86] ENUMERATED{
+     saleReceipt(0),      --Where the POI system print the Sale receipt when requested by the Sale Terminal.
+     cashierReceipt(1),   --Where the Sale system print the Cashier copy of the Payment receipt when...
+     customerReceipt(2),  --Where you print the Customer Payment receipt that could be located on the Sale...
+     document(3),         --When the POI System wants to print specific document (check, dynamic currency...
+     voucher(4),          --Coupons, voucher or special ticket generated by the POI or the Sale System and...
+     journal(5)           --When the POI or the Sale System wants to store a message on the journal printer...
+  }
+
+  --Standard product code of item purchased with the transaction.
+  EanUpc ::= [APPLICATION 87] NumericString
+
+  --Content of the Enable Service Request message.
+  EnableServiceRequest ::= [APPLICATION 88] SEQUENCE{
+     transactionAction  TransactionAction,
+     servicesEnabled    ServicesEnabled OPTIONAL,
+     displayOutput      DisplayOutput OPTIONAL
+  }
+
+  --Content of the Enable Service Response message.
+  EnableServiceResponse ::= [APPLICATION 89] SEQUENCE{
+     response  Response
+  }
+
+  --Date time of the end of an operation.
+  EndDate ::= [APPLICATION 419] GeneralizedTime
+
+  --Encrypted PIN
+  EncrPINBlock ::= [APPLICATION 90] ContentInformationType
+
+  --Text is at the end of a line.
+  EndOfLineFlag ::= [APPLICATION 91] BOOLEAN
+
+  --Entry mode of the payment instrument information
+  EntryMode ::= [APPLICATION 50] BIT STRING{
+     rFID(0),            --Payment instrument information are taken from RFID
+     keyed(1),           --Manual key entry
+     manual(2),          --Reading of embossing or OCR of printed data either at time of transaction or...
+     file(3),            --Account data on file
+     scanned(4),         --Scanned by a bar code reader.
+     magStripe(5),       --Magnetic stripe  card reader.
+     iCC(6),             --Contact ICC (asynchronous)
+     synchronousICC(7),  --Contact ICC (synchronous)
+     tapped(8),          --Contactless card reader Magnetic Stripe
+     contactless(9),     --Contactless card reader conform to ISO 14443
+     mobile(10)           --Mobile phone.
+  }
+
+  --Condition that has produced  an error on the processing of a message request
+  ErrorCondition ::= [APPLICATION 95] ENUMERATED{
+     aborted(0),             --The Initiator of the request has sent an Abort message request, which was...
+     busy(1),                --The system is busy, try later
+     cancel(2),              --The user has aborted the transaction on the PED keyboard, for instance during...
+     deviceOut(3),           --Device out of order
+     insertedCard(4),        --If the Input Device request a NotifyCardInputFlag and the Customer enters a...
+     inProgress(5),          --The transaction is still in progress and then the command cannot be processed
+     loggedOut(6),           --Not logged in
+     messageFormat(7),       --Error on the format of the message, AdditionalResponse shall contain the...
+     notAllowed(8),          --A service request is sent during a Service dialogue....
+     notFound(9),            --The transaction is not found (e.g. for a reversal or a repeat)
+     paymentRestriction(10),  --Some sale items are not payable by the card proposed by the Customer.
+     refusal(11),             --The transaction is refused by the host or the rules associated to the card, and...
+     unavailableDevice(12),   --The hardware is not available (absent, not configured...)
+     unavailableService(13),  --The service is not available (not implemented, not configured, protocol version...
+     invalidCard(14),         --The card entered by the Customer cannot be processed by the POI because this...
+     unreachableHost(15),     --Acquirer or any host is unreachable or has not answered to an online request,...
+     wrongPIN(16)             --The user has entered the PIN on the PED keyboard and the verification fails.
+  }
+
+  --Information about the event the POI notifies to the Sale System.
+  EventDetails ::= [APPLICATION 92] UTF8String
+
+  --Content of the EventNotification message.
+  EventNotification ::= [APPLICATION 93] SEQUENCE{
+     timeStamp                TimeStamp,
+     eventToNotify            EventToNotify,
+     eventDetails             EventDetails OPTIONAL,
+     rejectedMessage          RejectedMessage OPTIONAL,
+     maintenanceRequiredFlag  MaintenanceRequiredFlag DEFAULT FALSE,
+     customerLanguage         CustomerLanguage OPTIONAL,
+     displayOutput            DisplayOutput OPTIONAL
+  }
+
+  --Event the POI notifies to the Sale System.
+  EventToNotify ::= [APPLICATION 94] ENUMERATED{
+     beginMaintenance(0),  --Begin of POI Maintenance
+     endMaintenance(1),    --End of POI Maintenance
+     shutdown(2),          --The POI Terminal or the POI System is shutting down
+     initialised(3),       --The POI Terminal or the POI System is now ready to work
+     outOfOrder(4),        --The POI Terminal or the POI System cannot work
+     completed(5),         --An Abort request has been sent to abort a message which is already completed.
+     abort(6),             --One or several device request has been sent by the POI during the processing of...
+     saleWakeUp(7),        --A POI terminal requests the payment of the transaction identified by the...
+     saleAdmin(8),         --The POI has performed, or want to perform an automatic administrative process,...
+     customerLanguage(9),  --The customer has selected a different language on the POI.
+     keyPressed(10),        --The customer has pressed a specific key on the POI.
+     securityAlarm(11),     --Problem of security
+     stopAssistance(12),    --When the Customer assistance is stopped, because the Customer has completed its...
+     cardInserted(13),      --A card is inserted in the card reader (see Input request and...
+     cardRemoved(14),       --A card is removed from the card reader.
+     reject(15)             --A message request is rejected. An error explanation and the message in error...
+  }
+
+  --Date after which the card cannot be used.
+  ExpiryDate ::= [APPLICATION 96] NumericString (SIZE(4))
+
+  --Expiry date and time.
+  ExpiryDateTime ::= [APPLICATION 410] GeneralizedTime
+
+  --First amount of a payment.
+  FirstAmount ::= [APPLICATION 376] SimpleAmountType
+
+  --First date of a payment.
+  FirstPaymentDate ::= [APPLICATION 373] ISODate
+
+  --Name of the font.
+  Font ::= [APPLICATION 98] UTF8String
+
+  --Indicates if the Customer realises the selection of the card application.
+  ForceCustomerSelectionFlag ::= [APPLICATION 100] BOOLEAN
+
+  --Payment instrument entry mode requested by the Sale System.
+  ForceEntryMode ::= [APPLICATION 99] BIT STRING{
+     rFID(0),            --Payment instrument information are taken from RFID
+     keyed(1),           --Manual key entry
+     manual(2),          --Reading of embossing or OCR of printed data either at time of transaction or...
+     file(3),            --Account data on file
+     scanned(4),         --Scanned by a bar code reader.
+     magStripe(5),       --Magnetic stripe 
+     iCC(6),             --Contact ICC (asynchronous)
+     synchronousICC(7),  --Contact ICC (synchronous)
+     tapped(8),          --Contactless card reader Magnetic Stripe
+     contactless(9),     --Contactless card reader conform to ISO 14443
+     checkReader(10)      --Check Reader
+  }
+
+  --Indicates if the Cashier requires POI forces online access to the Acquirer.
+  ForceOnlineFlag ::= [APPLICATION 101] BOOLEAN
+
+	--Depending on the choice of the sale system it could equal the initial amount of the order or the global amount of the order.
+  ForecastedAmount ::= [APPLICATION 429] SimpleAmountType
+
+
+  --Indicate a suspicion of fraud by the POI System.
+  FraudPreventionFlag ::= [APPLICATION 316] BOOLEAN
+
+  --Indicate if the entered character has to be displayed from the right to the left of the display field.
+  FromRightToLeftFlag ::= [APPLICATION 102] BOOLEAN
+
+  --The number of the function key which is typed by the Customer on the POI or the Cashier on the Sale Terminal.
+  FunctionKey ::= [APPLICATION 310] NumericString
+
+  --Functional profile of the Sale to POI protocol.
+  GenericProfile ::= [APPLICATION 103] ENUMERATED{
+     basic(0),     --Protocol services that needs to be implemented by all the Sale and POI
+     standard(1),  --Protocol services involving interaction between Sale System and POI System as...
+     extended(2)   --Complete Protocol services
+  }
+
+  --Location on the Earth specified by two numbers representing vertical and horizontal position.
+  GeographicCoordinates ::= [APPLICATION 356] SEQUENCE{
+     latitude   Latitude,
+     longitude  Longitude
+  }
+
+  --Geographic location specified by geographic or UTM coordinates.
+  Geolocation ::= [APPLICATION 326] SEQUENCE{
+     geographicCoordinates  GeographicCoordinates OPTIONAL,
+     uTMCoordinates         UTMCoordinates OPTIONAL
+  }
+
+  --Content of the Get Totals Request message.
+  GetTotalsRequest ::= [APPLICATION 104] SEQUENCE{
+     totalDetails  TotalDetails OPTIONAL,
+     totalFilter   TotalFilter OPTIONAL
+  }
+
+  --Content of the Reconciliation Response message.
+  GetTotalsResponse ::= [APPLICATION 105] SEQUENCE{
+     response             Response,
+     pOIReconciliationID  POIReconciliationID,
+     transactionTotals    SEQUENCE (SIZE(0..MAX)) OF TransactionTotals
+  }
+
+  --Indicates, when the user press the Correct function key in an input entry, if all the entered characters are removed (value True) or only the last entered character if any (value False).
+  GlobalCorrectionFlag ::= [APPLICATION 404] BOOLEAN
+
+  --Global status of a POI Server or POI Terminal.
+  GlobalStatus ::= [APPLICATION 106] ENUMERATED{
+     oK(0),           --The POI is ready to receive and process a request
+     busy(1),         --The POI Terminal cannot process a request because another processing is in...
+     maintenance(2),  --The POI is in maintenance processing
+     unreachable(3)   --The POI is unreachable or not responding
+  }
+
+  --Identifier of a reconciliation period with a payment or loyalty host.
+  HostReconciliationID ::= [APPLICATION 300] UTF8String
+
+  --Indicates if Host Diagnosis are required
+  HostDiagnosisFlag ::= [APPLICATION 107] BOOLEAN
+
+  --State of a Host.
+  HostStatus ::= [APPLICATION 108] SEQUENCE{
+     acquirerID       AcquirerID,
+     isReachableFlag  IsReachableFlag DEFAULT TRUE
+  }
+
+  --Identification of the transaction by the host in charge of the stored value transaction
+  HostTransactionID ::= [APPLICATION 109] TransactionIdentificationType
+
+  --Data of a Chip Card related to the reset of the chip.
+  ICCResetData ::= [APPLICATION 110] SEQUENCE{
+     aTRValue         ATRValue OPTIONAL,
+     cardStatusWords  CardStatusWords OPTIONAL
+  }
+
+  --Support of the loyalty account identification
+  IdentificationSupport ::= [APPLICATION 114] ENUMERATED{
+     noCard(0),       --The identification is not found on a card
+     loyaltyCard(1),  --The identification is on a card dedicated to this loyalty brand.
+     hybridCard(2),   --The identification is on a card which might be used both for the loyalty and...
+     linkedCard(3)    --The loyalty account is implicitly attached to the payment card. This is usually...
+  }
+
+  --Type of account identification
+  IdentificationType ::= [APPLICATION 115] ENUMERATED{
+     pAN(0),            --Standard card identification (card number)
+     iSOTrack2(1),      --ISO Track 2 including identification.
+     barCode(2),        --Bar-code with a specific form of identification
+     accountNumber(3),  --Account number
+     phoneNumber(4)     --A phone number identifies the account on which the phone card is assigned.
+  }
+
+  --Bytesequence of the captured signature 
+  ImageData  ::= [APPLICATION 438] OCTET STRING
+ 
+  --Format of the captured signature 
+  ImageFormat  ::= [APPLICATION 437] UTF8String
+  
+  --URL or Filename of the signature image file
+  ImageReference  ::= [APPLICATION 439] UTF8String
+  
+  --International Mobile Equipement Identity.
+  IMEI ::= [APPLICATION 331] NumericString
+
+  --Request Immediate response to the message without waiting for the completion of the command.
+  ImmediateResponseFlag ::= [APPLICATION 111] BOOLEAN
+
+  --International Mobile Subscriber Identity.
+  IMSI ::= [APPLICATION 330] NumericString
+
+  --Qualification of the information to sent to an output logical device, to display or print to the Cashier or the Customer.
+  InfoQualify ::= [APPLICATION 112] ENUMERATED{
+     status(0),              --The information is a new state on which the message sender is entering. For...
+     error(1),               --The information is related to an error situation occurring on the message...
+     display(2),             --Standard display interface.
+     sound(3),               --Standard sound interface.
+     input(4),               --Answer to a question or information to be entered by the Cashier or the...
+     pOIReplication(5),      --Information displayed on the Cardholder POI interface, replicated on the...
+     customerAssistance(6),  --Input of the Cardholder POI interface which can be entered by the Cashier to...
+     receipt(7),             --Where you print the Payment receipt that could be located on the Sale Terminal...
+     document(8),            --When the POI System wants to print specific document (check, dynamic currency...
+     voucher(9)              --Coupons, voucher or special ticket generated by the POI or the Sale System and...
+  }
+
+  --Data entered by the user, related to the input command.
+  Input ::= [APPLICATION 116] SEQUENCE{
+     inputCommand     InputCommand,
+     confirmedFlag    ConfirmedFlag OPTIONAL,
+     functionKey      FunctionKey OPTIONAL,
+     textInput        TextInput OPTIONAL,
+     digitInput       DigitInput OPTIONAL,
+     password         Password OPTIONAL,
+     menuEntryNumber  MenuEntryNumber OPTIONAL
+  }
+
+  --Type of requested input
+  InputCommand ::= [APPLICATION 117] ENUMERATED{
+     getAnyKey(0),        --Wait for a key pressed on the Terminal, to be able to read the message...
+     getConfirmation(1),  --Wait for a confirmation Yes (Y) or No (N) on the Sale Terminal....
+     siteManager(2),      --Wait for a confirmation Yes (Y) or No (N) of the Site Manager on the Sale...
+     textString(3),       --Wait for a string of alphanumeric characters, the length range could be...
+     digitString(4),      --Wait for a string of digit characters, the length range could be specified.
+     decimalString(5),    --Wait for a string of digit characters with a decimal point, the length range...
+     getFunctionKey(6),   --Wait for a function key pressed on the Terminal: ...
+     getMenuEntry(7),     --To choose an entry among a list of entrys (all of them are not necessary...
+     password(8)          --Request to enter a password with masked characters while typing the password.
+  }
+
+  --Information related to an Input request.
+  InputData ::= [APPLICATION 118] SEQUENCE{
+     device                  Device,
+     infoQualify             InfoQualify,
+     inputCommand            InputCommand,
+     notifyCardInputFlag     NotifyCardInputFlag DEFAULT FALSE,
+     maxInputTime            MaxInputTime OPTIONAL,
+     immediateResponseFlag   ImmediateResponseFlag DEFAULT FALSE,
+     minLength               MinLength OPTIONAL,
+     maxLength               MaxLength OPTIONAL,
+     maxDecimalLength        MaxDecimalLength OPTIONAL,
+     waitUserValidationFlag  WaitUserValidationFlag DEFAULT TRUE,
+     defaultInputString      DefaultInputString OPTIONAL,
+     stringMask              StringMask OPTIONAL,
+     fromRightToLeftFlag     FromRightToLeftFlag DEFAULT FALSE,
+     maskCharactersFlag      MaskCharactersFlag DEFAULT FALSE,
+     beepKeyFlag             BeepKeyFlag DEFAULT FALSE,
+     globalCorrectionFlag    GlobalCorrectionFlag DEFAULT FALSE,
+     disableCancelFlag       DisableCancelFlag DEFAULT FALSE,
+     disableCorrectFlag      DisableCorrectFlag DEFAULT FALSE,
+     disableValidFlag        DisableValidFlag DEFAULT FALSE,
+     menuBackFlag            MenuBackFlag DEFAULT FALSE
+  }
+
+  --Content of the Input Request message.
+  InputRequest ::= [APPLICATION 119] SEQUENCE{
+     displayOutput  DisplayOutput OPTIONAL,
+     inputData      InputData
+  }
+
+  --Content of the Input Response message.
+  InputResponse ::= [APPLICATION 120] SEQUENCE{
+     outputResult  OutputResult OPTIONAL,
+     inputResult   InputResult
+  }
+
+  --Information related to the result the input.
+  InputResult ::= [APPLICATION 121] SEQUENCE{
+     device       Device,
+     infoQualify  InfoQualify,
+     response     Response,
+     input        Input OPTIONAL
+  }
+
+  --Content of the Input Update message.
+  InputUpdate ::= [APPLICATION 386] SEQUENCE{
+     messageReference  MessageReference,
+     outputContent     OutputContent,
+     menuEntry         SEQUENCE (SIZE(0..MAX)) OF MenuEntry,
+     outputSignature   OutputSignature OPTIONAL,
+     minLength         MinLength OPTIONAL,
+     maxLength         MaxLength OPTIONAL,
+     maxDecimalLength  MaxDecimalLength OPTIONAL
+  }
+
+  --Information related an instalment transaction.
+  Instalment ::= [APPLICATION 367] SEQUENCE{
+     instalmentType     InstalmentType OPTIONAL,
+     sequenceNumber     SequenceNumber OPTIONAL,
+     planID             PlanID OPTIONAL,
+     period             Period OPTIONAL,
+     periodUnit         PeriodUnit OPTIONAL,
+     firstPaymentDate   FirstPaymentDate OPTIONAL,
+     totalNbOfPayments  TotalNbOfPayments OPTIONAL,
+     cumulativeAmount   CumulativeAmount OPTIONAL,
+     firstAmount        FirstAmount OPTIONAL,
+     charges            Charges OPTIONAL
+  }
+
+  --Type of instalment transaction.
+  InstalmentType ::= [APPLICATION 368] BIT STRING{
+     deferredInstalments(0),  --The payment of the service or goods is deferred.
+     equalInstalments(1),     --The payment is split in several instalments of equal amounts.
+     inequalInstalments(2)    --The payment is split in several instalments of different amounts.
+  }
+
+  --Type of the print integrated to other prints.
+  IntegratedPrintFlag ::= [APPLICATION 113] BOOLEAN
+
+  --Indicate if a Host is reachable
+  IsReachableFlag ::= [APPLICATION 122] BOOLEAN
+
+  --Total amount of the item line.
+  ItemAmount ::= [APPLICATION 123] SimpleAmountType
+
+  --Item identification inside a transaction (0 to n).
+  ItemID ::= [APPLICATION 124] INTEGER
+
+  --Identify the key to use to encrypt the PIN block.
+  KeyReference ::= [APPLICATION 125] UTF8String
+
+  --Identification of a language.
+  Language ::= [APPLICATION 126] ISOLanguage2A
+
+  --Flag for request processing on last transaction.
+  LastTransactionFlag ::= [APPLICATION 434] BOOLEAN
+  
+  --Angular distance of a location on the earth south or north of the equator.
+  Latitude ::= [APPLICATION 355] UTF8String
+
+  --Indicates if the POI has to keep the card in the reader for a smart card.
+  LeaveCardFlag ::= [APPLICATION 127] BOOLEAN
+
+  --Sale Terminal logged to.
+  LoggedSaleID ::= [APPLICATION 130] UTF8String
+
+  --Content of the Login Request message.
+  LoginRequest ::= [APPLICATION 128] SEQUENCE{
+     dateTime            DateTime,
+     saleSoftware        SEQUENCE (SIZE(1..MAX)) OF SaleSoftware,
+     saleTerminalData    SaleTerminalData OPTIONAL,
+     trainingModeFlag    TrainingModeFlag DEFAULT FALSE,
+     operatorLanguage    OperatorLanguage,
+     operatorID          OperatorID OPTIONAL,
+     shiftNumber         ShiftNumber OPTIONAL,
+     tokenRequestedType  TokenRequestedType OPTIONAL,
+     customerOrderReq    CustomerOrderReq OPTIONAL,
+     pOISerialNumber     POISerialNumber OPTIONAL
+  }
+
+  --Content of the Login Response message.
+  LoginResponse ::= [APPLICATION 129] SEQUENCE{
+     response       Response,
+     pOISystemData  POISystemData OPTIONAL
+  }
+
+  --Content of the Logout Request message.
+  LogoutRequest ::= [APPLICATION 131] SEQUENCE{
+     maintenanceAllowed  MaintenanceAllowed DEFAULT FALSE
+  }
+
+  --Content of the Logout Response message.
+  LogoutResponse ::= [APPLICATION 132] SEQUENCE{
+     response  Response
+  }
+
+  --Angular measurement of the distance of a location on the earth east or west of the Greenwich observatory.
+  Longitude ::= [APPLICATION 354] UTF8String
+
+  --Data related to a loyalty account processed in the transaction.
+  LoyaltyAccount ::= [APPLICATION 133] SEQUENCE{
+     loyaltyAccountID  LoyaltyAccountID,
+     loyaltyBrand      LoyaltyBrand OPTIONAL
+  }
+
+  --Identification of a Loyalty account.
+  LoyaltyAccountID ::= [APPLICATION 134] SEQUENCE{
+     entryMode              EntryMode,
+     identificationType     IdentificationType,
+     identificationSupport  IdentificationSupport OPTIONAL,
+     loyaltyID              LoyaltyID
+  }
+
+  --Data related to a requested Loyalty program or account.
+  LoyaltyAccountReq ::= [APPLICATION 135] SEQUENCE{
+     cardAcquisitionReference  CardAcquisitionReference OPTIONAL,
+     loyaltyAccountID          LoyaltyAccountID OPTIONAL
+  }
+
+  --Data related to the result of a loyalty Balance Inquiry.
+  LoyaltyAccountStatus ::= [APPLICATION 136] SEQUENCE{
+     loyaltyAccount  LoyaltyAccount,
+     currentBalance  CurrentBalance OPTIONAL,
+     loyaltyUnit     LoyaltyUnit DEFAULT point,
+     currency        Currency OPTIONAL
+  }
+
+  --Data related to the loyalty Acquirer during a loyalty transaction.
+  LoyaltyAcquirerData ::= [APPLICATION 137] SEQUENCE{
+     loyaltyAcquirerID     LoyaltyAcquirerID OPTIONAL,
+     approvalCode          ApprovalCode OPTIONAL,
+     loyaltyTransactionID  LoyaltyTransactionID OPTIONAL,
+     hostReconciliationID  HostReconciliationID OPTIONAL
+  }
+
+  --Identification of the loyalty Acquirer.
+  LoyaltyAcquirerID ::= [APPLICATION 138] UTF8String
+
+  --Amount of a loyalty account.
+  LoyaltyAmount ::= [APPLICATION 140] SEQUENCE{
+     loyaltyUnit  LoyaltyUnit DEFAULT point,
+     currency     Currency OPTIONAL,
+     amountValue  AmountValue
+  }
+
+  --Identification of a Loyalty brand.
+  LoyaltyBrand ::= [APPLICATION 141] UTF8String
+
+  --Currency of a monetary amount.
+  LoyaltyCurrency ::= [APPLICATION 142] ISOCurrency3A
+
+  --Data related to a Loyalty program or account.
+  LoyaltyData ::= [APPLICATION 143] SEQUENCE{
+     cardAcquisitionReference  CardAcquisitionReference OPTIONAL,
+     loyaltyAccountID          LoyaltyAccountID OPTIONAL,
+     loyaltyAmount             LoyaltyAmount OPTIONAL
+  }
+
+  --Type of Loyalty processing requested by the Sale System.
+  LoyaltyHandling ::= [APPLICATION 145] ENUMERATED{
+     forbidden(0),  --No loyalty card to read and loyalty transaction to process. Any attempt to...
+     processed(1),  --The loyalty transaction is already processed, no loyalty card or loyalty...
+     allowed(2),    --The loyalty is accepted, but the POI has not to require or ask a loyalty card....
+     proposed(3),    --The loyalty is accepted, and the POI has to ask a loyalty card. If the Customer...
+     required(4)     --The loyalty is required, and the POI refuses the processing of the message...
+  }
+
+  --Loyalty account identification.
+  LoyaltyID ::= [APPLICATION 144] UTF8String
+
+  --Content of the Loyalty Request message.
+  LoyaltyRequest ::= [APPLICATION 146] SEQUENCE{
+     saleData            SaleData,
+     loyaltyTransaction  LoyaltyTransaction,
+     loyaltyData         SEQUENCE (SIZE(0..MAX)) OF LoyaltyData
+  }
+
+  --Content of the Loyalty Response message.
+  LoyaltyResponse ::= [APPLICATION 147] SEQUENCE{
+     response        Response,
+     saleData        SaleData,
+     pOIData         POIData,
+     loyaltyResult   SEQUENCE (SIZE(0..MAX)) OF LoyaltyResult,
+     paymentReceipt  SEQUENCE (SIZE(0..MAX)) OF PaymentReceipt
+  }
+
+  --Data related to the result of a processed loyalty transaction.
+  LoyaltyResult ::= [APPLICATION 148] SEQUENCE{
+     loyaltyAccount       LoyaltyAccount,
+     currentBalance       CurrentBalance OPTIONAL,
+     loyaltyAmount        LoyaltyAmount OPTIONAL,
+     loyaltyAcquirerData  LoyaltyAcquirerData OPTIONAL,
+     rebates              Rebates OPTIONAL
+  }
+
+  --Totals of the loyalty transaction during the reconciliation period.
+  LoyaltyTotals ::= [APPLICATION 149] SEQUENCE{
+     transactionType    TransactionType,
+     transactionCount   TransactionCount,
+     transactionAmount  TransactionAmount
+  }
+
+  --Identification of the Transaction for the Loyalty Acquirer.
+  LoyaltyTransactionID ::= [APPLICATION 139] TransactionIdentificationType
+
+  --Type of loyalty transaction.
+  LoyaltyTransactionType ::= [APPLICATION 150] ENUMERATED{
+     award(0),             --Direct or payment related award on a loyalty account. Award alone, award...
+     rebate(1),            --Rebate on a total amount, sale item amount, or sale items
+     redemption(2),        --Redemption on a loyalty account.
+     awardRefund(3),       --Refund of a loyalty award transaction.
+     rebateRefund(4),      --Refund of a loyalty rebate transaction.
+     redemptionRefund(5)   --Refund of a loyalty redemption transaction.
+  }
+
+  --Data related to the loyalty transaction.
+  LoyaltyTransaction ::= [APPLICATION 151] SEQUENCE{
+     loyaltyTransactionType  LoyaltyTransactionType,
+     currency                Currency OPTIONAL,
+     totalAmount             TotalAmount OPTIONAL,
+     originalPOITransaction  OriginalPOITransaction OPTIONAL,
+     transactionConditions   TransactionConditions OPTIONAL,
+     saleItem                SEQUENCE (SIZE(0..MAX)) OF SaleItem
+  }
+
+  --Unit of a loyalty amount.
+  LoyaltyUnit ::= [APPLICATION 152] ENUMERATED{
+     point(0),     --The amount is expressed in point.
+     monetary(1)   --The amount is expressed in a monetary value in a currency.
+  }
+
+  --Indicates if the occurred event requires maintenance call or action.
+  MaintenanceRequiredFlag ::= [APPLICATION 153] BOOLEAN
+
+  --Indicates that the POI terminal is able to (or have to) go to maintenance.
+  MaintenanceAllowed ::= [APPLICATION 387] BOOLEAN
+
+  --Identification of the Manufacturer
+  ManufacturerID ::= [APPLICATION 154] UTF8String
+
+  --Markup of an amount in percentage.
+  Markup ::= [APPLICATION 413] PrintableString
+
+  --Indicates to mask the characters entered by the user (i.e. replacing in the display of the input, the entered character by a standard character as '*').
+  MaskCharactersFlag ::= [APPLICATION 405] BOOLEAN
+
+  --Masked Mobile Subscriber Integrated Service Digital Network.
+  MaskedMSISDN ::= [APPLICATION 325] UTF8String
+
+  --Masked Primary Account Number
+  MaskedPAN ::= [APPLICATION 155] UTF8String
+
+  --Maximum input length of the decimal part (without decimal point)
+  MaxDecimalLength ::= [APPLICATION 156] INTEGER
+
+  --Maximum amount which could be requested for cash-back to the Sale System.
+  MaximumCashBackAmount ::= [APPLICATION 168] SimpleAmountType
+
+  --Maximum time in seconds of transmission.
+  MaximumTransmitTime ::= [APPLICATION 388] INTEGER
+
+  --Maximum input time in seconds
+  MaxInputTime ::= [APPLICATION 157] INTEGER
+
+  --Maximum input length
+  MaxLength ::= [APPLICATION 158] INTEGER
+
+  --Maximum time to wait for the request processing in seconds.
+  MaxWaitingTime ::= [APPLICATION 317] INTEGER
+
+  --If it has the value True, it indicates that the "Back" function key (respectively "Home" function key) may be used to go back to the immediate upper level of the menu (resp. to the home of the menu).#@|br#@|If it has the value False, it indicates that the current menu level has no parent menu.
+  MenuBackFlag ::= [APPLICATION 391] BOOLEAN
+
+  --An entryof the menu to present to the Cashier
+  MenuEntry ::= [APPLICATION 159] SEQUENCE{
+     menuEntryTag         MenuEntryTag DEFAULT selectable,
+     outputFormat         OutputFormat,
+     defaultSelectedFlag  DefaultSelectedFlag DEFAULT FALSE,
+     predefinedContent    PredefinedContent OPTIONAL,
+     outputText           SEQUENCE (SIZE(0..MAX)) OF OutputText,
+     outputXHTML          OutputXHTML OPTIONAL
+  }
+
+  --The index from 1 to n, of the menu item which is selected by the Cashier on the Sale Terminal.#@|br#@|The value -1 indicates that the immediate upper level of the menu is requested.#@|br#@|The value 0 indicates that the root of the menu is requested.
+  MenuEntryNumber ::= [APPLICATION 160] INTEGER (1..MAX)
+
+  --Characteristics related to the selection of a menu entry
+  MenuEntryTag ::= [APPLICATION 161] ENUMERATED{
+     selectable(0),            --The Cashier may select this entryof the menu
+     nonSelectable(1),         --The Cashier cannot select this entryof the menu
+     subMenu(2),               --The selection of this entry produces the display of a sub-menu (by the sending...
+     nonSelectableSubMenu(3)   --The menu entry is a submenu, but cannot be selected.
+  }
+
+  --Unformatted address of the merchant.
+  MerchantAddress ::= [APPLICATION 426] UTF8String
+
+  --The code which identifies the category of the transaction (MCC).
+  MerchantCategoryCode ::= [APPLICATION 162] UTF8String (SIZE(3..4))
+
+  --Country of the merchant.
+  MerchantCountry ::= [APPLICATION 427] NumericString
+
+  --Identification of the Merchant for the Acquirer
+  MerchantID ::= [APPLICATION 364] UTF8String
+
+  --Unformatted name of the merchant.
+  MerchantName ::= [APPLICATION 425] UTF8String
+
+  --Indicate that the Merchant forced the result of the payment to successfull.
+  MerchantOverrideFlag ::= [APPLICATION 163] BOOLEAN
+
+  --Content of a transmitted message.
+  Message ::= [APPLICATION 392] OCTET STRING
+
+  --Category of message.
+  MessageCategory ::= [APPLICATION 52] ENUMERATED{
+     abort(0),               --Abort message request
+     admin(1),               --Admin request or response
+     balanceInquiry(2),      --Balance Inquiry request or response
+     batch(3),               --Batch request or response
+     cardAcquisition(4),     --Card Acquisition request or response
+     cardReaderAPDU(5),      --Card Reader APDU request or response
+     cardReaderInit(6),      --Card Reader Init request or response
+     cardReaderPowerOff(7),  --Card Reader Power-Off request or response
+     diagnosis(8),           --Diagnosis request or response
+     display(9),             --Display message request or response
+     enableService(10),       --Enable Service message request or response
+     event(11),               --Event Notification message
+     getTotals(12),           --GetTotals message request or response
+     input(13),               --Input message request or response
+     inputUpdate(14),         --Input Update message
+     login(15),               --Login message request or response
+     logout(16),              --Logout message request or response
+     loyalty(17),             --Loyalty message request or response
+     payment(18),             --Payment message request or response
+     pIN(19),                 --PIN message request or response
+     print(20),               --Print message request or response
+     reconciliation(21),      --Reconciliation message request or response
+     reversal(22),            --Reversal message request or response
+     sound(23),               --Sound message request or response
+     storedValue(24),         --Stored Value message request or response
+     transactionStatus(25),   --TransactionStatus message request or response
+     transmit(26),             --Transmit message request or response
+ 	 transactionReport(27)    --TransactionReport request or response
+  }
+
+  --Class of the message
+  MessageClass ::= [APPLICATION 164] ENUMERATED{
+     service(0),  --A transaction message pair initiated by the Sale System, and requested to the...
+     device(1),   --A device message pair either: Inside a Service request and response. This...
+     event(2)     --An unsolicited event notification by the POI System to the Sale System.
+  }
+
+  --Message header of the Sale to POI protocol message.
+  MessageHeader ::= [APPLICATION 165] SEQUENCE{
+     protocolVersion  ProtocolVersion OPTIONAL,
+     messageClass     MessageClass,
+     messageCategory  MessageCategory,
+     messageType      MessageType,
+     serviceID        ServiceID OPTIONAL,
+     deviceID         DeviceID OPTIONAL,
+     saleID           SaleID,
+     pOIID            POIID
+  }
+
+  --Identification of a previous POI transaction.
+  MessageReference ::= [APPLICATION 166] SEQUENCE{
+     messageCategory  MessageCategory OPTIONAL,
+     serviceID        ServiceID OPTIONAL,
+     deviceID         DeviceID OPTIONAL,
+     saleID           SaleID OPTIONAL,
+     pOIID            POIID OPTIONAL
+  }
+
+  --Type of message of the Sale to POI protocol
+  MessageType ::= [APPLICATION 167] ENUMERATED{
+     request(0),       --Request message that requires a response, except if the request message...
+     response(1),      --Response message, sent to answer to a request message.
+     notification(2)   --Unsollicited notification message that does not require an answer.
+  }
+
+  --Minimum amount the Sale System is allowed to deliver for this payment.
+  MinimumAmountToDeliver ::= [APPLICATION 169] SimpleAmountType
+
+  --Number of seconds the message has to be displayed
+  MinimumDisplayTime ::= [APPLICATION 170] INTEGER (0..999)
+
+  --Minimum amount of a split, which could be requested by a Customer.
+  MinimumSplitAmount ::= [APPLICATION 171] SimpleAmountType
+
+  --Minimum input length
+  MinLength ::= [APPLICATION 172] INTEGER
+
+  --Identifies the country of a mobile phone operator.
+  MobileCountryCode ::= [APPLICATION 323] NumericString (SIZE(3))
+
+  --Information related to the mobile for the payment transaction.
+  MobileData ::= [APPLICATION 322] SEQUENCE{
+     mobileCountryCode    MobileCountryCode OPTIONAL,
+     mobileNetworkCode    MobileNetworkCode OPTIONAL,
+     maskedMSISDN         MaskedMSISDN OPTIONAL,
+     geolocation          Geolocation OPTIONAL,
+     protectedMobileData  ProtectedMobileData OPTIONAL,
+     sensitiveMobileData  SensitiveMobileData OPTIONAL
+  }
+
+  --Identifies the mobile phone operator inside a country.
+  MobileNetworkCode ::= [APPLICATION 324] NumericString (SIZE(2..3))
+
+  --Mobile Subscriber Integrated Service Digital Network (i.e. mobile phone number of the SIM card).
+  MSISDN ::= [APPLICATION 329] NumericString
+
+  --Request Notification of card entered in the POI card reader.
+  NotifyCardInputFlag ::= [APPLICATION 173] BOOLEAN
+
+  --Number of elements
+  Number ::= [APPLICATION 365] INTEGER
+
+  --Indicate that the payment transaction processing has required the approval of a host.
+  OnlineFlag ::= [APPLICATION 349] BOOLEAN
+
+--Specifies if a customer order is currently Open. An open customer order is an order waiting for further operations.
+  OpenOrderStateFlag ::= [APPLICATION 417] BOOLEAN
+
+  --Comparison operator used to evaluate matching transactions
+  Operator ::= [APPLICATION 453] ENUMERATED{
+     EQ(0),    
+     LE(1),    
+     LT(2),    
+     GE(3),
+	 GT(4)
+  }
+  
+  --Identification of the Cashier or Operator.
+  OperatorID ::= [APPLICATION 63] UTF8String
+
+  --Language of the Cashier or Operator.
+  OperatorLanguage ::= [APPLICATION 64] ISOLanguage2A
+
+  --Identification of a previous POI transaction.
+  OriginalPOITransaction ::= [APPLICATION 174] SEQUENCE{
+     saleID                SaleID OPTIONAL,
+     pOIID                 POIID OPTIONAL,
+     pOITransactionID      POITransactionID OPTIONAL,
+     reuseCardDataFlag     ReuseCardDataFlag DEFAULT TRUE,
+     approvalCode          ApprovalCode OPTIONAL,
+     customerLanguage      CustomerLanguage OPTIONAL,
+     acquirerID            AcquirerID OPTIONAL,
+     amountValue           AmountValue OPTIONAL,
+     hostTransactionID     HostTransactionID OPTIONAL,
+	 lastTransactionFlag   LastTransactionFlag OPTIONAL
+  }
+
+  --BarCode content to display or print.
+  OutputBarcode ::= [APPLICATION 175] SEQUENCE{
+     barcodeType              BarcodeType DEFAULT eAN13,
+     barcodeValue             BarcodeValue OPTIONAL,
+	 QRCodeBinaryValue        QRCodeBinaryValue OPTIONAL,
+	 QRCodeVersion            QRCodeVersion OPTIONAL,
+	 QRCodeEncodingMode       QRCodeEncodingMode OPTIONAL,
+	 QRCodeErrorCorrection    QRCodeErrorCorrection OPTIONAL
+  }
+
+  --Content to display or print.
+  OutputContent ::= [APPLICATION 176] SEQUENCE{
+     outputFormat       OutputFormat,
+     predefinedContent  PredefinedContent OPTIONAL,
+     outputText         SEQUENCE (SIZE(0..MAX)) OF OutputText,
+     outputXHTML        OutputXHTML OPTIONAL,
+     outputBarcode      OutputBarcode OPTIONAL
+  }
+
+  --Format of the content to display or print
+  OutputFormat ::= [APPLICATION 177] ENUMERATED{
+     messageRef(0),  --Predefined message (of any format) on the POI or the Sale. The output is then a...
+     text(1),        --Text message including control characters prefixed by an escape character. The...
+     xHTML(2),       --DisplayOutput uses the eXtensible HyperText Markup Language.
+     barCode(3)      --Barcode type to print The output is then a OutputBarCode data structure.
+  }
+
+  --Information related to the result the output (display, print, input).
+  OutputResult ::= [APPLICATION 179] SEQUENCE{
+     device       Device,
+     infoQualify  InfoQualify,
+     response     Response
+  }
+
+  --Vendor specific signature of text message to display or print.
+  OutputSignature ::= [APPLICATION 180] OCTET STRING
+
+  --Content of text message to display or print.
+  OutputText ::= [APPLICATION 181] SEQUENCE{
+     text             Text,
+     characterSet     CharacterSet OPTIONAL,
+     font             Font OPTIONAL,
+     startRow         StartRow OPTIONAL,
+     startColumn      StartColumn OPTIONAL,
+     color            Color OPTIONAL,
+     characterWidth   CharacterWidth OPTIONAL,
+     characterHeight  CharacterHeight OPTIONAL,
+     characterStyle   CharacterStyle OPTIONAL,
+     alignment        Alignment OPTIONAL,
+     endOfLineFlag    EndOfLineFlag DEFAULT TRUE
+  }
+
+  --XHTML document body containing the message to display or print.
+  OutputXHTML ::= [APPLICATION 178] OCTET STRING
+
+  --Owner name of an account
+  OwnerName ::= [APPLICATION 352] UTF8String
+
+  --Amount already paid amount in case of split payment.
+  PaidAmount ::= [APPLICATION 182] SimpleAmountType
+
+  --Primary Account Number
+  PAN ::= [APPLICATION 183] NumericString (SIZE(8..28))
+
+  --A text password which is typed by the Customer on the POI or the Cashier on the Sale Terminal.
+  Password ::= [APPLICATION 313] ContentInformationType
+
+  --Reference of the PAN, which identifies the PAN or the card uniquely, named also PAR (Payment Account Reference). This reference may be defined by the card issuer or by a token service provider under the control of the card issuer, and cannot be used for a payment transaction.
+  PaymentAccountRef ::= [APPLICATION 406] UTF8String
+
+  --Data related to the account pointed by the payment card
+  PaymentAccountReq ::= [APPLICATION 184] SEQUENCE{
+     accountType               AccountType DEFAULT default,
+     cardAcquisitionReference  CardAcquisitionReference OPTIONAL,
+     paymentInstrumentData     PaymentInstrumentData OPTIONAL
+  }
+
+  --Data related to the result of a Balance Inquiry request.
+  PaymentAccountStatus ::= [APPLICATION 185] SEQUENCE{
+     paymentInstrumentData  PaymentInstrumentData OPTIONAL,
+     currency               Currency OPTIONAL,
+     currentBalance         CurrentBalance OPTIONAL,
+     paymentAcquirerData    PaymentAcquirerData OPTIONAL,
+     loyaltyAccountStatus   LoyaltyAccountStatus OPTIONAL
+  }
+
+  --Data related to the response from the payment Acquirer.
+  PaymentAcquirerData ::= [APPLICATION 186] SEQUENCE{
+     acquirerID             AcquirerID OPTIONAL,
+     merchantID             MerchantID,
+     acquirerPOIID          AcquirerPOIID,
+     acquirerTransactionID  AcquirerTransactionID OPTIONAL,
+     approvalCode           ApprovalCode OPTIONAL
+  }
+
+  --Type of payment card
+  PaymentBrand ::= [APPLICATION 187] UTF8String
+
+  --Currency of a monetary amount.
+  PaymentCurrency ::= [APPLICATION 188] ISOCurrency3A
+
+  --Data related to the payment transaction.
+  PaymentData ::= [APPLICATION 189] SEQUENCE{
+     paymentType               PaymentType DEFAULT normal,
+     splitPaymentFlag          SplitPaymentFlag DEFAULT FALSE,
+     cardAcquisitionReference  CardAcquisitionReference OPTIONAL,
+     requestedValidityDate     RequestedValidityDate OPTIONAL,
+     instalment                Instalment OPTIONAL,
+     customerOrder             CustomerOrder OPTIONAL,
+     paymentInstrumentData     PaymentInstrumentData OPTIONAL
+  }
+
+  --Data related to the instrument of payment for the transaction.
+  PaymentInstrumentData ::= [APPLICATION 320] SEQUENCE{
+     paymentInstrumentType  PaymentInstrumentType,
+     cardData               CardData OPTIONAL,
+     checkData              CheckData OPTIONAL,
+     mobileData             MobileData OPTIONAL
+  }
+
+  --Type of payment instrument.
+  PaymentInstrumentType ::= [APPLICATION 321] ENUMERATED{
+     card(0),         --Payment card (credit or debit).
+     check(1),        --Paper check.
+     mobile(2),       --Operator account accessed by a mobile phone.
+     storedValue(3),  --Account accesed by a stored value instrument such as a card or a certificate.
+     cash(4)          --Cash managed by a cash handling system.
+  }
+
+  --Customer or Merchant payment receipt.
+  PaymentReceipt ::= [APPLICATION 345] SEQUENCE{
+     documentQualifier      DocumentQualifier,
+     integratedPrintFlag    IntegratedPrintFlag DEFAULT FALSE,
+     requiredSignatureFlag  RequiredSignatureFlag DEFAULT FALSE,
+     outputContent          OutputContent
+  }
+
+  --Content of the Payment Request message.
+  PaymentRequest ::= [APPLICATION 190] SEQUENCE{
+     saleData            SaleData,
+     paymentTransaction  PaymentTransaction,
+     paymentData         PaymentData OPTIONAL,
+     loyaltyData         SEQUENCE (SIZE(0..MAX)) OF LoyaltyData
+  }
+
+  --Content of the Payment Response message.
+  PaymentResponse ::= [APPLICATION 191] SEQUENCE{
+     response        Response,
+     saleData        SaleData,
+     pOIData         POIData,
+     paymentResult   PaymentResult OPTIONAL,
+     loyaltyResult   SEQUENCE (SIZE(0..MAX)) OF LoyaltyResult,
+     paymentReceipt  SEQUENCE (SIZE(0..2)) OF PaymentReceipt,
+     customerOrder   SEQUENCE (SIZE(0..MAX)) OF CustomerOrder
+  }
+
+  --Data related to the result of a processed payment transaction.
+  PaymentResult ::= [APPLICATION 192] SEQUENCE{
+     paymentType            PaymentType DEFAULT normal,
+     paymentInstrumentData  PaymentInstrumentData OPTIONAL,
+     amountsResp            AmountsResp OPTIONAL,
+     instalment             Instalment OPTIONAL,
+     currencyConversion     SEQUENCE (SIZE(0..MAX)) OF CurrencyConversion,
+     merchantOverrideFlag   MerchantOverrideFlag DEFAULT FALSE,
+     capturedSignature      CapturedSignature OPTIONAL,
+     protectedSignature     ProtectedSignature OPTIONAL,
+     customerLanguage       CustomerLanguage OPTIONAL,
+     onlineFlag             OnlineFlag DEFAULT TRUE,
+     authenticationMethod   AuthenticationMethod OPTIONAL,
+     validityDate           ValidityDate OPTIONAL,
+     paymentAcquirerData    PaymentAcquirerData OPTIONAL
+  }
+
+  --Surrogate of the PAN (Primary Account Number) of the payment card to identify the payment mean of the customer.
+  PaymentToken ::= [APPLICATION 407] SEQUENCE{
+     tokenRequestedType  TokenRequestedType,
+     tokenValue          TokenValue,
+     expiryDateTime      ExpiryDateTime OPTIONAL
+  }
+
+  --Totals of the payment transaction during the reconciliation period.
+  PaymentTotals ::= [APPLICATION 193] SEQUENCE{
+     transactionType    TransactionType,
+     transactionCount   TransactionCount,
+     transactionAmount  TransactionAmount
+  }
+
+  --Data related to the payment and loyalty transaction.
+  PaymentTransaction ::= [APPLICATION 194] SEQUENCE{
+     amountsReq              AmountsReq,
+     originalPOITransaction  OriginalPOITransaction OPTIONAL,
+     transactionConditions   TransactionConditions OPTIONAL,
+     saleItem                SEQUENCE (SIZE(0..MAX)) OF SaleItem
+  }
+
+  --Type of payment transaction.
+  PaymentType ::= [APPLICATION 195] ENUMERATED{
+     normal(0),              --Normal Payment
+     refund(1),              --Payment refund
+     oneTimeReservation(2),  --One time reservation to be just followed by a completion when the service or...
+     firstReservation(3),    --First reservation for an amount and period of time. This service is sometimes...
+     updateReservation(4),   --Adjustment of the amount or period of time of a reservation. 
+     completion(5),          --End of the reservation transaction.
+     cashAdvance(6),         --Cash advance at the POI System.
+     cashDeposit(7),         --Cash deposit at the POI System, to credit an account.
+     recurring(8),           --Recurring payment.
+     instalment(9),          --Instalments of payment performed on behalf of the merchant.
+     issuerInstalment(10),   --Instalments of payment performed by the card issuer.
+     paidOut(11),            --Give money to in return for goods or services rendered to the merchant.
+	 VoiceAuthorisation(12)  --After a referral, an authorisation code is provided in the payment request to complete the transaction
+  }
+
+  --Indicates if the PED is working and usable.
+  PEDOKFlag ::= [APPLICATION 196] BOOLEAN
+
+  --Result of performed transactions.
+  PerformedTransaction ::= [APPLICATION 381] SEQUENCE{
+     response        Response,
+     saleData        SaleData OPTIONAL,
+     pOIData         POIData,
+     paymentResult   PaymentResult OPTIONAL,
+     loyaltyResult   SEQUENCE (SIZE(0..MAX)) OF LoyaltyResult,
+     reversedAmount  ReversedAmount OPTIONAL
+  }
+
+  --Period of time with defined unit of time.
+  Period ::= [APPLICATION 371] INTEGER
+
+  --Type of instalment transaction.
+  PeriodUnit ::= [APPLICATION 372] ENUMERATED{
+     daily(0),    --The day is the unit of the period.
+     weekly(1),   --The week is the unit of the period.
+     monthly(2),  --The month is the unit of the period.
+     annual(3)    --The year is the unit of the period.
+  }
+
+  --Identify the encrypted PIN block algorithm.
+  PINEncAlgorithm ::= [APPLICATION 197] NumericString
+
+  --Identify the format of the PIN before encryption.
+  PINFormat ::= [APPLICATION 198] ENUMERATED{
+     iSO0(0),  --ISO 0
+     iSO1(1),  --ISO 1
+     iSO2(2),  --ISO 2
+     iSO3(3)   --ISO 3
+  }
+
+  --Content of the PIN Request message.
+  PINRequest ::= [APPLICATION 199] SEQUENCE{
+     pINRequestType   PINRequestType,
+     pINVerifMethod   PINVerifMethod OPTIONAL,
+     additionalInput  AdditionalInput OPTIONAL,
+     pINEncAlgorithm  PINEncAlgorithm OPTIONAL,
+     pINFormat        PINFormat OPTIONAL,
+     keyReference     KeyReference OPTIONAL,
+     maxWaitingTime   MaxWaitingTime OPTIONAL,
+     cardholderPIN    CardholderPIN OPTIONAL
+  }
+
+  --Type of PIN Service.
+  PINRequestType ::= [APPLICATION 200] ENUMERATED{
+     pINVerify(0),      --The PIN Entering and Verify.
+     pINVerifyOnly(1),  --The PIN Verify only, the PIN is entered before and the PIN Block (encrypted...
+     pINEnter(2)        --The PIN is entered by the Cardholder, encrypted by the POI, and provided as a...
+  }
+
+  --Content of the PIN Response message.
+  PINResponse ::= [APPLICATION 201] SEQUENCE{
+     response       Response,
+     cardholderPIN  CardholderPIN OPTIONAL
+  }
+
+  --Identify the PIN verification method and keys.
+  PINVerifMethod ::= [APPLICATION 202] UTF8String
+
+  --Identification of an instalment plan.
+  PlanID ::= [APPLICATION 370] UTF8String
+
+  --Hardware capabilities of the POI Terminal.
+  POICapabilities ::= [APPLICATION 203] BIT STRING{
+     cashierDisplay(0),   --Used by the Sale System when the device is managed by the POI Terminal, to ask...
+     cashierError(1),     --To display to the Cashier information is related to an error situation...
+     cashierInput(2),     --Any kind of keyboard allowing all or part of the commands of the Input message...
+     customerDisplay(3),  --Standard Customer display interface used by the Sale System to ask question, or...
+     customerError(4),    --To display to the Customer information is related to an error situation...
+     customerInput(5),    --Any kind of keyboard allowing all or part of the commands of the Input message...
+     printerReceipt(6),   --Printer for the Sale receipt.
+     printerDocument(7),  --When the Sale System wants to print specific document (check, dynamic currency...
+     printerVoucher(8),   --Coupons, voucher or special ticket generated by the Sale System and to be...
+     magStripe(9),        --Magnetic stripe card reader
+     iCC(10),              --Contact  ICC card reader
+     eMVContactless(11),   --Contactless card reader with EMV applications
+     cashHandling(12)      --Device which performs cash change, cash dispense or cash acceptance.
+  }
+
+  --Data related to the POI System.
+  POIData ::= [APPLICATION 204] SEQUENCE{
+     pOITransactionID     POITransactionID,
+     pOIReconciliationID  POIReconciliationID OPTIONAL
+  }
+
+  --Identification of a POI System or a POI Terminal for the Sale to POI protocol
+  POIID ::= [APPLICATION 205] UTF8String
+
+  --Functional profile of the POI Terminal.
+  POIProfile ::= [APPLICATION 207] SEQUENCE{
+     genericProfile   GenericProfile DEFAULT standard,
+     serviceProfiles  ServiceProfiles OPTIONAL
+  }
+
+  --Identification of the reconciliation period between Sale and POI. 
+  POIReconciliationID ::= [APPLICATION 43] NumericString
+
+  --Serial number of a POI Terminal
+  POISerialNumber ::= [APPLICATION 208] UTF8String
+
+  --Information related to the software of the POI System which manages the Sale to POI protocol.
+  POISoftware ::= [APPLICATION 206] SEQUENCE{
+     providerIdentification     ProviderIdentification,
+     applicationName            ApplicationName,
+     softwareVersion            SoftwareVersion,
+     certificationCode          CertificationCode OPTIONAL,
+	 componentDescription       ComponentDescription OPTIONAL,
+	 componentType              ComponentType OPTIONAL
+  }
+
+  --State of a POI Terminal.
+  POIStatus ::= [APPLICATION 209] SEQUENCE{
+     globalStatus         GlobalStatus,
+     securityOKFlag       SecurityOKFlag OPTIONAL,
+     pEDOKFlag            PEDOKFlag OPTIONAL,
+     cardReaderOKFlag     CardReaderOKFlag OPTIONAL,
+     printerStatus        PrinterStatus OPTIONAL,
+     communicationOKFlag  CommunicationOKFlag OPTIONAL,
+     cashHandlingDevice   SEQUENCE (SIZE(0..MAX)) OF CashHandlingDevice,
+     fraudPreventionFlag  FraudPreventionFlag OPTIONAL
+  }
+
+  --Information related to the POI System
+  POISystemData ::= [APPLICATION 210] SEQUENCE{
+     dateTime              DateTime,
+     pOISoftware           SEQUENCE (SIZE(1..MAX)) OF POISoftware,
+     pOITerminalData       POITerminalData OPTIONAL,
+     pOIStatus             POIStatus OPTIONAL,
+	 tokenRequestStatus    TokenRequestStatus OPTIONAL,
+	 customerOrderStatus   CustomerOrderStatus OPTIONAL
+  }
+
+  --Information related to the software and hardware feature of the POI Terminal
+  POITerminalData ::= [APPLICATION 211] SEQUENCE{
+     terminalEnvironment  TerminalEnvironment,
+     pOICapabilities      POICapabilities,
+     pOIProfile           POIProfile OPTIONAL,
+     pOISerialNumber      POISerialNumber
+  }
+
+  --Unique identification of a POI transaction for a POI
+  POITransactionID ::= [APPLICATION 212] TransactionIdentificationType
+
+  --Reference of a predefined message to display or print.
+  PredefinedContent ::= [APPLICATION 213] SEQUENCE{
+     referenceID  ReferenceID,
+     language     Language OPTIONAL
+  }
+
+  --Indicates if the printer is working and usable.
+  PrinterStatus ::= [APPLICATION 214] ENUMERATED{
+     oK(0),          --The printer is operational.
+     paperLow(1),    --The printer is operational but paper roll is almost empty.
+     noPaper(2),     --Paper roll is empty, an operator must insert a new paper roll.
+     paperJam(3),    --An operator must remove the paper jam manually.
+     outOfOrder(4)   --The printer is out of order.
+  }
+
+  --Information to print and the way to process the print.
+  PrintOutput ::= [APPLICATION 215] SEQUENCE{
+     documentQualifier      DocumentQualifier,
+     responseMode           ResponseMode,
+     integratedPrintFlag    IntegratedPrintFlag DEFAULT FALSE,
+     requiredSignatureFlag  RequiredSignatureFlag DEFAULT FALSE,
+     outputContent          OutputContent,
+     outputSignature        OutputSignature OPTIONAL
+  }
+
+  --Content of the Print Request message.
+  PrintRequest ::= [APPLICATION 216] SEQUENCE{
+     printOutput  PrintOutput
+  }
+
+  --Content of the Print Response message.
+  PrintResponse ::= [APPLICATION 217] SEQUENCE{
+     documentQualifier  DocumentQualifier,
+     response           Response
+  }
+
+  --Product code of item purchased with the transaction.
+  ProductCode ::= [APPLICATION 218] NumericString (SIZE(1..20))
+
+  --Product name of an item purchased with the transaction.
+  ProductLabel ::= [APPLICATION 393] UTF8String
+
+  --Sensitive information related to the payment card, protected by CMS.
+  ProtectedCardData ::= [APPLICATION 220] ContentInformationType
+
+  --Sensitive information related to the mobile phone, protected by CMS.
+  ProtectedMobileData ::= [APPLICATION 327] ContentInformationType
+
+  --Numeric value of a handwritten signature.
+  ProtectedSignature ::= [APPLICATION 361] ContentInformationType
+
+  -->"
+  ProtocolVersion ::= [APPLICATION 221] UTF8String
+
+  --Identification of the Provider
+  ProviderIdentification ::= [APPLICATION 452] UTF8String
+
+  --Product quantity
+  Quantity ::= [APPLICATION 222] PrintableString
+
+  --Identification of the provider of sale software.
+  ProviderIdentificationType ::= [APPLICATION 458] UTF8String
+  
+  --QR Code binary value - Use for binary and Kanji QRCode.
+  QRCodeBinaryValue ::= [APPLICATION 454] OCTET STRING
+  
+  -- Encoding mode of the QRCode.
+  QRCodeEncodingMode ::= [APPLICATION 456] ENUMERATED{
+     Numeric(0),    
+     Alphanumeric(1),    
+     Binary(2),
+     Kanji(3)	
+  }	 
+  
+  --ErrorCorrection - (L - 7%, M- 15%, Q- 25%,H-30%) - Reed-Solomon error correction
+  QRCodeErrorCorrection ::= [APPLICATION 457] ENUMERATED{
+     L(0),    
+     M(1),    
+     Q(2),
+     H(3)	
+  }	 
+  
+  --Version of the QRCode, numeric value from 1 to 40.
+  QRCodeVersion ::= [APPLICATION 455] NumericString
+ 
+ --Rate of currency conversion.
+  Rate ::= [APPLICATION 332] PrintableString
+
+  --Numeric value of a handwritten signature
+  RawSignature ::= [APPLICATION 435] SEQUENCE{
+     areaSize        AreaSize OPTIONAL ,
+     signaturePoint  SEQUENCE (SIZE(1..MAX)) OF SignaturePoint
+  }
+  
+  --Rebate form to an award;
+  Rebates ::= [APPLICATION 223] SEQUENCE{
+     totalRebate     TotalRebate OPTIONAL,
+     rebateLabel     RebateLabel OPTIONAL,
+     saleItemRebate  SEQUENCE (SIZE(0..MAX)) OF SaleItemRebate
+  }
+
+  --Short text to qualify a rebate on an line item.
+  RebateLabel ::= [APPLICATION 224] UTF8String
+
+  --Request to reprint the POI receipt(s).
+  ReceiptReprintFlag ::= [APPLICATION 225] BOOLEAN
+
+  --Content of the Reconciliation Request message.
+  ReconciliationRequest ::= [APPLICATION 226] SEQUENCE{
+     reconciliationType   ReconciliationType,
+     acquirerID           SEQUENCE (SIZE(0..MAX)) OF AcquirerID,
+     pOIReconciliationID  POIReconciliationID OPTIONAL
+  }
+
+  --Content of the Reconciliation Response message.
+  ReconciliationResponse ::= [APPLICATION 227] SEQUENCE{
+     response             Response,
+     reconciliationType   ReconciliationType,
+     pOIReconciliationID  POIReconciliationID OPTIONAL,
+     transactionTotals    SEQUENCE (SIZE(0..MAX)) OF TransactionTotals
+  }
+
+  --Type of Reconciliation requested by the Sale to the POI.
+  ReconciliationType ::= [APPLICATION 228] ENUMERATED{
+     saleReconciliation(0),       --Reconciliation with closure of the current period, without any Acquirers...
+     acquirerSynchronisation(1),  --Reconciliation and closure of the current period, with synchronisation of the...
+     acquirerReconciliation(2),   --Reconciliation between the POI and one or several Acquirers only. There is no...
+     previousReconciliation(3)    --Request result of a previous reconciliation.
+  }
+
+  --Identification of a predefined message to display, print or play.
+  ReferenceID ::= [APPLICATION 229] UTF8String
+
+  --Identification of a registered entity.
+  RegisteredIdentifier ::= [APPLICATION 433] UTF8String
+  
+  --Identification of a registered entity.
+  RegistrationID ::= [APPLICATION 428] UTF8String
+
+  --Message request rejected by the receiver.
+  RejectedMessage ::= [APPLICATION 230] OCTET STRING
+
+  
+  --Flag to remove all the transactions.
+  RemoveAllFlag ::= [APPLICATION 382] BOOLEAN
+
+  --Content of the requested Message Response.
+  RepeatedMessageResponse ::= [APPLICATION 231] SEQUENCE{
+     messageHeader                MessageHeader,
+     repeatedResponseMessageBody  RepeatedResponseMessageBody
+  }
+
+  --Repeated response message body.
+  RepeatedResponseMessageBody ::= CHOICE{
+     loyaltyResponse          LoyaltyResponse,
+     paymentResponse          PaymentResponse,
+     reversalResponse         ReversalResponse,
+     storedValueResponse      StoredValueResponse,
+     cardAcquisitionResponse  CardAcquisitionResponse,
+     cardReaderAPDUResponse   CardReaderAPDUResponse
+  }
+
+  --Amount requested by the Sale for the payment.
+  RequestedAmount ::= [APPLICATION 232] SimpleAmountType
+
+  --Requested validity date for the reservation.
+  RequestedValidityDate ::= [APPLICATION 233] ISODate
+
+  --Request message body of the nexo Sale To POI protocol.
+  RequestMessageBody ::= CHOICE{
+     abortRequest               AbortRequest,
+     balanceInquiryRequest      BalanceInquiryRequest,
+     batchRequest               BatchRequest,
+     cardAcquisitionRequest     CardAcquisitionRequest,
+     adminRequest               AdminRequest,
+     diagnosisRequest           DiagnosisRequest,
+     displayRequest             DisplayRequest,
+     enableServiceRequest       EnableServiceRequest,
+     eventNotification          EventNotification,
+     getTotalsRequest           GetTotalsRequest,
+     inputRequest               InputRequest,
+     inputUpdate                InputUpdate,
+     loginRequest               LoginRequest,
+     logoutRequest              LogoutRequest,
+     loyaltyRequest             LoyaltyRequest,
+     paymentRequest             PaymentRequest,
+     pINRequest                 PINRequest,
+     printRequest               PrintRequest,
+     cardReaderInitRequest      CardReaderInitRequest,
+     cardReaderAPDURequest      CardReaderAPDURequest,
+     cardReaderPowerOffRequest  CardReaderPowerOffRequest,
+     reconciliationRequest      ReconciliationRequest,
+     reversalRequest            ReversalRequest,
+     soundRequest               SoundRequest,
+     storedValueRequest         StoredValueRequest,
+     transactionStatusRequest   TransactionStatusRequest,
+     transmitRequest            TransmitRequest
+  }
+
+  --Indicate that the cardholder payment receipt requires a physical signature by the Customer.
+  RequiredSignatureFlag ::= [APPLICATION 234] BOOLEAN
+
+
+  --Result of a message request processing.
+  Response ::= [APPLICATION 235] SEQUENCE{
+     result              Result,
+     errorCondition      ErrorCondition OPTIONAL,
+     additionalResponse  AdditionalResponse OPTIONAL
+  }
+
+  --Response message body of the nexo Sale To POI protocol.
+  ResponseMessageBody ::= CHOICE{
+     balanceInquiryResponse      BalanceInquiryResponse,
+     batchResponse               BatchResponse,
+     cardAcquisitionResponse     CardAcquisitionResponse,
+     adminResponse               AdminResponse,
+     diagnosisResponse           DiagnosisResponse,
+     displayResponse             DisplayResponse,
+     enableServiceResponse       EnableServiceResponse,
+     getTotalsResponse           GetTotalsResponse,
+     inputResponse               InputResponse,
+     loginResponse               LoginResponse,
+     logoutResponse              LogoutResponse,
+     loyaltyResponse             LoyaltyResponse,
+     paymentResponse             PaymentResponse,
+     pINResponse                 PINResponse,
+     printResponse               PrintResponse,
+     cardReaderInitResponse      CardReaderInitResponse,
+     cardReaderAPDUResponse      CardReaderAPDUResponse,
+     cardReaderPowerOffResponse  CardReaderPowerOffResponse,
+     reconciliationResponse      ReconciliationResponse,
+     reversalResponse            ReversalResponse,
+     soundResponse               SoundResponse,
+     storedValueResponse         StoredValueResponse,
+     transactionStatusResponse   TransactionStatusResponse,
+     transmitResponse            TransmitResponse
+  }
+
+  --Message response awaited by the initiator of the Request
+  ResponseMode ::= [APPLICATION 236] ENUMERATED{
+     notRequired(0),  --The Message Response is not required, except in case of error.
+     immediate(1),    --The Message Response is immediate, after taking into account the request.
+     printEnd(2),     --The Print Response is required at the end of print.
+     soundEnd(3)      --The Sound Response is required at the end of play.
+  }
+
+  --Request of a message response.
+  ResponseRequiredFlag ::= [APPLICATION 237] BOOLEAN
+
+  --Result of the processing of the message
+  Result ::= [APPLICATION 238] ENUMERATED{
+     success(0),  --Processing OK. Information related to the result of the processing is contained...
+     failure(1),  --ErrorCondition
+     partial(2)   --The transaction has been processed successfully, but the success is not...
+  }
+
+  --Indicate if the card data has to be got from a previous transaction.
+  ReuseCardDataFlag ::= [APPLICATION 239] BOOLEAN
+
+  --Reason of the payment or loyalty reversal..
+  ReversalReason ::= [APPLICATION 240] ENUMERATED{
+     custCancel(0),      --Customer cancellation
+     merchantCancel(1),  --Cashier cancellation
+     malfunction(2),     --Suspected malfunction
+     unable2Compl(3)     --Card acceptor device unable to complete transaction
+  }
+
+  --Content of the Reversal Request message.
+  ReversalRequest ::= [APPLICATION 242] SEQUENCE{
+     saleData                SaleData OPTIONAL,
+     originalPOITransaction  OriginalPOITransaction,
+     reversalReason          ReversalReason,
+     reversedAmount          ReversedAmount OPTIONAL,
+     customerOrder           SEQUENCE (SIZE(0..1)) OF CustomerOrder
+  }
+
+  --Content of the Reversal Response message.
+  ReversalResponse ::= [APPLICATION 243] SEQUENCE{
+     response                Response,
+     pOIData                 POIData OPTIONAL,
+     originalPOITransaction  OriginalPOITransaction OPTIONAL,
+     reversedAmount          ReversedAmount OPTIONAL,
+     customerOrder           CustomerOrder OPTIONAL,
+     paymentReceipt          SEQUENCE (SIZE(0..MAX)) OF PaymentReceipt
+  }
+
+  --Amount of the payment or loyalty to reverse..
+  ReversedAmount ::= [APPLICATION 241] SimpleAmountType
+
+  --Hardware capabilities of the Sale Terminal.
+  SaleCapabilities ::= [APPLICATION 244] BIT STRING{
+     cashierStatus(0),       --To display to the Cashier a new state on which the POI is entering. For...
+     cashierError(1),        --To display to the Cashier information related to an error situation occurring...
+     cashierDisplay(2),      --Standard Cashier display interface (to ask question, or to show information).
+     pOIReplication(3),      --Information displayed on the Cardholder POI interface, replicated on the...
+     cashierInput(4),        --Any kind of keyboard allowing all or part of the commands of the Input message...
+     customerAssistance(5),  --Input of the Cardholder POI interface which can be entered by the Cashier to...
+     customerDisplay(6),     --Standard Customer display interface used by the POI System to ask question, or...
+     customerError(7),       --To display to the Customer information is related to an error situation...
+     customerInput(8),       --Any kind of keyboard allowing all or part of the commands of the Input message...
+     printerReceipt(9),      --Printer for the Payment receipt.
+     printerDocument(10),     --When the POI System wants to print specific document (check, dynamic currency...
+     printerVoucher(11),      --Coupons, voucher or special ticket generated by the POI and to be printed.
+     magStripe(12),           --Magnetic stripe card reader
+     iCC(13),                 --Contact  ICC card reader
+     eMVContactless(14)       --Contactless card reader with EMV applications
+  }
+
+  --Commercial or distribution channel associated to the line item.
+  SaleChannel ::= [APPLICATION 245] NumericString
+
+  --Data related to the Sale System.
+  SaleData ::= [APPLICATION 246] SEQUENCE{
+     operatorID          OperatorID OPTIONAL,
+     operatorLanguage    OperatorLanguage OPTIONAL,
+     shiftNumber         ShiftNumber OPTIONAL,
+     saleTransactionID   SaleTransactionID,
+     saleReferenceID     SaleReferenceID OPTIONAL,
+     saleTerminalData    SaleTerminalData OPTIONAL,
+     tokenRequestedType  TokenRequestedType OPTIONAL,
+     customerOrderID     CustomerOrderID OPTIONAL,
+     customerOrderReq    CustomerOrderReq OPTIONAL,
+     sponsoredMerchant   SEQUENCE (SIZE(0..MAX)) OF SponsoredMerchant,
+     saleToPOIData       SaleToPOIData OPTIONAL,
+     saleToAcquirerData  SaleToAcquirerData OPTIONAL,
+     saleToIssuerData    SaleToIssuerData OPTIONAL,
+	 sponsoredMerchant   SponsoredMerchant OPTIONAL
+  }
+
+  --Identification of a Sale System or a Sale Terminal for the Sale to POI protocol
+  SaleID ::= [APPLICATION 248] UTF8String
+
+  --Sale items of a transaction.
+  SaleItem ::= [APPLICATION 249] SEQUENCE{
+     itemID                 ItemID,
+     productCode            ProductCode,
+     eanUpc                 EanUpc OPTIONAL,
+     unitOfMeasure          UnitOfMeasure OPTIONAL,
+     quantity               Quantity OPTIONAL,
+     unitPrice              UnitPrice OPTIONAL,
+     itemAmount             ItemAmount,
+     taxCode                TaxCode OPTIONAL,
+     saleChannel            SaleChannel OPTIONAL,
+     productLabel           ProductLabel OPTIONAL,
+     additionalProductInfo  AdditionalProductInfo OPTIONAL
+  }
+
+  --The awarded amount that is attached to an item as a rebate.
+  SaleItemRebate ::= [APPLICATION 250] SEQUENCE{
+     itemID         ItemID,
+     productCode    ProductCode,
+     eanUpc         EanUpc OPTIONAL,
+     unitOfMeasure  UnitOfMeasure OPTIONAL,
+     quantity       Quantity OPTIONAL,
+     itemAmount     ItemAmount OPTIONAL,
+     rebateLabel    RebateLabel OPTIONAL
+  }
+
+  --Functional profile of the Sale Terminal.
+  SaleProfile ::= [APPLICATION 252] SEQUENCE{
+     genericProfile   GenericProfile DEFAULT standard,
+     serviceProfiles  ServiceProfiles OPTIONAL
+  }
+
+  --Identification of a Sale global transaction for a sequence of related POI transactions
+  SaleReferenceID ::= [APPLICATION 253] UTF8String
+
+  --Information related to the software of the Sale System which manages the Sale to POI protocol.
+  SaleSoftware ::= [APPLICATION 251] SEQUENCE{
+     providerIdentification     ProviderIdentification,
+     applicationName            ApplicationName,
+     softwareVersion            SoftwareVersion,
+     certificationCode          CertificationCode OPTIONAL,
+	 componentDescription       ComponentDescription OPTIONAL,
+	 componentType              ComponentType OPTIONAL
+  }
+
+  --Information related to the software and hardware feature of the Sale Terminal.
+  SaleTerminalData ::= [APPLICATION 254] SEQUENCE{
+     terminalEnvironment  TerminalEnvironment OPTIONAL,
+     saleCapabilities     SaleCapabilities OPTIONAL,
+     saleProfile          SaleProfile OPTIONAL,
+     totalsGroupID        TotalsGroupID OPTIONAL
+  }
+
+  --Sale information intended for the Acquirer.
+  SaleToAcquirerData ::= [APPLICATION 255] UTF8String
+
+  --Sale information intended for the Issuer.
+  SaleToIssuerData ::= [APPLICATION 256] SEQUENCE{
+     statementReference  StatementReference OPTIONAL
+  }
+
+  --Sale information intended for the POI.
+  SaleToPOIData ::= [APPLICATION 257] UTF8String
+
+  --Unique identification of a Sale transaction
+  SaleTransactionID ::= [APPLICATION 258] TransactionIdentificationType
+
+  --List of criterias following the AND logic.
+  SearchAND ::= [APPLICATION 459] SEQUENCE{
+     target          Target,
+	 operator        Operator,
+	 value			 Value 
+  }
+  
+  --Contains one or more combined search criterias.
+  SearchCriterias ::= [APPLICATION 461] SEQUENCE{
+     searchOR         SEQUENCE (SIZE(1..MAX)) OF searchOR
+  }
+    
+  --List of criterias following the OR logic.
+  SearchOR ::= [APPLICATION 460] SEQUENCE{
+     searchAND          SEQUENCE (SIZE(1..MAX)) OF SearchAND
+  }
+  
+  --Indicates the ordering in which the resulting transaction reports should be returned.
+  SearchOutputOrder ::= [APPLICATION 462] SEQUENCE{
+     criteriaOrder       SEQUENCE (SIZE(1..MAX)) OF CriteriaOrder
+  }
+  
+  --Indicates if the security module of the POI is working and usable.
+  SecurityOKFlag ::= [APPLICATION 259] BOOLEAN
+
+  --Protection of the whole message
+  SecurityTrailer ::= [APPLICATION 312] ContentInformationType
+
+  --Sensitive information related to the payment card, entered or read by the Sale System.
+  SensitiveCardData ::= [APPLICATION 260] SEQUENCE{
+     pAN          PAN OPTIONAL,
+     cardSeqNumb  CardSeqNumb OPTIONAL,
+     expiryDate   ExpiryDate OPTIONAL,
+     trackData    SEQUENCE (SIZE(0..4)) OF TrackData
+  }
+
+  --Sensitive information related to the mobile phone.
+  SensitiveMobileData ::= [APPLICATION 328] SEQUENCE{
+     mSISDN  MSISDN,
+     iMSI    IMSI OPTIONAL,
+     iMEI    IMEI OPTIONAL
+  }
+
+  --Sequence number of the instalment.
+  SequenceNumber ::= [APPLICATION 369] INTEGER
+
+  --Identification of a message pair, which processes a transaction
+  ServiceID ::= [APPLICATION 262] UTF8String (SIZE(1..10))
+
+  --Identification of the administrative service to process.
+  ServiceIdentification ::= [APPLICATION 318] UTF8String
+
+  --Services which are enabled before the start-up of a transaction
+  ServicesEnabled ::= [APPLICATION 261] BIT STRING{
+     cardAcquisition(0),  --Enable the POI to process a card acquisition before the request of the Sale...
+     payment(1),          --Enable the POI to start a payment transaction before the request of the Sale...
+     loyalty(2)           --Enable the POI to start a loyalty transaction before the request of the Sale...
+  }
+
+  --Service profiles of the Sale to POI protocol.
+  ServiceProfiles ::= [APPLICATION 263] BIT STRING{
+     synchro(0),        --CardAcquisition and EnableService could be requested by the Sale System to the...
+     batch(1),          --When the POI is unable to perform transactions without the Sale system, e.g....
+     oneTimeRes(2),     --One Time Reservation service could be requested by the Sale System (as petrol...
+     reservation(3),    --The Reservation services could be requested by the Sale System
+     loyalty(4),        --Loyalty services could be requested by the Sale System
+     storedValue(5),    --Stored Value service could be requested by the Sale System
+     pIN(6),            --The Sale System could request the PIN validation services.
+     cardReader(7),     --The Sale System could request Card Reader services.
+     sound(8),          --To produce various forms of sounds to a customer or an operator interface.
+     communication(9)   --The POI or Sale System could request communication through the Transmit device...
+  }
+
+  --Shift number.
+  ShiftNumber ::= [APPLICATION 264] UTF8String
+
+  --Image of the captured handwritten signature
+  SignatureImage ::= [APPLICATION 436] SEQUENCE{
+     imageFormat        ImageFormat OPTIONAL ,
+     imageData          ImageData OPTIONAL ,
+	 imageReference     ImageReference OPTIONAL
+
+  }
+  
+  --Coordinates of a point where the pen changes direction or lift.
+  SignaturePoint ::= [APPLICATION 344] SEQUENCE{
+     x  X,
+     y  Y
+  }
+
+  --Version of the software product
+  SoftwareVersion ::= [APPLICATION 265] UTF8String
+
+  --Type of action to perform on the sound.
+  SoundAction ::= [APPLICATION 395] ENUMERATED{
+     startSound(0),        --Start the sound as specified in the message.
+     stopSound(1),         --Stop the sound in progress.
+     setDefaultVolume(2)   --Set the default volume of sounds.
+  }
+
+  --Content of the Sound to play.
+  SoundContent ::= [APPLICATION 396] SEQUENCE{
+     soundFormat  SoundFormat OPTIONAL,
+     language     Language OPTIONAL,
+     referenceID  ReferenceID OPTIONAL,
+     text         Text OPTIONAL
+  }
+
+  --Content of the Sound Request message.
+  SoundRequest ::= [APPLICATION 397] SEQUENCE{
+     responseMode  ResponseMode DEFAULT notRequired,
+     soundAction   SoundAction,
+     soundVolume   SoundVolume OPTIONAL,
+     soundContent  SoundContent
+  }
+
+  --Content of the Sound Response message.
+  SoundResponse ::= [APPLICATION 398] SEQUENCE{
+     response  Response
+  }
+
+  --Type of sound to play.
+  SoundFormat ::= [APPLICATION 399] ENUMERATED{
+     soundRef(0),    --Preloaded sound File.
+     messageRef(1),  --Reference of a preloaded text to play.
+     text(2)         --Text to play.
+  }
+
+  --Volume of a sound, either in a pourcentage of the maximum volume, or 0 to mute.
+  SoundVolume ::= [APPLICATION 400] INTEGER
+
+  --Indicates if the payment of the Sale transaction is split.
+  SplitPaymentFlag ::= [APPLICATION 266] BOOLEAN
+
+  --Merchant using the payment services of a payment facilitator, acting as a card acceptor.
+  SponsoredMerchant ::= [APPLICATION 424] SEQUENCE{
+     commonName            CommonName,
+     address               Address OPTIONAL,
+     countryCode           CountryCode,
+     merchantCategoryCode  MerchantCategoryCode,
+     registeredIdentifier  RegisteredIdentifier
+  }
+
+  --Column from which the text string has to be displayed or printed.
+  StartColumn ::= [APPLICATION 267] INTEGER (1..100)
+
+  --Row from which the text string has to be displayed or printed.
+  StartRow ::= [APPLICATION 268] INTEGER (1..500)
+
+  --Date time of the beginning of an operation.
+  StartDate ::= [APPLICATION 418] GeneralizedTime
+
+  --Label to print on the bank statement.
+  StatementReference ::= [APPLICATION 269] UTF8String
+
+  --Identification of the stored value account or the stored value card
+  StoredValueAccountID ::= [APPLICATION 270] SEQUENCE{
+     storedValueAccountType  StoredValueAccountType,
+     storedValueProvider     StoredValueProvider OPTIONAL,
+     ownerName               OwnerName OPTIONAL,
+     expiryDate              ExpiryDate OPTIONAL,
+     entryMode               EntryMode,
+     identificationType      IdentificationType,
+     storedValueID           StoredValueID
+  }
+
+  --Data related to the result of the stored value card transaction.
+  StoredValueAccountStatus ::= [APPLICATION 271] SEQUENCE{
+     storedValueAccountID  StoredValueAccountID,
+     currentBalance        CurrentBalance OPTIONAL
+  }
+
+  --Type of stored value account
+  StoredValueAccountType ::= [APPLICATION 353] ENUMERATED{
+     giftCard(0),   --Payment mean issued by retailers or banks as a substitute to a non-monetary...
+     phoneCard(1),  --Stored value instrument used to pay telephone services (e.g. card or...
+     other(2)       --Other stored value instrument.
+  }
+
+  --Data related to the stored value card.
+  StoredValueData ::= [APPLICATION 272] SEQUENCE{
+     storedValueProvider         StoredValueProvider OPTIONAL,
+     storedValueTransactionType  StoredValueTransactionType,
+     storedValueAccountID        StoredValueAccountID OPTIONAL,
+     originalPOITransaction      OriginalPOITransaction OPTIONAL,
+     productCode                 ProductCode OPTIONAL,
+     eanUpc                      EanUpc OPTIONAL,
+     itemAmount                  ItemAmount,
+     currency                    Currency
+  }
+
+  --Stored value account identification
+  StoredValueID ::= [APPLICATION 273] UTF8String
+
+  --Identification of the provider of the stored value account load/reload
+  StoredValueProvider ::= [APPLICATION 274] UTF8String
+
+  --Content of the Stored Value Request message.
+  StoredValueRequest ::= [APPLICATION 275] SEQUENCE{
+     saleData          SaleData,
+     customerLanguage  CustomerLanguage OPTIONAL,
+     storedValueData   SEQUENCE (SIZE(1..MAX)) OF StoredValueData
+  }
+
+  --Content of the Stored Value Response message.
+  StoredValueResponse ::= [APPLICATION 276] SEQUENCE{
+     response           Response,
+     saleData           SaleData,
+     pOIData            POIData,
+     storedValueResult  SEQUENCE (SIZE(0..MAX)) OF StoredValueResult
+  }
+
+  --Result of loading/reloading a stored value card..
+  StoredValueResult ::= [APPLICATION 277] SEQUENCE{
+     storedValueTransactionType  StoredValueTransactionType,
+     productCode                 ProductCode,
+     eanUpc                      EanUpc OPTIONAL,
+     itemAmount                  ItemAmount,
+     currency                    Currency,
+     storedValueAccountStatus    StoredValueAccountStatus,
+     hostTransactionID           HostTransactionID OPTIONAL
+  }
+
+  --Identification of operation to proceed on the stored value account or the stored value card
+  StoredValueTransactionType ::= [APPLICATION 278] ENUMERATED{
+     reserve(0),    --Reserve the account (e.g. get an activation code)
+     activate(1),   --Activate the account or the card
+     load(2),       --Load the account or the card with money
+     unload(3),     --Unload the account
+     reverse(4),    --Reverse an activation or loading.
+     duplicate(5)   --Duplicate the code or number provided by the loading or activation
+  }
+
+  --String mask to get information requiring a specific format.
+  StringMask ::= [APPLICATION 279] UTF8String
+
+  --Type of taxes associated to the line item.
+  TaxCode ::= [APPLICATION 280] NumericString
+
+  --Environment of the Terminal.
+  TerminalEnvironment ::= [APPLICATION 281] ENUMERATED{
+     attended(0),      --The Sale Terminal is managed by a Cashier through the Sale System. A Cashier...
+     semiAttended(1),  --Without a Cashier Interface. The POI Terminal is managed by the Customer...
+     unattended(2)     --The Sale Terminal is managed as a logical terminal without any Cashier...
+  }
+
+  --Content of text message to display, print or play.
+  Text ::= [APPLICATION 283] UTF8String
+
+  --The text which is typed by the Customer on the POI or the Cashier on the Sale Terminal.
+  TextInput ::= [APPLICATION 282] UTF8String
+
+  --Date and time of a transaction for the Sale System, the POI System or the Acquirer.
+  TimeStamp ::= [APPLICATION 284] GeneralizedTime
+
+  --Amount paid for a tip.
+  TipAmount ::= [APPLICATION 285] SimpleAmountType
+  
+  --Type of token replacing the PAN of a payment card to identify the payment mean of the customer.
+  TokenRequestedType ::= [APPLICATION 408] ENUMERATED{
+     transaction(0),  --The token is generated to recognise a customer during the time of a transaction.
+     customer(1)      --The token is generated to recognise a customer for a longer period.
+  }
+
+  --Indicates if the POI manages token requests.
+  TokenRequestStatus ::= [APPLICATION 448] BOOLEAN
+  
+  --Payment token replacing the PAN of the payment card to identify the payment mean of the customer.
+  TokenValue ::= [APPLICATION 409] UTF8String
+
+  --Amount of a transaction.
+  TotalAmount ::= [APPLICATION 286] SimpleAmountType
+
+  --Indicates the hierarchical structure of the reconciliation result of the Sale to POI reconciliation.
+  TotalDetails ::= [APPLICATION 287] BIT STRING{
+     pOIID(0),          --Give the totals result per POIID value.
+     saleID(1),         --Give the totals result per SaleID value.
+     operatorID(2),     --Give the totals result per OperatorID value.
+     shiftNumber(3),    --Give the totals result per ShiftNumber value.
+     totalsGroupID(4)   --Give the totals result per TotalsGroupID value.
+  }
+
+  --Total amount of financial fees.
+  TotalFeesAmount ::= [APPLICATION 97] SimpleAmountType
+
+  --Filter to compute the totals.
+  TotalFilter ::= [APPLICATION 288] SEQUENCE{
+     pOIID          POIID OPTIONAL,
+     saleID         SaleID OPTIONAL,
+     operatorID     OperatorID OPTIONAL,
+     shiftNumber    ShiftNumber OPTIONAL,
+     totalsGroupID  TotalsGroupID OPTIONAL
+  }
+
+  --Identification of a group of transaction on a POI Terminal, having the same Sale features.
+  TotalsGroupID ::= [APPLICATION 247] UTF8String (SIZE(1..16))
+
+  --Total number of payments.
+  TotalNbOfPayments ::= [APPLICATION 374] INTEGER
+
+  --The global awarded amount that is not attached to an item.
+  TotalRebate ::= [APPLICATION 289] SimpleAmountType
+
+  --Sum of rebates in amount (total amount or line item amount) for all the loyalty programs.
+  TotalRebatesAmount ::= [APPLICATION 290] SimpleAmountType
+
+  --Magnetic track or magnetic ink characters line.
+  TrackData ::= [APPLICATION 291] SEQUENCE{
+     trackNumb    TrackNumb DEFAULT 2,
+     trackFormat  TrackFormat DEFAULT iSO,
+     trackValue   TrackValue
+  }
+
+  --Card track format
+  TrackFormat ::= [APPLICATION 293] ENUMERATED{
+     iSO(0),     --ISO card track format - ISO 7813 - ISO 4909
+     jIS-I(1),   --Japenese track format I
+     jIS-II(2),  --Japenese track format II
+     aAMVA(3),   --American driver license
+     cMC-7(4),   --((Magnetic Ink Character Recognition, using the CMC-7 font - ISO 1004) Line at...
+     e-13B(5)    --(Magnetic Ink Character Recognition, using the E-13B font) Line at the bottom...
+  }
+
+  --Card track number
+  TrackNumb ::= [APPLICATION 292] INTEGER (1..3)
+
+  --Card track content
+  TrackValue ::= [APPLICATION 294] UTF8String (SIZE(1..104))
+
+  --Training mode
+  TrainingModeFlag ::= [APPLICATION 295] BOOLEAN
+
+  --Content of the Transmit Request message.
+  TransmitRequest ::= [APPLICATION 401] SEQUENCE{
+     waitResponseFlag     WaitResponseFlag DEFAULT FALSE,
+     maximumTransmitTime  MaximumTransmitTime,
+     destinationAddress   DestinationAddress,
+     message              Message
+  }
+
+  --Content of the Transmit Response message.
+  TransmitResponse ::= [APPLICATION 402] SEQUENCE{
+     response  Response,
+     message   Message OPTIONAL
+  }
+
+  --Sum of amount of processed transaction during the period.
+  TransactionAmount ::= [APPLICATION 297] SimpleAmountType
+
+  --Conditions on which the transaction must be processed.
+  TransactionConditions ::= [APPLICATION 296] SEQUENCE{
+     allowedPaymentBrand   SEQUENCE (SIZE(0..MAX)) OF AllowedPaymentBrand,
+     acquirerID            SEQUENCE (SIZE(0..MAX)) OF AcquirerID,
+     debitPreferredFlag    DebitPreferredFlag DEFAULT FALSE,
+     allowedLoyaltyBrand   SEQUENCE (SIZE(0..MAX)) OF AllowedLoyaltyBrand,
+     loyaltyHandling       LoyaltyHandling DEFAULT forbidden,
+     customerLanguage      CustomerLanguage OPTIONAL,
+     forceOnlineFlag       ForceOnlineFlag DEFAULT FALSE,
+     forceEntryMode        SEQUENCE (SIZE(0..MAX)) OF ForceEntryMode,
+     merchantCategoryCode  MerchantCategoryCode OPTIONAL
+  }
+
+  --Number of processed transaction during the period.
+  TransactionCount ::= [APPLICATION 299] INTEGER
+
+  --Unique identification of a transaction
+  TransactionID ::= [APPLICATION 298] UTF8String
+
+  --Transaction Report information for one transaction
+  TransactionReport ::= [APPLICATION 441] SEQUENCE{
+     response           Response,
+	 saleData           SaleData,
+	 POIData            POIData,
+	 paymentResult      PaymentResult OPTIONAL
+  }
+  
+  --Content of the Transaction Report Request message.
+  TransactionReportRequest  ::= [APPLICATION 442] SEQUENCE{
+    searchCriterias       SEQUENCE (SIZE(1..MAX)) OF SearchCriterias,
+	searchOutputOrder     SearchOutputOrder OPTIONAL,
+	blockStart            BlockStart OPTIONAL,
+	blockStop             BlockStop OPTIONAL
+  }
+  
+  --Content of the Transaction Report Response message
+  TransactionReportResponse ::= [APPLICATION 443] SEQUENCE{
+    response              Response,
+	reportFullSize        ReportFullSize,
+	blockStart            BlockStart,
+	blockStop             BlockStop,
+	transactionReport     SEQUENCE (SIZE(0..MAX)) OF TransactionReport
+  }
+  
+  --Content of the TransactionStatus Request message.
+  TransactionStatusRequest ::= [APPLICATION 301] SEQUENCE{
+     messageReference    MessageReference OPTIONAL,
+     receiptReprintFlag  ReceiptReprintFlag DEFAULT FALSE,
+     documentQualifier   SEQUENCE (SIZE(0..2)) OF DocumentQualifier
+  }
+
+  --Content of the TransactionStatus Response message.
+  TransactionStatusResponse ::= [APPLICATION 302] SEQUENCE{
+     response                 Response,
+     messageReference         MessageReference OPTIONAL,
+     repeatedMessageResponse  RepeatedMessageResponse OPTIONAL
+  }
+
+  --Result of the Sale to POI Reconciliation processing.
+  TransactionTotals ::= [APPLICATION 303] SEQUENCE{
+     paymentInstrumentType  PaymentInstrumentType,
+     acquirerID             AcquirerID OPTIONAL,
+     errorCondition         ErrorCondition OPTIONAL,
+     hostReconciliationID   HostReconciliationID OPTIONAL,
+     cardBrand              CardBrand OPTIONAL,
+     pOIID                  POIID OPTIONAL,
+     saleID                 SaleID OPTIONAL,
+     operatorID             OperatorID OPTIONAL,
+     shiftNumber            ShiftNumber OPTIONAL,
+     totalsGroupID          TotalsGroupID OPTIONAL,
+     paymentCurrency        PaymentCurrency OPTIONAL,
+     paymentTotals          SEQUENCE (SIZE(0..10)) OF PaymentTotals,
+     loyaltyUnit            LoyaltyUnit DEFAULT point,
+     loyaltyCurrency        LoyaltyCurrency OPTIONAL,
+     loyaltyTotals          SEQUENCE (SIZE(0..6)) OF LoyaltyTotals
+  }
+
+  --Action to realise on a transaction.
+  TransactionAction ::= [APPLICATION 304] ENUMERATED{
+     startTransaction(0),  --Start a transaction by a swipe ahead mechanism, with the services which are...
+     abortTransaction(1)   --Abort a transaction started either by a CardAcquisition or EnableService with...
+  }
+
+  --Content of the Batch Request message.
+  TransactionToPerform ::= CHOICE{
+     paymentRequest   PaymentRequest,
+     loyaltyRequest   LoyaltyRequest,
+     reversalRequest  ReversalRequest
+  }
+
+  --Type of transaction for which totals are grouped.
+  TransactionType ::= [APPLICATION 305] ENUMERATED{
+     debit(0),                 --Payment Debit transactions (e.g. if PaymentType is "Normal")
+     credit(1),                --Payment Credit transactions (e.g.  if PaymentType is "Refund")
+     reverseDebit(2),          --Payment Reversal Debit transactions
+     reverseCredit(3),         --Payment Reversal Credit transactions
+     oneTimeReservation(4),    --Outstanding OneTimeReservation transactions, i.e. between OneTimeReservation...
+     completedDeffered(5),     --OneTimeReservation transactions which have been completed by the Completion.
+     firstReservation(6),      --Outstanding FirstReservation transactions, i.e. between FirstReservation and...
+     updateReservation(7),     --Outstanding UpdateReservation transactions, i.e. between UpdateReservation and...
+     completedReservation(8),  --Reservation transactions which have been completed by the Completion.
+     cashAdvance(9),           --Cash Advance transactions.
+     issuerInstalment(10),      --Issuer instalment transactions.
+     declined(11),              --ResultErrorCondition
+     failed(12),                --ResultErrorCondition
+     award(13),                 --Loyalty Award Transaction
+     reverseAward(14),          --Loyalty Reversal Award Transaction
+     redemption(15),            --Loyalty Redemption Transaction
+     reverseRedemption(16),     --Loyalty Reversal Redemption Transaction
+     rebate(17),                --Loyalty Rebate Transaction
+     reverseRebate(18)          --Loyalty Reversal Rebate Transaction
+  }
+
+  --Unit of measure of a quantity
+  UnitOfMeasure ::= [APPLICATION 306] ENUMERATED{
+     case(0),        --Case or Carton
+     foot(1),        --Foot
+     uKGallon(2),    --Gallon (UK)
+     uSGallon(3),    --Gallon (US)
+     gram(4),        --Gram
+     inch(5),        --Inch
+     kilogram(6),    --Kilogram
+     pound(7),       --Pound
+     meter(8),       --Meter
+     centimetre(9),  --Centimetre
+     litre(10),       --Litre
+     centilitre(11),  --Centilitre
+     ounce(12),       --Ounce
+     quart(13),       --Quart
+     pint(14),        --Pint
+     mile(15),        --Mile
+     kilometre(16),   --Kilometre
+     yard(17),        --Yard
+     other(18)        --Other unit than the previous one
+  }
+
+  --Price per unit of product
+  UnitPrice ::= [APPLICATION 307] SimpleAmountType
+
+  --Value of a coin or bill.
+  UnitValue ::= [APPLICATION 366] SimpleAmountType
+
+  --Location on the Earth specified by the Universal Transverse Mercator coordinate system.
+  UTMCoordinates ::= [APPLICATION 357] SEQUENCE{
+     uTMZone       UTMZone,
+     uTMEastward   UTMEastward,
+     uTMNorthward  UTMNorthward
+  }
+
+  --X-coordinate of the Universal Transverse Mercator coordinate system.
+  UTMEastward ::= [APPLICATION 359] UTF8String
+
+  --Y-coordinate of the Universal Transverse Mercator coordinate system.
+  UTMNorthward ::= [APPLICATION 360] UTF8String
+
+  --UTM grid zone combination of the longitude zone (1 to 60) and the latitude band (C to X, excluding I and O).
+  UTMZone ::= [APPLICATION 358] UTF8String
+
+  --End of the validity period for the reservation.
+  ValidityDate ::= [APPLICATION 25] ISODate
+
+  --Indicates that the user must confirm the entered characters, when the maximum allowed length is reached.
+  WaitUserValidationFlag ::= [APPLICATION 308] BOOLEAN
+
+  --Indicates that a response message has to be received.
+  WaitResponseFlag ::= [APPLICATION 403] BOOLEAN
+
+  --Flag to request a warm reset on a chip.
+  WarmResetFlag ::= [APPLICATION 309] BOOLEAN
+
+  --Abscissa of a point coordinates.
+  X ::= [APPLICATION 350] UTF8String
+
+  --Ordinate of a point coordinates.
+  Y ::= [APPLICATION 351] UTF8String
+
+  --
+  -- 3. Types Definition
+  --
+
+  --Common amount definition with currency
+  AmountType ::= SEQUENCE{
+     amountValue  AmountValue,
+     currency     Currency OPTIONAL
+  }
+  
+    --Index of the first transaction to be reported within the list of transactions matching the search criterias.
+  BlockStart ::= INTEGER
+  
+  --Index of the last transaction to be reported within the list of transactions matching the search criterias.
+  BlockStop ::= INTEGER
+  
+  --Indicates the direction in which this order criteria is used. True, indicates descending. False, indicates ascending.
+  DescendingOrder ::= BOOLEAN
+
+  --Currency identification
+  ISOCurrency3A ::= UTF8String (SIZE(3))
+
+  --Country Code
+  ISOCountry3A ::= UTF8String (SIZE(3))
+
+  --Date and Time
+  ISODateTime ::= UTF8String (SIZE(19..29))
+
+  --Date
+  ISODate ::= UTF8String
+
+  --Language identification.
+  ISOLanguage2A ::= UTF8String (SIZE(2))
+
+  --Common amount value definition
+  SimpleAmountType ::= PrintableString
+
+  --The total number of transactions matching the search criterias.
+  ReportFullSize ::= INTEGER
+  
+  --Identifier of target element
+  Target ::= UTF8String
+  
+  --Identification of a transaction for the Sale System or the POI System.
+  TransactionIdentificationType ::= SEQUENCE{
+     transactionID  TransactionID,
+     timeStamp      TimeStamp
+  }
+  
+  --Reference value to be used when evaluating against the target element value using the criteria operator
+  Value ::= UTF8String
+
+END

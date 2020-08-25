@@ -1,0 +1,54 @@
+apply plugin: "java"
+
+version = "0.0.1-SNAPSHOT"
+
+buildscript {
+    repositories {
+        google()
+        jcenter()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.5.0'
+        classpath 'com.jakewharton:butterknife-gradle-plugin:10.0.0'
+        classpath 'com.github.dcendents:android-maven-gradle-plugin:2.1'
+        classpath 'org.unbroken-dome.gradle-plugins:gradle-xjc-plugin:1.4.3'
+    }
+}
+
+allprojects {
+
+    project.ext {
+        apiVersion = rootProject.version
+    }
+
+    repositories {
+        google()
+        jcenter()
+        mavenCentral()
+        maven {
+            url "s3://sdk-releases.aevi.com/maven2"
+            credentials(AwsCredentials) {
+                accessKey aws_accessid
+                secretKey aws_accesskey
+            }
+        }
+        maven {
+            url "s3://sdk-qa.aevi.com/maven2"
+            credentials(AwsCredentials) {
+                accessKey aws_accessid
+                secretKey aws_accesskey
+            }
+        }
+        mavenLocal()
+        maven {
+            url "s3://sdk-snapshots.aevi.com/maven2"
+            credentials(AwsCredentials) {
+                accessKey aws_accessid
+                secretKey aws_accesskey
+            }
+        }
+    }
+}
+
+apply from: 'dependencies.gradle'

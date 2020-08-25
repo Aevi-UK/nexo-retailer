@@ -1,0 +1,54 @@
+-dontusemixedcaseclassnames
+-dontskipnonpubliclibraryclasses
+-dontpreverify
+-optimizations !field/removal/writeonly,!field/marking/private,!class/merging/*,!code/allocation/variable
+-dontobfuscate
+# Remove log messages
+-assumenosideeffects class android.util.Log {
+    public static *** d(...);
+    public static *** v(...);
+}
+
+-assumenosideeffects class android.util.SLog {
+    public static *** d(...);
+    public static *** v(...);
+}
+
+-keep class com.aevi.** { *; }
+-keep class com.wincor.** { *; }
+-keep class cz.wincor.** { *; }
+-keep class javax.smartcardio.** { *; }
+
+-dontwarn cz.wincor.ang.pp.**
+-dontwarn com.wincor.paypad.**
+-dontnote com.wincor.paypad.**
+-dontwarn android.util.Slog
+-dontwarn com.aevi.**
+-dontwarn sun.misc.**
+
+-dontnote com.google.vending.licensing.ILicensingService
+-dontnote com.google.vending.licensing.ILicensingService
+-dontnote com.android.vending.licensing.ILicensingService
+
+-keep class android.**
+-dontwarn android.**
+-keep class java.lang.reflect.**
+
+# Classes introduced from AeviCard
+-dontwarn sasc.**
+-dontwarn com.licel.**
+-dontwarn javacard.framework.**
+
+# Classes duplicated via new print library
+-dontwarn com.bixolon.**
+
+# Butterknife
+-dontwarn butterknife.internal.**
+-keep class **$$ViewInjector { *; }
+-keepnames class * { @butterknife.InjectView *;}
+-dontwarn butterknife.Views$InjectViewProcessor
+-dontwarn com.gc.materialdesign.views.**
+
+# Dagger
+-keep class dagger.** { *; }
+-dontwarn dagger.**
