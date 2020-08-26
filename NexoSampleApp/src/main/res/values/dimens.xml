@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="button_text_size">22sp</dimen>
+    <dimen name="spinner_elevation">3dp</dimen>
+    <dimen name="send_button_shadow_depth">5dp</dimen>
+</resources>

@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">NexoSample</string>
+    <string name="initiate">Initiate Request</string>
+    <string name="scenario">Scenario</string>
+    <string name="outcome">Outcome</string>
+    <string name="delete_all">Delete all responses</string>
+</resources>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#00688B</color>
+    <color name="colorPrimaryDark">#737373</color>
+    <color name="colorAccent">#00688B</color>
+
+    <color name="defaultButtonText">#ffffff</color>
+    <color name="defaultButtonBackground">#4b9b63</color>
+    <color name="defaultButtonBackgroundDark">#3f8f50</color>
+    <color name="defaultButtonBackgroundDisabled">#dddddd</color>
+
+    <color name="itemBackgroundColor">#ffffff</color>
+    <color name="itemBackgroundStrokeColor">#9c9c9c</color>
+    <color name="itemBackgroundSelectedColor">#dddddd</color>
+    <color name="itemTextColor">#000000</color>
+
+</resources>

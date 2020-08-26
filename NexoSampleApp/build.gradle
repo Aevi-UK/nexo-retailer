@@ -1,0 +1,86 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+
+apply from: "../artifacts.gradle"
+apply from: "../publish-repo.gradle"
+apply from: "../publish-repo-android.gradle"
+
+ext.applicationName = "NexoSampleApp"
+ext.artifactIdPrefix = "nexo-sample"
+ext.artifactGroupId = "com.aevi.nexo.sample"
+
+android {
+    compileSdkVersion projectTargetSdkVersion
+
+    defaultConfig {
+        applicationId "com.aevi.nexo.sample"
+        minSdkVersion projectMinSdkVersion
+        targetSdkVersion projectTargetSdkVersion
+        versionCode apiVersionCode
+        versionName "${apiVersion}"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    signingConfigs {
+        release {
+            storeFile file("../samples-key.jks")
+            storePassword "appflow"
+            keyAlias "sample"
+            keyPassword "appflow"
+        }
+    }
+
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        unsigned {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig null
+        }
+    }
+
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    buildFeatures {
+        dataBinding true
+    }
+}
+
+repositories {
+    google()
+    jcenter()
+    mavenLocal()
+    maven {
+        url "http://dl.bintray.com/aevi/aevi-uk"
+    }
+}
+
+dependencies {
+    implementation kotlinDependencies.jdk
+    implementation presentationDependencies.appcompat
+    implementation presentationDependencies.constraintLayout
+    implementation presentationDependencies.viewModel
+    implementation presentationDependencies.liveData
+    implementation presentationDependencies.lifecycleExtensions
+    implementation presentationDependencies.viewPager
+    implementation presentationDependencies.material
+
+    implementation domainDependencies.okio
+    implementation domainDependencies.aeviUiLibrary
+
+    testImplementation testDependencies.junit
+}
+

@@ -1,26 +1,27 @@
 apply plugin: "java"
 
-version = "0.0.1-SNAPSHOT"
+ext.apiVersion = "0.0.1-SNAPSHOT"
+ext.apiVersionCode = 000001 // MMmmppbb
+
+version = ext.apiVersion
 
 buildscript {
+    ext.kotlin_version = '1.4.0'
     repositories {
         google()
         jcenter()
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.5.0'
+        classpath 'com.android.tools.build:gradle:4.0.1'
         classpath 'com.jakewharton:butterknife-gradle-plugin:10.0.0'
         classpath 'com.github.dcendents:android-maven-gradle-plugin:2.1'
         classpath 'org.unbroken-dome.gradle-plugins:gradle-xjc-plugin:1.4.3'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
 
 allprojects {
-
-    project.ext {
-        apiVersion = rootProject.version
-    }
 
     repositories {
         google()
