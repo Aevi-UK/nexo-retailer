@@ -7,6 +7,7 @@ import androidx.lifecycle.observe
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.aevi.nexo.sample.R
+import com.aevi.nexo.sample.data.ScenarioController
 import com.aevi.nexo.sample.data.ScenarioController.model
 import com.aevi.nexo.sample.ui.page.InitiationFragment
 import com.aevi.nexo.sample.ui.page.OutputFragment
@@ -53,6 +54,8 @@ class ViewPagerActivity : FragmentActivity() {
                 tab.removeBadge()
             }
         })
+
+        ScenarioController.setup(this)
     }
 
     override fun onBackPressed() {
