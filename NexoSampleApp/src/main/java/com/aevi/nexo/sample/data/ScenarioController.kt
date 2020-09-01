@@ -8,6 +8,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.io.InputStream
+import java.net.Socket
 import java.security.KeyStore
 import java.util.*
 import javax.net.ssl.KeyManagerFactory
@@ -34,22 +35,22 @@ object ScenarioController {
     lateinit var socketFactory: TLSSocketFactory
 
     fun setup(context: Context) {
-        val trusted: KeyStore = KeyStore.getInstance("BKS")
-        context.resources.openRawResource(R.raw.sample).use {
-            trusted.load(it, "sample".toCharArray())
-            it.close()
-        }
-
-        val kmf: KeyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm())
-        kmf.init(trusted, "sample".toCharArray())
-        val sslContext = SSLContext.getInstance("TLSv1.2")
-        sslContext.init(kmf.keyManagers, null, null)
-        socketFactory = TLSSocketFactory(sslContext.socketFactory)
+//        val trusted: KeyStore = KeyStore.getInstance("BKS")
+//        context.resources.openRawResource(R.raw.sample).use {
+//            trusted.load(it, "sample".toCharArray())
+//            it.close()
+//        }
+//
+//        val kmf: KeyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm())
+//        kmf.init(trusted, "sample".toCharArray())
+//        val sslContext = SSLContext.getInstance("TLSv1.2")
+//        sslContext.init(kmf.keyManagers, null, null)
+//        socketFactory = TLSSocketFactory(sslContext.socketFactory)
     }
 
     fun start(): String {
         GlobalScope.launch(Dispatchers.IO) {
-            val socket = socketFactory.createSocket("127.0.0.1", 12345)
+            val socket = Socket("127.0.0.1", 12345)
             socket.getOutputStream().write(byteArrayOf(1, 2, 3, 4, 5))
             socket.close()
         }
