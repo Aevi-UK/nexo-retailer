@@ -1,6 +1,5 @@
 apply plugin: 'java'
 apply plugin: 'java-library'
-apply plugin: 'org.unbroken-dome.xjc'
 
 group = 'com.aevi.nexo'
 version = "${apiVersion}"
@@ -16,13 +15,6 @@ repositories {
     }
 }
 
-xjcGenerate {
-    extension = true
-    extraArgs = [
-            '-Xinheritance'
-    ]
-}
-
 sourceSets.main.java.srcDirs = ['src/main/java']
 
 sourceCompatibility = "1.8"
@@ -35,8 +27,8 @@ dependencies {
     implementation domainDependencies.appFlowPaymentApi
     implementation domainDependencies.appFlowPrintApi
     implementation domainDependencies.zxing
+    implementation project(":NexoModel")
     compileOnly testDependencies.mockableAndroid
-    xjcClasspath 'org.jvnet.jaxb2_commons:jaxb2-basics:0.11.1'
 
     testImplementation testDependencies.junit
     testImplementation testDependencies.assertJ
