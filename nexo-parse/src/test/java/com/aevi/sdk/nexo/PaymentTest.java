@@ -46,7 +46,6 @@ public class PaymentTest extends ResponseTest {
             if (nexoRequest.isAppFlowPayment()) {
                 Payment payment = nexoRequest.getAsAppFlowPayment();
                 if (payment.getAmounts() != null) {
-                    if (payment.getAmounts().getBaseAmount().getValue() == )
                 }
             }
             return false;

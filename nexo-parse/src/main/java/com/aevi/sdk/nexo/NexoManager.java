@@ -29,6 +29,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.transform.stream.StreamSource;
 
 import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
@@ -62,17 +63,17 @@ public class NexoManager {
             SaleToPOIRequest saleToPOIRequest = (SaleToPOIRequest) parsed;
             if (NexoState.OPEN.equals(state)) {
                 Object request = nexoFlow.decodeNexoRequest(saleToPOIRequest);
-                emit(request);
+                emit(saleToPOIRequest, request);
             } else if (NexoState.CLOSED.equals(state)) {
-                emit(new RejectedRequest(saleToPOIRequest, ErrorCondition.LOGGED_OUT));
+                emit(saleToPOIRequest, new RejectedRequest(saleToPOIRequest, ErrorCondition.LOGGED_OUT));
             } else {
-                emit(new RejectedRequest(saleToPOIRequest, ErrorCondition.BUSY));
+                emit(saleToPOIRequest, new RejectedRequest(saleToPOIRequest, ErrorCondition.BUSY));
             }
         }
     }
 
-    public void sendAppflowObject(Object object) {
-        SaleToPOIResponse response = nexoFlow.encodeAppFlowObject(object);
+    private void sendAppflowObject(SaleToPOIRequest request, Object object) {
+        SaleToPOIResponse response = nexoFlow.encodeAppFlowObject(request, object);
         if (response != null) {
             String xml = toXml(response);
             if (xml != null) {
@@ -97,7 +98,7 @@ public class NexoManager {
         try {
             Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
 
-            SaleToPOIRequest parsed = (SaleToPOIRequest) jaxbUnmarshaller.unmarshal(new StringReader(xml));
+            SaleToPOIRequest parsed = jaxbUnmarshaller.unmarshal(new StreamSource(new StringReader(xml)), SaleToPOIRequest.class).getValue();
             return parsed;
         } catch (JAXBException jaxbe) {
             return null;
@@ -115,25 +116,34 @@ public class NexoManager {
         }
     }
 
-    private void emit(Object request) {
+    private void emit(SaleToPOIRequest nexoRequest, Object request) {
         // Handle special cases
         if (request instanceof Login) {
             if (login((Login) request)) {
-                sendAppflowObject(new LoggedIn());
+                sendAppflowObject(nexoRequest, new LoggedIn());
             } else {
-                sendAppflowObject(new LoginFailure());
+                sendAppflowObject(nexoRequest, new LoginFailure());
             }
         } else if (request instanceof Logout) {
             if (logout((Logout) request)) {
-                sendAppflowObject(new LoggedOut());
+                sendAppflowObject(nexoRequest, new LoggedOut());
             } else {
-                sendAppflowObject(new LogoutFailure());
+                sendAppflowObject(nexoRequest, new LogoutFailure());
             }
         } else if (request instanceof RejectedRequest) {
-            sendAppflowObject(request);
+            sendAppflowObject(nexoRequest, request);
         }
 
-        requestEmitter.onNext(new NexoRequest(request));
+        requestEmitter.onNext(createRequest(nexoRequest, request));
+    }
+
+    private NexoRequest createRequest(final SaleToPOIRequest nexoRequest, Object request) {
+        return new NexoRequest(request) {
+            @Override
+            public void sendResponse(Object response) {
+                sendAppflowObject(nexoRequest, response);
+            }
+        };
     }
 
     private boolean login(Login login) {

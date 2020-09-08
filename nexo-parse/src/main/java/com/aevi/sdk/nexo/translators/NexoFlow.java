@@ -13,9 +13,9 @@ public class NexoFlow {
         return SALE_RESPONSE_TRANSLATOR;
     }
 
-    public SaleToPOIResponse encodeAppFlowObject(Object appFlowObject) {
+    public SaleToPOIResponse encodeAppFlowObject(SaleToPOIRequest request, Object appFlowObject) {
         AppFlowToNexo encoder = getEncoder(appFlowObject);
-        SaleToPOIResponse response = encoder == null ? null : (SaleToPOIResponse) encoder.translate(appFlowObject);
+        SaleToPOIResponse response = encoder == null ? null : (SaleToPOIResponse) encoder.translate(request, appFlowObject);
         return response;
     }
 

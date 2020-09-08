@@ -25,30 +25,15 @@ import java.math.BigDecimal;
 
 public class PaymentResponseTranslator extends ResponseTranslator<PaymentResponse, SaleToPOIResponse> {
     @Override
-    public SaleToPOIResponse translate(PaymentResponse appFlowObject) {
-        SaleToPOIRequest originalRequest = null; // Need this passing in...
+    public SaleToPOIResponse translate(SaleToPOIRequest originalRequest, PaymentResponse appFlowObject) {
         SaleToPOIResponse saleToPOIResponse = new SaleToPOIResponse();
-        saleToPOIResponse.setMessageHeader(messageHeader(originalRequest));
+        saleToPOIResponse.setMessageHeader(copyMessageHeader(originalRequest));
         com.aevi.sdk.nexo.model.PaymentResponse paymentResponse = new com.aevi.sdk.nexo.model.PaymentResponse();
         paymentResponse.setPaymentResult(paymentResult(appFlowObject, originalRequest.getPaymentRequest()));
         paymentResponse.setPOIData(poiData(appFlowObject, originalRequest.getPaymentRequest()));
         paymentResponse.setSaleData(saleData(appFlowObject, originalRequest.getPaymentRequest()));
         paymentResponse.setResponse(response("Success")); // TODO later not all payments are successes...
         return saleToPOIResponse;
-    }
-
-    private MessageHeader messageHeader(SaleToPOIRequest originalRequest) {
-        MessageHeader messageHeader = new MessageHeader();
-        MessageHeader originalHeader = originalRequest.getMessageHeader();
-
-        messageHeader.setMessageClass(originalHeader.getMessageClass());
-        messageHeader.setMessageCategory(MessageCategory.PAYMENT.value());
-        messageHeader.setMessageType(MessageType.RESPONSE.value());
-        messageHeader.setServiceID(originalHeader.getServiceID());
-        messageHeader.setSaleID(originalHeader.getSaleID());
-        messageHeader.setPOIID(originalHeader.getPOIID());
-
-        return messageHeader;
     }
 
     private SaleData saleData(PaymentResponse paymentResponse, PaymentRequest originalRequest) {

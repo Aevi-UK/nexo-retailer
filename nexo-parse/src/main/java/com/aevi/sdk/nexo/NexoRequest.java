@@ -4,7 +4,7 @@ import com.aevi.sdk.flow.model.Request;
 import com.aevi.sdk.nexo.extramodel.NexoModel;
 import com.aevi.sdk.pos.flow.model.Payment;
 
-public class NexoRequest {
+public abstract class NexoRequest {
     private Object request;
 
     public NexoRequest(Object request) {
@@ -34,4 +34,6 @@ public class NexoRequest {
     public Request getAsAppFlowRequest() {
         return isAppFlowRequest() ? (Request) request : null;
     }
+
+    public abstract void sendResponse(Object response);
 }

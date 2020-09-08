@@ -1,6 +1,7 @@
 package com.aevi.sdk.nexo.translators.responses;
 
 import com.aevi.sdk.nexo.model.PaymentResponse;
+import com.aevi.sdk.nexo.model.SaleToPOIRequest;
 import com.aevi.sdk.nexo.model.SaleToPOIResponse;
 import com.aevi.sdk.nexo.translators.AppFlowToNexo;
 
@@ -17,10 +18,10 @@ public class SaleResponseTranslator extends ResponseTranslator<Object, SaleToPOI
             new LogoutFailureTranslator());
 
     @Override
-    public SaleToPOIResponse translate(Object appFlowObject) {
+    public SaleToPOIResponse translate(SaleToPOIRequest originalRequest, Object appFlowObject) {
         for (AppFlowToNexo translator : TRANSLATORS) {
             if (translator.translatesFrom(appFlowObject)) {
-                Object translated = translator.translate(appFlowObject);
+                Object translated = translator.translate(originalRequest, appFlowObject);
                 if (translated instanceof SaleToPOIResponse) {
                     return (SaleToPOIResponse) translated;
                 }
