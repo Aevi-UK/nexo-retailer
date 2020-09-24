@@ -13,9 +13,10 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import com.aevi.nexo.INexlatorAPI
-import com.aevi.nexo.sample.data.ScenarioController
+import com.aevi.android.rxmessenger.ChannelClient
+import com.aevi.android.rxmessenger.Channels
 import com.aevi.nexo.sample.R
+import com.aevi.nexo.sample.data.ScenarioController
 import com.aevi.nexo.sample.databinding.FragmentInitBinding
 import com.aevi.nexo.sample.ui.PagerViewModel
 import com.aevi.ui.library.DropDownHelper
@@ -25,6 +26,7 @@ import kotlinx.android.synthetic.main.fragment_init.view.*
 class InitiationFragment : Fragment() {
 
     private lateinit var viewModel: PagerViewModel
+    private lateinit var messengerClient: ChannelClient
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val binding: FragmentInitBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_init, container, false)
@@ -37,7 +39,7 @@ class InitiationFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         bindScenarioSelection(view)
         bindInitiationAction(view)
-        initService(view.context)
+        messengerClient = Channels.pipe(view.context, SERVICE)
     }
 
     private fun bindScenarioSelection(view: View) {
@@ -54,35 +56,20 @@ class InitiationFragment : Fragment() {
         }
     }
 
-    var api: INexlatorAPI? = null
-
-    private fun initService(context: Context) {
-        val connection = object : ServiceConnection {
-
-            override fun onServiceConnected(className: ComponentName, service: IBinder) {
-                Log.e("VPA", "Nexlator connected successfully")
-                api = INexlatorAPI.Stub.asInterface(service)
-            }
-
-            override fun onServiceDisconnected(className: ComponentName) {
-                Log.e("VPA", "Service has unexpectedly disconnected")
-                api = null
-            }
-        }
-        val intent = Intent()
-        intent.component = ComponentName("com.aevi.nexo", "com.aevi.nexo.NexlatorService")
-        println(context.bindService(intent, connection, Context.BIND_AUTO_CREATE))
-    }
-
     private fun bindInitiationAction(view: View) {
         view.initiateButton.setOnClickListener {
-            api?.sendRequest("Magic!")
-//            val message = ScenarioController.start()
-//            Toast.makeText(view.context, message, Toast.LENGTH_SHORT).show()
+            messengerClient
+                    .sendMessage("Magic!")
+                    .subscribe({ response ->
+                        Log.i(TAG, "Response received $response")
+                    }, {
+                        Log.w(TAG, "Failed to send message", it)
+                    })
         }
     }
 
     companion object {
         private val TAG = InitiationFragment::class.simpleName
+        private val SERVICE = ComponentName("com.aevi.nexo", "com.aevi.nexo.service.NexlatorInitiatorService")
     }
 }

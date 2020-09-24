@@ -80,6 +80,7 @@ dependencies {
 
     implementation domainDependencies.okio
     implementation domainDependencies.aeviUiLibrary
+    implementation domainDependencies.rxMessenger
 
     testImplementation testDependencies.junit
 }

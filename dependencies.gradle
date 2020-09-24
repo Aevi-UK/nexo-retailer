@@ -27,6 +27,7 @@ ext {
     appFlowConstantsVersion = '2.3.5'
     appFlowPrintVersion = '1.1.5'
     aeviUiLibraryVersion = "2.0.1"
+    rxMessengerVersion = "5.1.0-SNAPSHOT"
 
     xpapVersion = '4.2.4'
 
@@ -49,7 +50,8 @@ ext {
             zxing            : "com.google.zxing:core:$zxingVersion",
             gson             : "com.google.code.gson:gson:$gsonVersion",
             okio             : "com.squareup.okio:okio:$okioVersion",
-            aeviUiLibrary    : "com.aevi.ui.library:ui-library:$aeviUiLibraryVersion"
+            aeviUiLibrary    : "com.aevi.ui.library:ui-library:$aeviUiLibraryVersion",
+            rxMessenger    : "com.aevi.android:rxmessenger:$rxMessengerVersion"
     ]
 
     testDependencies = [
