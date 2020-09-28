@@ -1,6 +1,7 @@
 package com.aevi.sdk.nexo;
 
 import com.aevi.sdk.nexo.model.SaleToPOIResponse;
+import com.aevi.sdk.nexo.model.SaleToPOIResponseType;
 
 import org.junit.Test;
 
@@ -25,7 +26,7 @@ public class LoginTest extends ResponseTest {
         responseObserver.assertNoErrors();
         responseObserver.assertValueCount(1);
         responseObserver.assertValueAt(0, s -> {
-            SaleToPOIResponse response = parseResponse(s);
+            SaleToPOIResponseType response = parseResponse(s);
             return response != null
                     && response.getLoginResponse() != null
                     && response.getLoginResponse().getResponse() != null
@@ -45,14 +46,14 @@ public class LoginTest extends ResponseTest {
         responseObserver.assertNoErrors();
         responseObserver.assertValueCount(2);
         responseObserver.assertValueAt(0, s -> {
-            SaleToPOIResponse response = parseResponse(s);
+            SaleToPOIResponseType response = parseResponse(s);
             return response != null
                     && response.getLoginResponse() != null
                     && response.getLoginResponse().getResponse() != null
                     && isSuccess(response.getLoginResponse().getResponse());
         });
         responseObserver.assertValueAt(1, s -> {
-            SaleToPOIResponse response = parseResponse(s);
+            SaleToPOIResponseType response = parseResponse(s);
             return response != null
                     && response.getLoginResponse() != null
                     && response.getLoginResponse().getResponse() != null
@@ -70,7 +71,7 @@ public class LoginTest extends ResponseTest {
         responseObserver.assertNoErrors();
         responseObserver.assertValueCount(1);
         responseObserver.assertValueAt(0, s -> {
-            SaleToPOIResponse response = parseResponse(s);
+            SaleToPOIResponseType response = parseResponse(s);
             return response != null
                     && response.getLogoutResponse() != null
                     && response.getLogoutResponse().getResponse() != null
@@ -89,7 +90,7 @@ public class LoginTest extends ResponseTest {
         responseObserver.assertNoErrors();
         responseObserver.assertValueCount(2);
         responseObserver.assertValueAt(1, s -> {
-            SaleToPOIResponse response = parseResponse(s);
+            SaleToPOIResponseType response = parseResponse(s);
             return response != null
                     && response.getLogoutResponse() != null
                     && response.getLogoutResponse().getResponse() != null
@@ -109,7 +110,7 @@ public class LoginTest extends ResponseTest {
         responseObserver.assertNoErrors();
         responseObserver.assertValueCount(3);
         responseObserver.assertValueAt(2, s -> {
-            SaleToPOIResponse response = parseResponse(s);
+            SaleToPOIResponseType response = parseResponse(s);
             return response != null
                     && response.getLogoutResponse() != null
                     && response.getLogoutResponse().getResponse() != null

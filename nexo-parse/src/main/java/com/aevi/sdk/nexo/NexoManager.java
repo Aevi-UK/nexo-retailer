@@ -2,6 +2,7 @@ package com.aevi.sdk.nexo;
 
 import android.support.annotation.NonNull;
 
+import com.aevi.sdk.nexo.extramodel.LoginNotRequired;
 import com.aevi.sdk.nexo.extramodel.RejectedRequest;
 import com.aevi.sdk.nexo.extramodel.requests.Login;
 import com.aevi.sdk.nexo.extramodel.requests.Logout;
@@ -12,6 +13,7 @@ import com.aevi.sdk.nexo.extramodel.responses.LogoutFailure;
 import com.aevi.sdk.nexo.manager.NexoState;
 import com.aevi.sdk.nexo.model.ErrorCondition;
 import com.aevi.sdk.nexo.model.LoginRequest;
+import com.aevi.sdk.nexo.model.NexoDeserialiser;
 import com.aevi.sdk.nexo.model.ObjectFactory;
 import com.aevi.sdk.nexo.model.POISoftware;
 import com.aevi.sdk.nexo.model.POIStatus;
@@ -42,27 +44,17 @@ public class NexoManager {
     private final PublishSubject<NexoRequest> requestEmitter = PublishSubject.create();
     private final PublishSubject<NexoCommsStatus> commsStatusEmitter = PublishSubject.create();
 
-    private JAXBContext jaxbContext = createJAXBContext();
-
     private NexoFlow nexoFlow = new NexoFlow();
 
     private NexoState state = NexoState.CLOSED;
     private LoginRequest loginRequest;
-
-    private JAXBContext createJAXBContext() {
-        try {
-            return JAXBContext.newInstance(ObjectFactory.class);
-        } catch (JAXBException jaxbe) {
-            return null;
-        }
-    }
+    private NexoDeserialiser deserialiser = new NexoDeserialiser();
 
     public void sendXmlMessage(String xml) {
-        Object parsed = parse(xml);
-        if (parsed instanceof SaleToPOIRequest) {
-            SaleToPOIRequest saleToPOIRequest = (SaleToPOIRequest) parsed;
-            if (NexoState.OPEN.equals(state)) {
-                Object request = nexoFlow.decodeNexoRequest(saleToPOIRequest);
+        SaleToPOIRequest saleToPOIRequest = deserialiser.deserialiseXML(xml);
+        if (saleToPOIRequest != null) {
+            Object request = nexoFlow.decodeNexoRequest(saleToPOIRequest);
+            if (NexoState.OPEN.equals(state) || request instanceof LoginNotRequired) {
                 emit(saleToPOIRequest, request);
             } else if (NexoState.CLOSED.equals(state)) {
                 emit(saleToPOIRequest, new RejectedRequest(saleToPOIRequest, ErrorCondition.LOGGED_OUT));
@@ -75,7 +67,7 @@ public class NexoManager {
     private void sendAppflowObject(SaleToPOIRequest request, Object object) {
         SaleToPOIResponse response = nexoFlow.encodeAppFlowObject(request, object);
         if (response != null) {
-            String xml = toXml(response);
+            String xml = deserialiser.serialiseRequest(response);
             if (xml != null) {
                 xmlEmitter.onNext(xml);
             }
@@ -92,28 +84,6 @@ public class NexoManager {
 
     public @NonNull Observable<NexoRequest> getRequests() {
         return requestEmitter;
-    }
-
-    private Object parse(String xml) {
-        try {
-            Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-
-            SaleToPOIRequest parsed = jaxbUnmarshaller.unmarshal(new StreamSource(new StringReader(xml)), SaleToPOIRequest.class).getValue();
-            return parsed;
-        } catch (JAXBException jaxbe) {
-            return null;
-        }
-    }
-
-    public String toXml(Object object) {
-        try {
-            Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
-            StringWriter writer = new StringWriter();
-            jaxbMarshaller.marshal(object, writer);
-            return writer.toString();
-        } catch (JAXBException jaxbe) {
-            return null;
-        }
     }
 
     private void emit(SaleToPOIRequest nexoRequest, Object request) {

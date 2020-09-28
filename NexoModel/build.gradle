@@ -4,6 +4,7 @@ apply plugin: 'org.unbroken-dome.xjc'
 
 group = 'com.aevi.nexo'
 version = "${apiVersion}"
+def jacksonDir = "build/jackson"
 
 apply from: '../publish-repo.gradle'
 
@@ -21,9 +22,58 @@ xjcGenerate {
     extraArgs = [
             '-Xinheritance'
     ]
+    includeInMainCompilation = false
 }
 
-sourceSets.main.java.srcDirs = ['src/main/java']
+task jacksonify(type: Copy) {
+    dependsOn "xjcGenerate"
+    from xjcGenerate.outputDirectory
+    into jacksonDir
+
+    filter {
+        line ->
+            def pattern = /(?<ws>\s*)@XmlElement\(name = \"(?<name>[^\"]*)\"(, required = (?<req>\w*))?(, type = ((?<type>\S*)))?\)/
+            def pattern2 = /(?<ws>\s*)@XmlAttribute\(name = \"(?<name>[^\"]*)\"(, required = (?<req>\w*))?(, type = ((?<type>\S*)))?\)/
+            def xmlElement = line =~ pattern
+            def xmlAttribute = line =~ pattern2
+            if (xmlElement.matches()) {
+                if (xmlElement.group("req") == null) {
+                    return line + "\n" + xmlElement.replaceAll("\${ws}@JsonProperty(\"\${name}\")")
+                } else {
+                    return line + "\n" + xmlElement.replaceAll("\${ws}@JsonProperty(value = \"\${name}\", required = \${req})")
+                }
+            } else if (xmlAttribute.matches()) {
+                if (xmlAttribute.group("req") == null) {
+                    return line + "\n" + xmlAttribute.replaceAll("\${ws}@JsonProperty(\"\${name}\")") + "\n" + xmlAttribute.replaceAll("\${ws}@JacksonXmlProperty(isAttribute = true)")
+                } else {
+                    return line + "\n" + xmlAttribute.replaceAll("\${ws}@JsonProperty(value = \"\${name}\", required = \${req})") + "\n" + xmlAttribute.replaceAll("\${ws}@JacksonXmlProperty(isAttribute = true)")
+                }
+            } else if (line.contains("@XmlAccessorType")) {
+                return null
+            } else if ((line.contains("@XmlElements(") || line.contains("@XmlType(")) && line.endsWith("{")) {
+                return "/* " + line
+            } else if (line.trim().equals("})")) {
+                return line + "*/"
+            } else if (line.contains("import javax.xml.bind.annotation.XmlAccessType;")) {
+                return line + "\nimport com.fasterxml.jackson.annotation.JsonProperty;"
+            } else if (line.contains("import javax.xml.bind.annotation.XmlAttribute;")) {
+                return line + "\nimport com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;"
+            }
+
+            return line
+    }
+
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir file(jacksonDir)
+        }
+    }
+}
+
+compileJava.dependsOn.add("jacksonify")
 
 sourceCompatibility = "1.8"
 targetCompatibility = "1.8"
@@ -35,12 +85,16 @@ dependencies {
     implementation domainDependencies.appFlowPaymentApi
     implementation domainDependencies.appFlowPrintApi
     implementation domainDependencies.zxing
-    compileOnly testDependencies.mockableAndroid
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.11.2'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.11.2'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.11.2'
+    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.11.2"
     xjcClasspath 'org.jvnet.jaxb2_commons:jaxb2-basics:0.11.1'
+    implementation fileTree('build//monkeys')
+    implementation 'org.eclipse.persistence:org.eclipse.persistence.moxy:3.0.0-M1'
 
     testImplementation testDependencies.junit
     testImplementation testDependencies.assertJ
-    testImplementation testDependencies.mockableAndroid
     testImplementation testDependencies.opencsv
     testImplementation testDependencies.xpay
     testImplementation testDependencies.mockito

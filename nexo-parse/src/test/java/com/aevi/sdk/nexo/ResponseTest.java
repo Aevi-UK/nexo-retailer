@@ -1,9 +1,11 @@
 package com.aevi.sdk.nexo;
 
+import com.aevi.sdk.nexo.model.NexoDeserialiser;
 import com.aevi.sdk.nexo.model.ObjectFactory;
 import com.aevi.sdk.nexo.model.Response;
 import com.aevi.sdk.nexo.model.SaleToPOIRequest;
 import com.aevi.sdk.nexo.model.SaleToPOIResponse;
+import com.aevi.sdk.nexo.model.SaleToPOIResponseType;
 
 import java.io.StringReader;
 
@@ -32,25 +34,10 @@ public abstract class ResponseTest {
             + "</SaleTerminalData>\n"
             + "</LoginRequest>\n"
             + "</SaleToPOIRequest>";
-    private JAXBContext jaxbContext = createJAXBContext();
+    private NexoDeserialiser deserialiser = new NexoDeserialiser();
 
-    private JAXBContext createJAXBContext() {
-        try {
-            return JAXBContext.newInstance(ObjectFactory.class);
-        } catch (JAXBException jaxbe) {
-            return null;
-        }
-    }
-
-    protected SaleToPOIResponse parseResponse(String xml) {
-        try {
-            Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-
-            SaleToPOIResponse parsed = (SaleToPOIResponse) jaxbUnmarshaller.unmarshal(new StringReader(xml));
-            return parsed;
-        } catch (JAXBException jaxbe) {
-            return null;
-        }
+    protected SaleToPOIResponseType parseResponse(String xml) {
+        return deserialiser.deserialiseResponseXML(xml);
     }
 
     protected boolean isSuccess(Response response) {

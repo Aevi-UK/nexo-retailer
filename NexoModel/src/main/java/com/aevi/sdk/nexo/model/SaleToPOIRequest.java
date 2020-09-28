@@ -1,6 +1,42 @@
 package com.aevi.sdk.nexo.model;
 
 public class SaleToPOIRequest extends SaleToPOIRequestType {
+    public SaleToPOIRequest() {
+    }
+
+    public SaleToPOIRequest(SaleToPOIRequestType source) {
+        setAbortRequest(source.getAbortRequest());
+        setAdminRequest(source.getAdminRequest());
+        setBalanceInquiryRequest(source.getBalanceInquiryRequest());
+        setBatchRequest(source.getBatchRequest());
+        setCardAcquisitionRequest(source.getCardAcquisitionRequest());
+        setCardReaderAPDURequest(source.getCardReaderAPDURequest());
+        setCardReaderInitRequest(source.getCardReaderInitRequest());
+        setCardReaderPowerOffRequest(source.getCardReaderPowerOffRequest());
+        setDiagnosisRequest(source.getDiagnosisRequest());
+        setDisplayRequest(source.getDisplayRequest());
+        setEnableServiceRequest(source.getEnableServiceRequest());
+        setEventNotification(source.getEventNotification());
+        setGetTotalsRequest(source.getGetTotalsRequest());
+        setInputRequest(source.getInputRequest());
+        setInputUpdate(source.getInputUpdate());
+        setLoginRequest(source.getLoginRequest());
+        setLogoutRequest(source.getLogoutRequest());
+        setLoyaltyRequest(source.getLoyaltyRequest());
+        setMessageHeader(source.getMessageHeader());
+        setPaymentRequest(source.getPaymentRequest());
+        setPINRequest(source.getPINRequest());
+        setPrintRequest(source.getPrintRequest());
+        setReconciliationRequest(source.getReconciliationRequest());
+        setReversalRequest(source.getReversalRequest());
+        setSecurityTrailer(source.getSecurityTrailer());
+        setSoundRequest(source.getSoundRequest());
+        setStoredValueRequest(source.getStoredValueRequest());
+        setTransactionReportRequest(source.getTransactionReportRequest());
+        setTransactionStatusRequest(source.getTransactionStatusRequest());
+        setTransmitRequest(source.getTransmitRequest());
+    }
+
     public ResponseHolder createResponseHolder() {
         if (getAdminRequest() != null) {
             return new AdminResponse();

@@ -137,6 +137,6 @@ public class PaymentResponseTranslator extends ResponseTranslator<PaymentRespons
 
     @Override
     public boolean translatesFrom(Object appFlowObject) {
-        return appFlowObject instanceof LoginFailure;
+        return appFlowObject instanceof PaymentResponse;
     }
 }

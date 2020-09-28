@@ -2,6 +2,7 @@ package com.aevi.sdk.nexo;
 
 import com.aevi.sdk.nexo.model.ObjectFactory;
 import com.aevi.sdk.nexo.model.SaleToPOIRequest;
+import com.aevi.sdk.nexo.model.SaleToPOIRequestType;
 import com.aevi.sdk.nexo.translators.requests.SaleRequestTranslator;
 
 import org.junit.Test;
@@ -73,9 +74,9 @@ public class NexoTest {
     private Object parse(String xml) throws Exception {
         JAXBContext jaxbContext = JAXBContext.newInstance(ObjectFactory.class);
         Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-        SaleToPOIRequest parsed = (SaleToPOIRequest) jaxbUnmarshaller.unmarshal(new StringReader(xml));
+        SaleToPOIRequestType parsed = (SaleToPOIRequestType) jaxbUnmarshaller.unmarshal(new StringReader(xml));
 
         SaleRequestTranslator saleRequestTranslator = new SaleRequestTranslator();
-        return saleRequestTranslator.translate(parsed);
+        return saleRequestTranslator.translate(new SaleToPOIRequest(parsed));
     }
 }
