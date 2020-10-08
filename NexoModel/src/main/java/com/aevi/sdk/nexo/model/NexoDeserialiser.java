@@ -10,9 +10,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
-
-import org.eclipse.persistence.jaxb.xmlmodel.XmlMap;
+//import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
 
 public class NexoDeserialiser {
     private ObjectMapper configureJson(ObjectMapper objectMapper) {
@@ -36,6 +34,17 @@ public class NexoDeserialiser {
                         .withSetterVisibility(JsonAutoDetect.Visibility.NONE)
                         .withCreatorVisibility(JsonAutoDetect.Visibility.NONE));
         return objectMapper;
+    }
+
+    public SaleToPOIRequest deserialise(String message, MessageFormat format) {
+        switch (format) {
+            case XML:
+                return deserialiseXML(message);
+            case JSON:
+                return deserialiseJSON(message);
+            default:
+                return null;
+        }
     }
 
     public SaleToPOIRequest deserialiseXML(String xml) {
@@ -78,7 +87,7 @@ public class NexoDeserialiser {
         try {
             ObjectMapper objectMapper = configureJson(new JsonMapper());
 
-            SaleToPOIResponseType value = objectMapper.readValue(xml, SaleToPOIResponseType.class);
+            SaleToPOIResponse value = objectMapper.readValue(xml, SaleToPOIResponse.class);
             System.err.println("!! " + value);
             return value;
         } catch (JsonProcessingException jpe) {
@@ -92,7 +101,7 @@ public class NexoDeserialiser {
         try {
             XmlMapper objectMapper = ((XmlMapper) configure(new XmlMapper()))
                     .setDefaultUseWrapper(false);
-            objectMapper.registerModule(new JaxbAnnotationModule());
+//            objectMapper.registerModule(new JaxbAnnotationModule());
 
             String value = objectMapper.writeValueAsString(object);
             return value;

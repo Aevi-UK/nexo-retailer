@@ -52,6 +52,8 @@ task jacksonify(type: Copy) {
                 return null
             } else if ((line.contains("@XmlElements(") || line.contains("@XmlType(")) && line.endsWith("{")) {
                 return "/* " + line
+            } else if (line.contains("import javax.xml.bind.JAXBElement")) {
+                return "import com.aevi.javax.xml.bind.JAXBElement;"
             } else if (line.trim().equals("})")) {
                 return line + "*/"
             } else if (line.contains("import javax.xml.bind.annotation.XmlAccessType;")) {
@@ -88,10 +90,9 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-core:2.11.2'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.11.2'
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.11.2'
-    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.11.2"
+    implementation fileTree(dir: 'libs', include: '*.jar')
+
     xjcClasspath 'org.jvnet.jaxb2_commons:jaxb2-basics:0.11.1'
-    implementation fileTree('build//monkeys')
-    implementation 'org.eclipse.persistence:org.eclipse.persistence.moxy:3.0.0-M1'
 
     testImplementation testDependencies.junit
     testImplementation testDependencies.assertJ

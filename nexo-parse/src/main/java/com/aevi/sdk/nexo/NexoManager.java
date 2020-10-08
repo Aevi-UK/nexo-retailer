@@ -13,8 +13,8 @@ import com.aevi.sdk.nexo.extramodel.responses.LogoutFailure;
 import com.aevi.sdk.nexo.manager.NexoState;
 import com.aevi.sdk.nexo.model.ErrorCondition;
 import com.aevi.sdk.nexo.model.LoginRequest;
+import com.aevi.sdk.nexo.model.MessageFormat;
 import com.aevi.sdk.nexo.model.NexoDeserialiser;
-import com.aevi.sdk.nexo.model.ObjectFactory;
 import com.aevi.sdk.nexo.model.POISoftware;
 import com.aevi.sdk.nexo.model.POIStatus;
 import com.aevi.sdk.nexo.model.POISystemData;
@@ -23,15 +23,7 @@ import com.aevi.sdk.nexo.model.SaleToPOIRequest;
 import com.aevi.sdk.nexo.model.SaleToPOIResponse;
 import com.aevi.sdk.nexo.translators.NexoFlow;
 
-import java.io.StringReader;
-import java.io.StringWriter;
 import java.time.ZonedDateTime;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.transform.stream.StreamSource;
 
 import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
@@ -41,6 +33,7 @@ import io.reactivex.subjects.PublishSubject;
  */
 public class NexoManager {
     private final PublishSubject<String> xmlEmitter = PublishSubject.create();
+    private final PublishSubject<String> jsonEmitter = PublishSubject.create();
     private final PublishSubject<NexoRequest> requestEmitter = PublishSubject.create();
     private final PublishSubject<NexoCommsStatus> commsStatusEmitter = PublishSubject.create();
 
@@ -51,25 +44,45 @@ public class NexoManager {
     private NexoDeserialiser deserialiser = new NexoDeserialiser();
 
     public void sendXmlMessage(String xml) {
-        SaleToPOIRequest saleToPOIRequest = deserialiser.deserialiseXML(xml);
+        sendMessage(xml, MessageFormat.XML);
+    }
+
+    public void sendJSONMessage(String json) {
+        sendMessage(json, MessageFormat.JSON);
+    }
+
+    public void sendMessage(String message, MessageFormat format) {
+        SaleToPOIRequest saleToPOIRequest = deserialiser.deserialise(message, format);
         if (saleToPOIRequest != null) {
             Object request = nexoFlow.decodeNexoRequest(saleToPOIRequest);
             if (NexoState.OPEN.equals(state) || request instanceof LoginNotRequired) {
-                emit(saleToPOIRequest, request);
+                emit(saleToPOIRequest, request, format);
             } else if (NexoState.CLOSED.equals(state)) {
-                emit(saleToPOIRequest, new RejectedRequest(saleToPOIRequest, ErrorCondition.LOGGED_OUT));
+                emit(saleToPOIRequest, new RejectedRequest(saleToPOIRequest, ErrorCondition.LOGGED_OUT), format);
             } else {
-                emit(saleToPOIRequest, new RejectedRequest(saleToPOIRequest, ErrorCondition.BUSY));
+                emit(saleToPOIRequest, new RejectedRequest(saleToPOIRequest, ErrorCondition.BUSY), format);
             }
         }
     }
 
-    private void sendAppflowObject(SaleToPOIRequest request, Object object) {
+    private void sendAppflowObject(SaleToPOIRequest request, Object object, MessageFormat format) {
+        System.err.println("BORTLES: Sending appflow object " + object);
         SaleToPOIResponse response = nexoFlow.encodeAppFlowObject(request, object);
+        System.err.println("BORTLES: Encoded response is " + response);
         if (response != null) {
-            String xml = deserialiser.serialiseRequest(response);
-            if (xml != null) {
-                xmlEmitter.onNext(xml);
+            switch (format) {
+                case JSON:
+                    String json = deserialiser.serialiseRequestJSON(response);
+                    if (json != null) {
+                        jsonEmitter.onNext(json);
+                    }
+                    break;
+                case XML:
+                    String xml = deserialiser.serialiseRequest(response);
+                    if (xml != null) {
+                        xmlEmitter.onNext(xml);
+                    }
+                    break;
             }
         }
     }
@@ -82,36 +95,40 @@ public class NexoManager {
         return xmlEmitter;
     }
 
+    public @NonNull Observable<String> getOutputJSON() {
+        return jsonEmitter;
+    }
+
     public @NonNull Observable<NexoRequest> getRequests() {
         return requestEmitter;
     }
 
-    private void emit(SaleToPOIRequest nexoRequest, Object request) {
+    private void emit(SaleToPOIRequest nexoRequest, Object request, MessageFormat format) {
         // Handle special cases
         if (request instanceof Login) {
             if (login((Login) request)) {
-                sendAppflowObject(nexoRequest, new LoggedIn());
+                sendAppflowObject(nexoRequest, new LoggedIn(), format);
             } else {
-                sendAppflowObject(nexoRequest, new LoginFailure());
+                sendAppflowObject(nexoRequest, new LoginFailure(), format);
             }
         } else if (request instanceof Logout) {
             if (logout((Logout) request)) {
-                sendAppflowObject(nexoRequest, new LoggedOut());
+                sendAppflowObject(nexoRequest, new LoggedOut(), format);
             } else {
-                sendAppflowObject(nexoRequest, new LogoutFailure());
+                sendAppflowObject(nexoRequest, new LogoutFailure(), format);
             }
         } else if (request instanceof RejectedRequest) {
-            sendAppflowObject(nexoRequest, request);
+            sendAppflowObject(nexoRequest, request, format);
         }
 
-        requestEmitter.onNext(createRequest(nexoRequest, request));
+        requestEmitter.onNext(createRequest(nexoRequest, request, format));
     }
 
-    private NexoRequest createRequest(final SaleToPOIRequest nexoRequest, Object request) {
+    private NexoRequest createRequest(final SaleToPOIRequest nexoRequest, Object request, MessageFormat format) {
         return new NexoRequest(request) {
             @Override
             public void sendResponse(Object response) {
-                sendAppflowObject(nexoRequest, response);
+                sendAppflowObject(nexoRequest, response, format);
             }
         };
     }

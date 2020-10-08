@@ -4,11 +4,13 @@ import com.aevi.sdk.flow.constants.AmountIdentifiers;
 import com.aevi.sdk.flow.constants.PaymentMethods;
 import com.aevi.sdk.nexo.extramodel.responses.LoginFailure;
 import com.aevi.sdk.nexo.model.AmountsResp;
+import com.aevi.sdk.nexo.model.CardData;
 import com.aevi.sdk.nexo.model.LoginResponse;
 import com.aevi.sdk.nexo.model.MessageCategory;
 import com.aevi.sdk.nexo.model.MessageHeader;
 import com.aevi.sdk.nexo.model.MessageType;
 import com.aevi.sdk.nexo.model.POIData;
+import com.aevi.sdk.nexo.model.PaymentAcquirerData;
 import com.aevi.sdk.nexo.model.PaymentInstrumentData;
 import com.aevi.sdk.nexo.model.PaymentInstrumentType;
 import com.aevi.sdk.nexo.model.PaymentRequest;
@@ -19,7 +21,9 @@ import com.aevi.sdk.nexo.model.SaleToPOIResponse;
 import com.aevi.sdk.nexo.model.SaleToPOIResponseType;
 import com.aevi.sdk.nexo.model.TransactionIdentification;
 import com.aevi.sdk.pos.flow.model.Amounts;
+import com.aevi.sdk.pos.flow.model.Card;
 import com.aevi.sdk.pos.flow.model.PaymentResponse;
+import com.aevi.sdk.pos.flow.model.TransactionResponse;
 
 import java.math.BigDecimal;
 
@@ -33,6 +37,7 @@ public class PaymentResponseTranslator extends ResponseTranslator<PaymentRespons
         paymentResponse.setPOIData(poiData(appFlowObject, originalRequest.getPaymentRequest()));
         paymentResponse.setSaleData(saleData(appFlowObject, originalRequest.getPaymentRequest()));
         paymentResponse.setResponse(response("Success")); // TODO later not all payments are successes...
+        saleToPOIResponse.setPaymentResponse(paymentResponse);
         return saleToPOIResponse;
     }
 
@@ -106,6 +111,7 @@ public class PaymentResponseTranslator extends ResponseTranslator<PaymentRespons
             switch (type) {
                 case CARD:
                     // TODO copy card data
+                    paymentInstrumentData.setCardData(cardData(paymentResponse));
                     break;
                 case CHECK:
                     // TODO copy check data
@@ -113,6 +119,15 @@ public class PaymentResponseTranslator extends ResponseTranslator<PaymentRespons
             }
         }
         return paymentInstrumentData;
+    }
+
+    private CardData cardData(PaymentResponse paymentResponse) {
+        TransactionResponse response = paymentResponse.getTransactions().get(0).getPaymentAppResponse(); // Dangerous?
+        Card card = response.getCard();
+
+        CardData cardData = new CardData();
+        cardData.setMaskedPAN(card.getMaskedPan());
+        return cardData;
     }
 
     private AmountsResp amounts(Amounts amounts) {

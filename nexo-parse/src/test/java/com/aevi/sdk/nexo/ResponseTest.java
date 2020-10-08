@@ -34,7 +34,8 @@ public abstract class ResponseTest {
             + "</SaleTerminalData>\n"
             + "</LoginRequest>\n"
             + "</SaleToPOIRequest>";
-    private NexoDeserialiser deserialiser = new NexoDeserialiser();
+
+    protected NexoDeserialiser deserialiser = new NexoDeserialiser();
 
     protected SaleToPOIResponseType parseResponse(String xml) {
         return deserialiser.deserialiseResponseXML(xml);
