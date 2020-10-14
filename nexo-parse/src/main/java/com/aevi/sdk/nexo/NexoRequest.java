@@ -1,5 +1,6 @@
 package com.aevi.sdk.nexo;
 
+import com.aevi.sdk.flow.model.FlowEvent;
 import com.aevi.sdk.flow.model.Request;
 import com.aevi.sdk.nexo.extramodel.NexoModel;
 import com.aevi.sdk.pos.flow.model.Payment;
@@ -23,6 +24,10 @@ public abstract class NexoRequest {
         return request instanceof Request;
     }
 
+    public boolean isAppFlowEvent() {
+        return request instanceof FlowEvent;
+    }
+
     public Payment getAsAppFlowPayment() {
         return isAppFlowPayment() ? (Payment) request : null;
     }
@@ -33,6 +38,10 @@ public abstract class NexoRequest {
 
     public Request getAsAppFlowRequest() {
         return isAppFlowRequest() ? (Request) request : null;
+    }
+
+    public FlowEvent getAsAppFlowEvent() {
+        return isAppFlowEvent() ? (FlowEvent) request : null;
     }
 
     public abstract void sendResponse(Object response);

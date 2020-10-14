@@ -1,6 +1,7 @@
 apply plugin: 'java'
 apply plugin: 'java-library'
 apply plugin: 'org.unbroken-dome.xjc'
+apply plugin: 'org.anarres.jarjar'
 
 group = 'com.aevi.nexo'
 version = "${apiVersion}"
@@ -87,10 +88,20 @@ dependencies {
     implementation domainDependencies.appFlowPaymentApi
     implementation domainDependencies.appFlowPrintApi
     implementation domainDependencies.zxing
-    implementation 'com.fasterxml.jackson.core:jackson-core:2.11.2'
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.11.2'
-    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.11.2'
-    implementation fileTree(dir: 'libs', include: '*.jar')
+
+    implementation jarjar.repackage {
+        from 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.11.1'
+        from 'com.fasterxml:aalto-xml:1.2.2'
+        from 'javax.xml.stream:stax-api:1.0-2'
+        from 'org.codehaus.woodstox:stax2-api:4.2.1'
+        from 'com.fasterxml.jackson.module:jackson-module-jaxb-annotations:2.11.3'
+        from 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.11.2'
+
+        classRename 'javax.xml.stream.**', 'com.aevi.javax.xml.stream.@1'
+        classRename 'javax.xml.bind.**', 'com.aevi.javax.xml.bind.@1'
+        classRename 'com.bea.xml.stream.MXParserFactory', 'com.fasterxml.aalto.stax.InputFactoryImpl'
+        classRename 'com.bea.xml.stream.XMLOutputFactoryBase', 'com.fasterxml.aalto.stax.OutputFactoryImpl'
+    }
 
     xjcClasspath 'org.jvnet.jaxb2_commons:jaxb2-basics:0.11.1'
 

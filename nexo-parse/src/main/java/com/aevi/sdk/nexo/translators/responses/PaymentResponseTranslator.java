@@ -44,6 +44,7 @@ public class PaymentResponseTranslator extends ResponseTranslator<PaymentRespons
     private SaleData saleData(PaymentResponse paymentResponse, PaymentRequest originalRequest) {
         SaleData saleData = new SaleData();
         saleData.setSaleTransactionID(originalRequest.getSaleData().getSaleTransactionID());
+        System.out.println("BORTLES: References for sale data are " + paymentResponse.getTransactions().get(0).getPaymentAppResponse().getReferences());
 //        saleData.setSaleReferenceID(); // Mandatory if payment reservation or if CustomerOrder is present
         return saleData;
     }

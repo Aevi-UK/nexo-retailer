@@ -54,7 +54,7 @@ public class NexoManager {
     public void sendMessage(String message, MessageFormat format) {
         SaleToPOIRequest saleToPOIRequest = deserialiser.deserialise(message, format);
         if (saleToPOIRequest != null) {
-            Object request = nexoFlow.decodeNexoRequest(saleToPOIRequest);
+            Object request = nexoFlow.decodeNexoRequest(saleToPOIRequest, loginRequest);
             if (NexoState.OPEN.equals(state) || request instanceof LoginNotRequired) {
                 emit(saleToPOIRequest, request, format);
             } else if (NexoState.CLOSED.equals(state)) {

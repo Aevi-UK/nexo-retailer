@@ -6,7 +6,8 @@ import com.aevi.sdk.nexo.translators.NexoToAppFlow;
 
 public class LoginRequestTranslator implements NexoToAppFlow<LoginRequest, Login> {
     @Override
-    public Login translate(LoginRequest loginRequest) {
+    public Login translate(LoginRequest loginRequest, LoginRequest existingLogin) {
+        // New login request should supersede the existing one
         return new Login(loginRequest);
     }
 }

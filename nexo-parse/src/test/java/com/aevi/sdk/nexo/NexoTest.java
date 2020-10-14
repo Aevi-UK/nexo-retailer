@@ -77,6 +77,6 @@ public class NexoTest {
         SaleToPOIRequestType parsed = (SaleToPOIRequestType) jaxbUnmarshaller.unmarshal(new StringReader(xml));
 
         SaleRequestTranslator saleRequestTranslator = new SaleRequestTranslator();
-        return saleRequestTranslator.translate(new SaleToPOIRequest(parsed));
+        return saleRequestTranslator.translate(new SaleToPOIRequest(parsed), );
     }
 }

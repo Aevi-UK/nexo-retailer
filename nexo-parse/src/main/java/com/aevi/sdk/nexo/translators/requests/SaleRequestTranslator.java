@@ -1,21 +1,23 @@
 package com.aevi.sdk.nexo.translators.requests;
 
 import com.aevi.sdk.nexo.extramodel.RejectedRequest;
+import com.aevi.sdk.nexo.model.LoginRequest;
 import com.aevi.sdk.nexo.translators.NexoToAppFlow;
 import com.aevi.sdk.nexo.model.SaleToPOIRequest;
 
 public class SaleRequestTranslator implements NexoToAppFlow<SaleToPOIRequest, Object> {
+    private static final AbortRequestTranslator ABORT_REQUEST_TRANSLATOR = new AbortRequestTranslator();
     private static final PaymentRequestTranslator PAYMENT_REQUEST_TRANSLATOR = new PaymentRequestTranslator();
     private static final LoginRequestTranslator LOGIN_REQUEST_TRANSLATOR = new LoginRequestTranslator();
     private static final LogoutRequestTranslator LOGOUT_REQUEST_TRANSLATOR = new LogoutRequestTranslator();
 
     @Override
-    public Object translate(SaleToPOIRequest nexoObject) {
+    public Object translate(SaleToPOIRequest nexoObject, LoginRequest loginRequest) {
         RequestType type = RequestType.requestTypeFromSaleRequest(nexoObject);
         if (nexoObject.getPaymentRequest() != null) {
-            return PAYMENT_REQUEST_TRANSLATOR.translate(nexoObject.getPaymentRequest());
+            return PAYMENT_REQUEST_TRANSLATOR.translate(nexoObject.getPaymentRequest(), loginRequest);
         } else if (nexoObject.getAbortRequest() != null) {
-            // ABORT
+            return ABORT_REQUEST_TRANSLATOR.translate(nexoObject.getAbortRequest(), loginRequest);
         } else if (nexoObject.getAdminRequest() != null) {
             // ADMIN
         } else if (nexoObject.getBalanceInquiryRequest() != null) {
@@ -45,9 +47,9 @@ public class SaleRequestTranslator implements NexoToAppFlow<SaleToPOIRequest, Ob
         } else if (nexoObject.getInputUpdate() != null) {
             // INPUT UPDATE
         } else if (nexoObject.getLoginRequest() != null) {
-            return LOGIN_REQUEST_TRANSLATOR.translate(nexoObject.getLoginRequest());
+            return LOGIN_REQUEST_TRANSLATOR.translate(nexoObject.getLoginRequest(), loginRequest);
         } else if (nexoObject.getLogoutRequest() != null) {
-            return LOGOUT_REQUEST_TRANSLATOR.translate(nexoObject.getLogoutRequest());
+            return LOGOUT_REQUEST_TRANSLATOR.translate(nexoObject.getLogoutRequest(), loginRequest);
         } else if (nexoObject.getLoyaltyRequest() != null) {
             // LOYALTY
         } else if (nexoObject.getPINRequest() != null) {
