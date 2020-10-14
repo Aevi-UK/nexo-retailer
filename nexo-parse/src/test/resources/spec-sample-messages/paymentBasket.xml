@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SaleToPOIRequest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="NexoSaleToPOIMessages.xsd">
+    <MessageHeader MessageClass="Service" MessageCategory="Payment"
+        MessageType="Request" ServiceID="643" SaleID="SaleTermA" POIID="POITerm1"/>
+    <PaymentRequest>
+        <SaleData>
+            <SaleTransactionID TransactionID="581" TimeStamp="2015-04-
+06T10:42:34.1+01:00"/>
+        </SaleData>
+        <PaymentTransaction>
+            <AmountsReq Currency="EUR" RequestedAmount="38.52"/>
+            <TransactionConditions LoyaltyHandling="Forbidden"/>
+            <SaleItem ItemID="1" ProductCode="673" EanUpc="84116369" ItemAmount="2.30">
+                <Quantity>2</Quantity>
+                <UnitPrice>1.15</UnitPrice>
+                <ProductLabel>Mineral Water 1,5L</ProductLabel>
+            </SaleItem>
+            <SaleItem ItemID="2" ProductCode="101" ItemAmount="33.22">
+                <UnitOfMeasure>Litre</UnitOfMeasure>
+                <Quantity>38.23</Quantity>
+                <UnitPrice>0.869</UnitPrice>
+                <ProductLabel>Diesel Fuel</ProductLabel>
+            </SaleItem>
+        </PaymentTransaction>
+        <PaymentData PaymentType="Normal"/>
+    </PaymentRequest>
+</SaleToPOIRequest>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SaleToPOIRequest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="NexoSaleToPOIMessages.xsd">
+    <MessageHeader MessageClass="Service" MessageCategory="StoredValue"
+        MessageType="Request" ServiceID="630" SaleID="SaleTermA" POIID="POITerm1"/>
+    <StoredValueRequest>
+        <SaleData>
+            <SaleTransactionID TransactionID="580" TimeStamp="2009-07-
+22T23:08:42.4+01:00"/>
+        </SaleData>
+        <StoredValueData StoredValueTransactionType="Load" ProductCode="512"
+            ItemAmount="14.99" Currency="EUR"/>
+    </StoredValueRequest>
+</SaleToPOIRequest>

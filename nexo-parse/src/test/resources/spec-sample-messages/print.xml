@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SaleToPOIRequest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="NexoSaleToPOIMessages.xsd">
+    <MessageHeader MessageClass="Device" MessageCategory="Print"
+        MessageType="Request" ServiceID="675" DeviceID="1375" SaleID="SaleTermA"
+        POIID="POITerm1"/>
+    <PrintRequest>
+        <PrintOutput DocumentQualifier="CustomerReceipt" ResponseMode="PrintEnd">
+            <OutputContent OutputFormat="XHTML">
+                <OutputXHTML>
+                    PGJpZz48Yj5QYXBhZGVhdXggU2VhZm9vZCBLaXRjaGVuPC9iPjwvYmlnPjxwPjEwNzkgRGF2a
+                    XMgRHIuIC0gQWxwaGFyZXR0YSBHQSAzMDAyMjwvcD48cD4xMjo1NDowNyAwNC8zMC8yMDA5PC
+                    9wPjxwPlZpc2EgKioqKio1OTczPC9wPjxiaWc+PHA+QW1vdW50OiA8Yj4kMTguMDA8L2I+PC9
+                    wPjxwPkF1dGggQ29kZTogMjM3MTYyPC9wPjwvYmlnPj48cD5DdXN0b21lciBDb3B5PC9wPg==
+                </OutputXHTML>
+            </OutputContent>
+        </PrintOutput>
+    </PrintRequest>
+</SaleToPOIRequest>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SaleToPOIRequest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="NexoSaleToPOIMessages.xsd">
+    <MessageHeader MessageClass="Device" MessageCategory="Transmit"
+        MessageType="Request" ServiceID="675" DeviceID="1" SaleID="SaleTermA"
+        POIID="POITerm1"/>
+    <TransmitRequest MaximumTransmitTime="30" DestinationAddress="acquirer.com:8080">
+        <Message>
+            PEF1dGhSZXEgQW1vdW50PSIxMDAwIiBQQU49IjkxNjQ2NSI+PC9BdXRoUmVxPg==
+        </Message>
+    </TransmitRequest>
+</SaleToPOIRequest>

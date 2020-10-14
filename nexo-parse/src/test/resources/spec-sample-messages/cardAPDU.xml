@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SaleToPOIRequest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="NexoSaleToPOIMessages.xsd">
+    <MessageHeader MessageClass="Device" MessageCategory="CardReaderAPDU"
+        MessageType="Request" DeviceID="422" SaleID="SaleTermA" POIID="POITerm1"/>
+    <CardReaderAPDURequest APDUClass="AA==" APDUInstruction="pA==" APDUPar1="BA=="
+        APDUPar2="AA==" APDUExpectedLength="Bw==">
+        <APDUData>oAAAAEIQEA==</APDUData>
+    </CardReaderAPDURequest>
+</SaleToPOIRequest>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SaleToPOIRequest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="NexoSaleToPOIMessages.xsd">
+    <MessageHeader MessageClass="Service" MessageCategory="Admin"
+        MessageType="Request" ServiceID="613" SaleID="SaleTermA" POIID="POITerm1"/>
+    <AdminRequest/>
+</SaleToPOIRequest>

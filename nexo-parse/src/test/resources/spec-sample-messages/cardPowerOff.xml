@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SaleToPOIRequest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="NexoSaleToPOIMessages.xsd">
+    <MessageHeader MessageClass="Device" MessageCategory="CardReaderPowerOff"
+        MessageType="Request" DeviceID="423" SaleID="SaleTermA" POIID="POITerm1"/>
+    <CardReaderPowerOffRequest>
+        <DisplayOutput Device="CustomerDisplay" InfoQualify="Display">
+            <OutputContent OutputFormat="Text">
+                <OutputText>Please Remove Your Card</OutputText>
+            </OutputContent>
+        </DisplayOutput>
+    </CardReaderPowerOffRequest>
+</SaleToPOIRequest>

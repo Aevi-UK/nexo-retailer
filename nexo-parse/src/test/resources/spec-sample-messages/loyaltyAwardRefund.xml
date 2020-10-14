@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SaleToPOIRequest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="NexoSaleToPOIMessages.xsd">
+    <MessageHeader MessageClass="Service" MessageCategory="Loyalty"
+        MessageType="Request" ServiceID="666" SaleID="SaleTermA" POIID="POITerm1"/>
+    <LoyaltyRequest>
+        <SaleData>
+            <SaleTransactionID TransactionID="582" TimeStamp="2009-08-
+09T18:33:21.9+01:00"/>
+        </SaleData>
+        <LoyaltyTransaction LoyaltyTransactionType="Award" Currency="EUR"
+            TotalAmount="48.19"/>
+    </LoyaltyRequest>
+</SaleToPOIRequest>

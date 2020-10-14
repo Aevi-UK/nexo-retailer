@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SaleToPOIRequest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="NexoSaleToPOIMessages.xsd">
+    <MessageHeader MessageClass="Device" MessageCategory="CardReaderInit"
+        MessageType="Request" DeviceID="385" SaleID="SaleTermA" POIID="POITerm1"/>
+    <CardReaderInitRequest>
+        <DisplayOutput Device="CustomerDisplay" InfoQualify="Display">
+            <OutputContent OutputFormat="Text">
+                <OutputText>Please Enter Your Card</OutputText>
+            </OutputContent>
+        </DisplayOutput>
+    </CardReaderInitRequest>
+</SaleToPOIRequest>

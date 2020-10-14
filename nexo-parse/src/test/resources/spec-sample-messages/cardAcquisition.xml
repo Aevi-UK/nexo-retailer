@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SaleToPOIRequest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="NexoSaleToPOIMessages.xsd">
+    <MessageHeader MessageClass="Service" MessageCategory="CardAcquisition"
+        MessageType="Request" ServiceID="653" SaleID="SaleTermA" POIID="POITerm1"/>
+    <CardAcquisitionRequest>
+        <SaleData>
+            <SaleTransactionID TransactionID="589" TimeStamp="2009-08-
+05T22:17:52.33+01:00"/>
+        </SaleData>
+        <CardAcquisitionTransaction LoyaltyHandling="Forbidden"
+            ForceCustomerSelectionFlag="true" />
+    </CardAcquisitionRequest>
+</SaleToPOIRequest>

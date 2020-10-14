@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SaleToPOIRequest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="NexoSaleToPOIMessages.xsd">
+    <MessageHeader MessageClass="Service" MessageCategory="EnableService"
+        MessageType="Request" ServiceID="640" SaleID="SaleTermA" POIID="POITerm1"/>
+    <EnableServiceRequest TransactionAction="StartTransaction">
+        <ServicesEnabled>Payment</ServicesEnabled>
+        <DisplayOutput Device="CustomerDisplay" InfoQualify="Display">
+            <OutputContent OutputFormat="Text">
+                <OutputText>Please, enter your card</OutputText>
+            </OutputContent>
+        </DisplayOutput>
+    </EnableServiceRequest>
+</SaleToPOIRequest>
