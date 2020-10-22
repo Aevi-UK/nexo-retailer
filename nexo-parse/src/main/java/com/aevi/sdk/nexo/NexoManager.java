@@ -66,9 +66,7 @@ public class NexoManager {
     }
 
     private void sendAppflowObject(SaleToPOIRequest request, Object object, MessageFormat format) {
-        System.err.println("BORTLES: Sending appflow object " + object);
         SaleToPOIResponse response = nexoFlow.encodeAppFlowObject(request, object);
-        System.err.println("BORTLES: Encoded response is " + response);
         if (response != null) {
             switch (format) {
                 case JSON:
