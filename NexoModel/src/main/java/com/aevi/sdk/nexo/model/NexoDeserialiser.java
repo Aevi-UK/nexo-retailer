@@ -23,7 +23,7 @@ public class NexoDeserialiser {
     }
 
     private ObjectMapper configureXml(XmlMapper objectMapper) {
-        objectMapper.configOverride(BalanceInquiryRequest.class).setSetterInfo(Nulls.AS_EMPTY);
+//        objectMapper.configOverride(BalanceInquiryRequest.class).setSetterInfo(Nulls.AS_EMPTY);
         return configure(objectMapper.disable(FromXmlParser.Feature.EMPTY_ELEMENT_AS_NULL));
     }
 

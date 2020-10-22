@@ -35,6 +35,32 @@ public class SaleToPOIRequest extends SaleToPOIRequestType {
         setTransactionReportRequest(source.getTransactionReportRequest());
         setTransactionStatusRequest(source.getTransactionStatusRequest());
         setTransmitRequest(source.getTransmitRequest());
+
+        checkValues();
+    }
+
+    private void checkValues() {
+        // Parsing can sometimes ignore empty requests - in these cases, repopulate the request
+        if (isNull(abortRequest, adminRequest, balanceInquiryRequest, batchRequest,
+                cardAcquisitionRequest, cardReaderAPDURequest, cardReaderInitRequest,
+                cardReaderPowerOffRequest, diagnosisRequest, displayRequest, enableServiceRequest,
+                eventNotification, inputRequest, inputUpdate, loginRequest, logoutRequest,
+                loyaltyRequest, paymentRequest, pinRequest, printRequest, reconciliationRequest,
+                reversalRequest, soundRequest, storedValueRequest, transactionReportRequest,
+                transactionStatusRequest, transmitRequest)) {
+            if (messageHeader != null && MessageCategory.BALANCE_INQUIRY.value().equals(messageHeader.getMessageCategory())) {
+                setBalanceInquiryRequest(new BalanceInquiryRequest());
+            }
+        }
+    }
+
+    private boolean isNull(Object... objects) {
+        for (Object object : objects) {
+            if (object != null) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public ResponseHolder createResponseHolder() {
