@@ -104,6 +104,8 @@ public class NexoManager {
     }
 
     private void emit(SaleToPOIRequest nexoRequest, Object request, MessageFormat format) {
+        boolean emitRequest = true;
+
         // Handle special cases
         if (request instanceof Login) {
             if (login((Login) request)) {
@@ -119,9 +121,12 @@ public class NexoManager {
             }
         } else if (request instanceof RejectedRequest) {
             sendAppflowObject(nexoRequest, request, format);
+            emitRequest = false;
         }
 
-        requestEmitter.onNext(createRequest(nexoRequest, request, format));
+        if (emitRequest) {
+            requestEmitter.onNext(createRequest(nexoRequest, request, format));
+        }
     }
 
     private NexoRequest createRequest(final SaleToPOIRequest nexoRequest, Object request, MessageFormat format) {

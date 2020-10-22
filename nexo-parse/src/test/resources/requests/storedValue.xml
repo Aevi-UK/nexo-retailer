@@ -5,10 +5,8 @@
         MessageType="Request" ServiceID="630" SaleID="SaleTermA" POIID="POITerm1"/>
     <StoredValueRequest>
         <SaleData>
-            <SaleTransactionID TransactionID="580" TimeStamp="2009-07-
-22T23:08:42.4+01:00"/>
+            <SaleTransactionID TransactionID="580" TimeStamp="2009-07-22T23:08:42.4+01:00"/>
         </SaleData>
-        <StoredValueData StoredValueTransactionType="Load" ProductCode="512"
-            ItemAmount="14.99" Currency="EUR"/>
+        <StoredValueData StoredValueTransactionType="Load" ProductCode="512" ItemAmount="14.99" Currency="EUR"/>
     </StoredValueRequest>
 </SaleToPOIRequest>

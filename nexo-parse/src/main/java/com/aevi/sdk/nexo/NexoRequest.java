@@ -44,5 +44,9 @@ public abstract class NexoRequest {
         return isAppFlowEvent() ? (FlowEvent) request : null;
     }
 
+    public Object getRaw() {
+        return request;
+    }
+
     public abstract void sendResponse(Object response);
 }

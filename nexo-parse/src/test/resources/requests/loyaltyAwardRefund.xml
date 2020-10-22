@@ -5,8 +5,7 @@
         MessageType="Request" ServiceID="666" SaleID="SaleTermA" POIID="POITerm1"/>
     <LoyaltyRequest>
         <SaleData>
-            <SaleTransactionID TransactionID="582" TimeStamp="2009-08-
-09T18:33:21.9+01:00"/>
+            <SaleTransactionID TransactionID="582" TimeStamp="2009-08-09T18:33:21.9+01:00"/>
         </SaleData>
         <LoyaltyTransaction LoyaltyTransactionType="Award" Currency="EUR"
             TotalAmount="48.19"/>

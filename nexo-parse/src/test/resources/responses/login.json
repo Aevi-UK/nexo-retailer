@@ -1,0 +1,1 @@
+{"SaleToPOIResponse":{"MessageHeader":{"ProtocolVersion":"3.0","MessageClass":"Service","MessageCategory":"Login","MessageType":"Response","ServiceID":"498","SaleID":"SaleTermA","POIID":"POITerm1"},"LoginResponse":{"Response":{"Result":"Success"}}}}

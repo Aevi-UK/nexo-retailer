@@ -51,6 +51,8 @@ task jacksonify(type: Copy) {
                 }
             } else if (line.contains("@XmlAccessorType")) {
                 return null
+            } else if (line.contains("@XmlValue")) {
+                return line + "\n@JacksonXmlText";
             } else if ((line.contains("@XmlElements(") || line.contains("@XmlType(")) && line.endsWith("{")) {
                 return "/* " + line
             } else if (line.contains("import javax.xml.bind.JAXBElement")) {
@@ -59,6 +61,8 @@ task jacksonify(type: Copy) {
                 return line + "*/"
             } else if (line.contains("import javax.xml.bind.annotation.XmlAccessType;")) {
                 return line + "\nimport com.fasterxml.jackson.annotation.JsonProperty;"
+            } else if (line.contains("import javax.xml.bind.annotation.XmlValue;")) {
+                return line + "\nimport com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlText;"
             } else if (line.contains("import javax.xml.bind.annotation.XmlAttribute;")) {
                 return line + "\nimport com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;"
             }

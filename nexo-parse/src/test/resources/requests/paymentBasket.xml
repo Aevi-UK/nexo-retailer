@@ -5,8 +5,7 @@
         MessageType="Request" ServiceID="643" SaleID="SaleTermA" POIID="POITerm1"/>
     <PaymentRequest>
         <SaleData>
-            <SaleTransactionID TransactionID="581" TimeStamp="2015-04-
-06T10:42:34.1+01:00"/>
+            <SaleTransactionID TransactionID="581" TimeStamp="2015-04-06T10:42:34.1+01:00"/>
         </SaleData>
         <PaymentTransaction>
             <AmountsReq Currency="EUR" RequestedAmount="38.52"/>

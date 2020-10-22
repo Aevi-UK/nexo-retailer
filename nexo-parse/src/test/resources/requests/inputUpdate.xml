@@ -4,7 +4,7 @@
     <MessageHeader MessageClass="Device" MessageCategory="InputUpdate"
         MessageType="Request" DeviceID="260" SaleID="SaleTermA" POIID="POITerm1"/>
     <InputUpdate>
-        <MessageReference DeviceID="259">
+        <MessageReference DeviceID="259"/>
         <OutputContent OutputFormat="Text">
             <OutputText>Select your car wash program (credit=5 euros)</OutputText>
         </OutputContent>

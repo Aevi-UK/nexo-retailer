@@ -1,5 +1,6 @@
 package com.aevi.sdk.nexo;
 
+import com.aevi.sdk.nexo.model.MessageFormat;
 import com.aevi.sdk.nexo.model.ObjectFactory;
 import com.aevi.sdk.nexo.model.SaleToPOIRequest;
 import com.aevi.sdk.nexo.model.SaleToPOIRequestType;
@@ -77,6 +78,6 @@ public class NexoTest {
         SaleToPOIRequestType parsed = (SaleToPOIRequestType) jaxbUnmarshaller.unmarshal(new StringReader(xml));
 
         SaleRequestTranslator saleRequestTranslator = new SaleRequestTranslator();
-        return saleRequestTranslator.translate(new SaleToPOIRequest(parsed), );
+        return saleRequestTranslator.translate(new SaleToPOIRequest(parsed), null);
     }
 }

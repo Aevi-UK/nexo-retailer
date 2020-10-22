@@ -15,6 +15,7 @@ ext {
     appFlowVersion = '2.2.2-SNAPSHOT'
     appFlowConstantsVersion = '2.3.5'
     appFlowPrintVersion = '1.1.5'
+    nexoModelVersion = '0.0.1-SNAPSHOT'
 
     xpapVersion = '4.2.4'
 
@@ -24,6 +25,7 @@ ext {
             appFlowConstants : "com.aevi.sdk.flow:api-constants:$appFlowConstantsVersion",
             appFlowPrintApi  : "com.aevi.print:print-api:$appFlowPrintVersion",
             zxing            : "com.google.zxing:core:$zxingVersion",
+            nexo             : "com.aevi.nexo:NexoModel:$nexoModelVersion",
             gson             : "com.google.code.gson:gson:$gsonVersion"
     ]
 

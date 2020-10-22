@@ -14,67 +14,18 @@ public class SaleRequestTranslator implements NexoToAppFlow<SaleToPOIRequest, Ob
     @Override
     public Object translate(SaleToPOIRequest nexoObject, LoginRequest loginRequest) {
         RequestType type = RequestType.requestTypeFromSaleRequest(nexoObject);
-        if (nexoObject.getPaymentRequest() != null) {
-            return PAYMENT_REQUEST_TRANSLATOR.translate(nexoObject.getPaymentRequest(), loginRequest);
-        } else if (nexoObject.getAbortRequest() != null) {
-            return ABORT_REQUEST_TRANSLATOR.translate(nexoObject.getAbortRequest(), loginRequest);
-        } else if (nexoObject.getAdminRequest() != null) {
-            // ADMIN
-        } else if (nexoObject.getBalanceInquiryRequest() != null) {
-            // BALANCE INQUIRY
-        } else if (nexoObject.getBatchRequest() != null) {
-            // BATCH
-        } else if (nexoObject.getCardAcquisitionRequest() != null) {
-            // CARD ACQUISITION
-        } else if (nexoObject.getCardReaderAPDURequest() != null) {
-            // APDU
-        } else if (nexoObject.getCardReaderInitRequest() != null) {
-            // CARD READER INIT
-        } else if (nexoObject.getCardReaderPowerOffRequest() != null) {
-            // CARD READER POWER OFF
-        } else if (nexoObject.getDiagnosisRequest() != null) {
-            // DIAGNOSIS
-        } else if (nexoObject.getDisplayRequest() != null) {
-            // DISPLAY
-        } else if (nexoObject.getEnableServiceRequest() != null) {
-            // ENABLE SERVICE
-        } else if (nexoObject.getEventNotification() != null) {
-            // EVENT NOTIFICATION
-        } else if (nexoObject.getGetTotalsRequest() != null) {
-            // GET TOTALS
-        } else if (nexoObject.getInputRequest() != null) {
-            // INPUT
-        } else if (nexoObject.getInputUpdate() != null) {
-            // INPUT UPDATE
-        } else if (nexoObject.getLoginRequest() != null) {
-            return LOGIN_REQUEST_TRANSLATOR.translate(nexoObject.getLoginRequest(), loginRequest);
-        } else if (nexoObject.getLogoutRequest() != null) {
-            return LOGOUT_REQUEST_TRANSLATOR.translate(nexoObject.getLogoutRequest(), loginRequest);
-        } else if (nexoObject.getLoyaltyRequest() != null) {
-            // LOYALTY
-        } else if (nexoObject.getPINRequest() != null) {
-            // PIN
-        } else if (nexoObject.getPrintRequest() != null) {
-            // PRINT
-        } else if (nexoObject.getReconciliationRequest() != null) {
-            // RECONCILIATION
-        } else if (nexoObject.getReversalRequest() != null) {
-            // REVERSAL
-        } else if (nexoObject.getSoundRequest() != null) {
-            // SOUND (!)
-        } else if (nexoObject.getStoredValueRequest() != null) {
-            // STORED VALUE
-        } else if (nexoObject.getTransactionReportRequest() != null) {
-            // TRANSACTION REPORT
-        } else if (nexoObject.getTransactionStatusRequest() != null) {
-            // TRANSACTION STATUS
-        } else if (nexoObject.getTransmitRequest() != null) {
-            // TRANSMIT
+        switch (type) {
+            case PAYMENT:
+                return PAYMENT_REQUEST_TRANSLATOR.translate(nexoObject.getPaymentRequest(), loginRequest);
+            case ABORT:
+                return ABORT_REQUEST_TRANSLATOR.translate(nexoObject.getAbortRequest(), loginRequest);
+            case LOGIN:
+                return LOGIN_REQUEST_TRANSLATOR.translate(nexoObject.getLoginRequest(), loginRequest);
+            case LOGOUT:
+                return LOGOUT_REQUEST_TRANSLATOR.translate(nexoObject.getLogoutRequest(), loginRequest);
+            default:
+                return new RejectedRequest(nexoObject);
         }
-
         // Not doing anything with message header or security trailer yet...
-
-        // If nothing was translated, return an unsupported request...
-        return new RejectedRequest(nexoObject);
     }
 }

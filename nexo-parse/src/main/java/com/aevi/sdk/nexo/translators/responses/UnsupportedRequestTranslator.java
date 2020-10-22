@@ -1,6 +1,7 @@
 package com.aevi.sdk.nexo.translators.responses;
 
 import com.aevi.sdk.nexo.extramodel.RejectedRequest;
+import com.aevi.sdk.nexo.extramodel.responses.LoggedIn;
 import com.aevi.sdk.nexo.model.SaleToPOIRequest;
 import com.aevi.sdk.nexo.model.SaleToPOIResponse;
 
@@ -10,5 +11,11 @@ public class UnsupportedRequestTranslator extends ResponseTranslator<RejectedReq
         SaleToPOIResponse response = rejectedRequest.generateResponse();
         response.setMessageHeader(copyMessageHeader(originalRequest));
         return response;
+    }
+
+
+    @Override
+    public boolean translatesFrom(Object appFlowObject) {
+        return appFlowObject instanceof RejectedRequest;
     }
 }
