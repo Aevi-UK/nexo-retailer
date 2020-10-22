@@ -107,7 +107,8 @@ public class SampleMessagesTest extends ResponseTest {
 
     @Test
     public void testInputUpdate() throws IOException {
-        testUnsupported("inputUpdate.xml");
+        // InputUpdate is not supported currently, but requires no response
+        testSampleMessage("inputUpdate.xml", null, null);
     }
 
     @Test

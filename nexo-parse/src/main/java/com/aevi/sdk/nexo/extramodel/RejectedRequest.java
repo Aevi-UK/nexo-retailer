@@ -1,6 +1,12 @@
 package com.aevi.sdk.nexo.extramodel;
 
+import com.aevi.sdk.nexo.model.DisplayOutput;
+import com.aevi.sdk.nexo.model.DisplayResponse;
 import com.aevi.sdk.nexo.model.ErrorCondition;
+import com.aevi.sdk.nexo.model.InputData;
+import com.aevi.sdk.nexo.model.InputResponse;
+import com.aevi.sdk.nexo.model.InputResult;
+import com.aevi.sdk.nexo.model.OutputResult;
 import com.aevi.sdk.nexo.model.Response;
 import com.aevi.sdk.nexo.model.ResponseHolder;
 import com.aevi.sdk.nexo.model.SaleToPOIRequest;
@@ -30,14 +36,38 @@ public class RejectedRequest {
         } else if (request.getAbortRequest() != null) {
             // Aborts don't have direct responses...
         } else if (request.getInputRequest() != null) {
-            // Input has wacky multiple responses
+            response = new SaleToPOIResponse();
+            InputResponse inputResponse = new InputResponse();
+            inputResponse.setOutputResult(outputResultFromDisplayOutput(request.getInputRequest().getDisplayOutput()));
+            inputResponse.setInputResult(inputResultFromInputData(request.getInputRequest().getInputData()));
         } else if (request.getDisplayRequest() != null) {
-            // Display has wacky nested responses
+            response = new SaleToPOIResponse();
+            DisplayResponse displayResponse = new DisplayResponse();
+            for (DisplayOutput displayOutput : request.getDisplayRequest().getDisplayOutput()) {
+                displayResponse.getOutputResult().add(outputResultFromDisplayOutput(displayOutput));
+            }
+            response.setDisplayResponse(displayResponse);
         }
         if (response == null) {
             System.err.println("Rejected request: no response holder generated for " + request);
         }
         return response;
+    }
+
+    private OutputResult outputResultFromDisplayOutput(DisplayOutput displayOutput) {
+        OutputResult result = new OutputResult();
+        result.setDevice(displayOutput.getDevice());
+        result.setInfoQualify(displayOutput.getInfoQualify());
+        result.setResponse(createResponse());
+        return result;
+    }
+
+    private InputResult inputResultFromInputData(InputData inputData) {
+        InputResult result = new InputResult();
+        result.setDevice(inputData.getDevice());
+        result.setInfoQualify(inputData.getInfoQualify());
+        result.setResponse(createResponse());
+        return result;
     }
 
     private Response createResponse() {
