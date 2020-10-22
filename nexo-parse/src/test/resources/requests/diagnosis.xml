@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SaleToPOIRequest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="NexoSaleToPOIMessages.xsd">
+    <MessageHeader ProtocolVersion="3.0" MessageClass="Service"
+        MessageCategory="Diagnosis" MessageType="Request" ServiceID="660"
+        SaleID="SaleTermA" POIID="POITerm1"/>
+    <DiagnosisRequest HostDiagnosisFlag="true"/>
+</SaleToPOIRequest>

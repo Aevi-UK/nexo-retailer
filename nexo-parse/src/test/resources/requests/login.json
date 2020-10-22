@@ -1,0 +1,36 @@
+{
+  "SaleToPOIRequest":{
+    "MessageHeader":{
+      "ProtocolVersion":"3.0",
+      "MessageClass":"Service",
+      "MessageCategory":"Login",
+      "MessageType":"Request",
+      "ServiceID":"498",
+      "SaleID":"SaleTermA",
+      "POIID":"POITerm1"
+    },
+    "LoginRequest":{
+      "DateTime":"2009-01-29T09:13:51.0+01:00",
+      "SaleSoftware":{
+        "ProviderIdentification":"PointOfSaleCo",
+        "ApplicationName":"SaleSys",
+        "SoftwareVersion":"01.98.01",
+        "CertificationCode":"ECTS2PS001"
+      },
+      "SaleTerminalData":{
+        "TerminalEnvironment":"Attended",
+        "SaleCapabilities":["PrinterReceipt","CashierStatus","CashierError",
+          "CashierDisplay","CashierInput"],
+        "SaleTerminalData":{
+          "GenericProfile":"Extended",
+          "ServiceProfiles":["Loyalty","PIN","CardReader"]
+        }
+      },
+      "TrainingModeFlag":true,
+      "OperatorLanguage":"sp",
+      "OperatorID":"Cashier16",
+      "ShiftNumber":"2",
+      "POISerialNumber":"78910AA46010005"
+    }
+  }
+}

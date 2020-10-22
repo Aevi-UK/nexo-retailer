@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SaleToPOIRequest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="NexoSaleToPOIMessages.xsd">
+    <MessageHeader MessageClass="Service" MessageCategory="Payment"
+        MessageType="Request" ServiceID="644" SaleID="SaleTermA" POIID="POITerm1"/>
+    <PaymentRequest>
+        <SaleData>
+            <SaleTransactionID TransactionID="581" TimeStamp="2009-03-11T10:37:21.9+01:00"/>
+        </SaleData>
+        <PaymentTransaction>
+            <AmountsReq Currency="EUR" RequestedAmount="38.01"/>
+            <TransactionConditions LoyaltyHandling="Forbidden"/>
+        </PaymentTransaction>
+        <PaymentData PaymentType="Normal">
+            <PaymentInstrumentData PaymentInstrumentType="Card">
+                <CardData EntryMode="Scanned">
+                    <SensitiveCardData PAN="7011014570541535"/>
+                </CardData>
+            </PaymentInstrumentData>
+        </PaymentData>
+    </PaymentRequest>
+</SaleToPOIRequest>

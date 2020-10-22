@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SaleToPOIRequest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="nexoSaleToPOIMessages.xsd">
+    <MessageHeader ProtocolVersion="3.0" MessageClass="Service"
+        MessageCategory="Login" MessageType="Request" ServiceID="498"
+        SaleID="SaleTermA" POIID="POITerm1"/>
+    <LoginRequest OperatorLanguage="sp" OperatorID="Cashier16" ShiftNumber="2"
+        POISerialNumber="78910AA46010005">
+        <DateTime>2015-03-08T09:13:51.0+01:00</DateTime>
+        <SaleSoftware ProviderIdentification="PointOfSaleCo" ApplicationName="SaleSys"
+            SoftwareVersion="01.98.01" CertificationCode="ECTS2PS001"/>
+        <SaleTerminalData TerminalEnvironment="Attended">
+            <SaleCapabilities>PrinterReceipt CashierStatus CashierError CashierDisplay
+                CashierInput</SaleCapabilities>
+            <SaleProfile GenericProfile="Extended">
+                <ServiceProfiles>Loyalty PIN CardReader</ServiceProfiles>
+            </SaleProfile>
+        </SaleTerminalData>
+    </LoginRequest>
+</SaleToPOIRequest>

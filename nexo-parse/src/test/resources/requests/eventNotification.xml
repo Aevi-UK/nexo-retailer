@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SaleToPOIRequest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="NexoSaleToPOIMessages.xsd">
+    <MessageHeader MessageClass="Event" MessageCategory="Event"
+        MessageType="Notification" DeviceID="1328" SaleID="SaleTermA"
+        POIID="POITerm1"/>
+    <EventNotification TimeStamp="2009-12-13T23:11:16.4+01:00"
+        EventToNotify="BeginMaintenance">
+        <EventDetails>POITerm1 Maintenance: Parameters Update</EventDetails>
+    </EventNotification>
+</SaleToPOIRequest>

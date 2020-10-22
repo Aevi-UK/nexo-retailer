@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bindings xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc"
+    extensionBindingPrefixes="xjc"
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
     xmlns:xsi="http://www.w3.org/2000/10/XMLSchema-instance" version="2.1"
+    xmlns:inheritance="http://jaxb2-commons.dev.java.net/basic/inheritance"
     xmlns="http://java.sun.com/xml/ns/jaxb"
     xsi:schemaLocation="http://java.sun.com/xml/ns/jaxb http://java.sun.com/xml/ns/jaxb/bindingschema_2_0.xsd">
-    <globalBindings>
-        <xjc:simple />
-    </globalBindings>
-
     <bindings node="/xs:schema" schemaLocation="nexoCMS.xsd">
         <bindings node="//xs:complexType[@name='AuthenticatedDataType']">
             <class name="AuthenticatedData" />
@@ -79,12 +77,22 @@
     </bindings>
 
     <bindings node="/xs:schema" schemaLocation="nexoCommonTypes.xsd">
+        <bindings node="//xs:simpleType[@name='ISODateTime']">
+            <xjc:javaType adapter="com.aevi.jaxb.DateTimeAdapter"
+                name="java.time.ZonedDateTime" />
+        </bindings>
     </bindings>
 
     <bindings node="/xs:schema" schemaLocation="nexoSaleToPOIMessages.xsd">
         <schemaBindings>
             <package name="com.aevi.sdk.nexo.model" />
         </schemaBindings>
+        <bindings node="//xs:element[@name='SaleToPOIResponse']">
+            <class name="SaleToPOIResponseType" implClass="com.aevi.sdk.nexo.model.SaleToPOIResponse"/>
+        </bindings>
+        <bindings node="//xs:element[@name='SaleToPOIRequest']">
+            <class name="SaleToPOIRequestType" implClass="com.aevi.sdk.nexo.model.SaleToPOIRequest"/>
+        </bindings>
         <bindings node="//xs:complexType[@name='AbortRequestType']">
             <class name="AbortRequest" />
         </bindings>
@@ -92,6 +100,7 @@
             <class name="AdminRequest" />
         </bindings>
         <bindings node="//xs:complexType[@name='AdminResponseType']">
+            <inheritance:implements>com.aevi.sdk.nexo.model.ResponseHolder</inheritance:implements>
             <class name="AdminResponse" />
         </bindings>
         <bindings node="//xs:complexType[@name='AllowedProductType']">
@@ -113,12 +122,14 @@
             <class name="BalanceInquiryRequest" />
         </bindings>
         <bindings node="//xs:complexType[@name='BalanceInquiryResponseType']">
+            <inheritance:implements>com.aevi.sdk.nexo.model.ResponseHolder</inheritance:implements>
             <class name="BalanceInquiryResponse" />
         </bindings>
         <bindings node="//xs:complexType[@name='BatchRequestType']">
             <class name="BatchRequest" />
         </bindings>
         <bindings node="//xs:complexType[@name='BatchResponseType']">
+            <inheritance:implements>com.aevi.sdk.nexo.model.ResponseHolder</inheritance:implements>
             <class name="BatchResponse" />
         </bindings>
         <bindings node="//xs:complexType[@name='CapturedSignatureType']">
@@ -128,6 +139,7 @@
             <class name="CardAcquisitionRequest" />
         </bindings>
         <bindings node="//xs:complexType[@name='CardAcquisitionResponseType']">
+            <inheritance:implements>com.aevi.sdk.nexo.model.ResponseHolder</inheritance:implements>
             <class name="CardAcquisitionResponse" />
         </bindings>
         <bindings node="//xs:complexType[@name='CardAcquisitionTransactionType']">
@@ -143,18 +155,21 @@
             <class name="CardReaderAPDURequest" />
         </bindings>
         <bindings node="//xs:complexType[@name='CardReaderAPDUResponseType']">
+            <inheritance:implements>com.aevi.sdk.nexo.model.ResponseHolder</inheritance:implements>
             <class name="CardReaderAPDUResponse" />
         </bindings>
         <bindings node="//xs:complexType[@name='CardReaderInitRequestType']">
             <class name="CardReaderInitRequest" />
         </bindings>
         <bindings node="//xs:complexType[@name='CardReaderInitResponseType']">
+            <inheritance:implements>com.aevi.sdk.nexo.model.ResponseHolder</inheritance:implements>
             <class name="CardReaderInitResponse" />
         </bindings>
         <bindings node="//xs:complexType[@name='CardReaderPowerOffRequestType']">
             <class name="CardReaderPowerOffRequest" />
         </bindings>
         <bindings node="//xs:complexType[@name='CardReaderPowerOffResponseType']">
+            <inheritance:implements>com.aevi.sdk.nexo.model.ResponseHolder</inheritance:implements>
             <class name="CardReaderPowerOffResponse" />
         </bindings>
         <bindings node="//xs:complexType[@name='CashHandlingDeviceType']">
@@ -179,6 +194,7 @@
             <class name="DiagnosisRequest" />
         </bindings>
         <bindings node="//xs:complexType[@name='DiagnosisResponseType']">
+            <inheritance:implements>com.aevi.sdk.nexo.model.ResponseHolder</inheritance:implements>
             <class name="DiagnosisResponse" />
         </bindings>
         <bindings node="//xs:complexType[@name='DisplayOutputType']">
@@ -194,6 +210,7 @@
             <class name="EnableServiceRequest" />
         </bindings>
         <bindings node="//xs:complexType[@name='EnableServiceResponseType']">
+            <inheritance:implements>com.aevi.sdk.nexo.model.ResponseHolder</inheritance:implements>
             <class name="EnableServiceResponse" />
         </bindings>
         <bindings node="//xs:complexType[@name='EventNotificationType']">
@@ -209,6 +226,7 @@
             <class name="GetTotalsRequest" />
         </bindings>
         <bindings node="//xs:complexType[@name='GetTotalsResponseType']">
+            <inheritance:implements>com.aevi.sdk.nexo.model.ResponseHolder</inheritance:implements>
             <class name="GetTotalsResponse" />
         </bindings>
         <bindings node="//xs:complexType[@name='HostStatusType']">
@@ -227,6 +245,7 @@
             <class name="InputResponse" />
         </bindings>
         <bindings node="//xs:complexType[@name='InputResultType']">
+            <inheritance:implements>com.aevi.sdk.nexo.model.ResponseHolder</inheritance:implements>
             <class name="InputResult" />
         </bindings>
         <bindings node="//xs:complexType[@name='InputType']">
@@ -242,12 +261,14 @@
             <class name="LoginRequest" />
         </bindings>
         <bindings node="//xs:complexType[@name='LoginResponseType']">
+            <inheritance:implements>com.aevi.sdk.nexo.model.ResponseHolder</inheritance:implements>
             <class name="LoginResponse" />
         </bindings>
         <bindings node="//xs:complexType[@name='LogoutRequestType']">
             <class name="LogoutRequest" />
         </bindings>
         <bindings node="//xs:complexType[@name='LogoutResponseType']">
+            <inheritance:implements>com.aevi.sdk.nexo.model.ResponseHolder</inheritance:implements>
             <class name="LogoutResponse" />
         </bindings>
         <bindings node="//xs:complexType[@name='LoyaltyAccountIDType']">
@@ -275,6 +296,7 @@
             <class name="LoyaltyRequest" />
         </bindings>
         <bindings node="//xs:complexType[@name='LoyaltyResponseType']">
+            <inheritance:implements>com.aevi.sdk.nexo.model.ResponseHolder</inheritance:implements>
             <class name="LoyaltyResponse" />
         </bindings>
         <bindings node="//xs:complexType[@name='LoyaltyResultType']">
@@ -308,6 +330,7 @@
             <class name="OutputContent" />
         </bindings>
         <bindings node="//xs:complexType[@name='OutputResultType']">
+            <inheritance:implements>com.aevi.sdk.nexo.model.ResponseHolder</inheritance:implements>
             <class name="OutputResult" />
         </bindings>
         <bindings node="//xs:complexType[@name='OutputTextType']">
@@ -335,6 +358,7 @@
             <class name="PaymentRequest" />
         </bindings>
         <bindings node="//xs:complexType[@name='PaymentResponseType']">
+            <inheritance:implements>com.aevi.sdk.nexo.model.ResponseHolder</inheritance:implements>
             <class name="PaymentResponse" />
         </bindings>
         <bindings node="//xs:complexType[@name='PaymentResultType']">
@@ -356,6 +380,7 @@
             <class name="PINRequest" />
         </bindings>
         <bindings node="//xs:complexType[@name='PINResponseType']">
+            <inheritance:implements>com.aevi.sdk.nexo.model.ResponseHolder</inheritance:implements>
             <class name="PINResponse" />
         </bindings>
         <bindings node="//xs:complexType[@name='POIDataType']">
@@ -386,6 +411,7 @@
             <class name="PrintRequest" />
         </bindings>
         <bindings node="//xs:complexType[@name='PrintResponseType']">
+            <inheritance:implements>com.aevi.sdk.nexo.model.ResponseHolder</inheritance:implements>
             <class name="PrintResponse" />
         </bindings>
         <bindings node="//xs:complexType[@name='RawSignatureType']">
@@ -398,6 +424,7 @@
             <class name="ReconciliationRequest" />
         </bindings>
         <bindings node="//xs:complexType[@name='ReconciliationResponseType']">
+            <inheritance:implements>com.aevi.sdk.nexo.model.ResponseHolder</inheritance:implements>
             <class name="ReconciliationResponse" />
         </bindings>
         <bindings node="//xs:complexType[@name='RepeatedMessageResponseType']">
@@ -410,6 +437,7 @@
             <class name="ReversalRequest" />
         </bindings>
         <bindings node="//xs:complexType[@name='ReversalResponseType']">
+            <inheritance:implements>com.aevi.sdk.nexo.model.ResponseHolder</inheritance:implements>
             <class name="ReversalResponse" />
         </bindings>
         <bindings node="//xs:complexType[@name='SaleDataType']">
@@ -464,6 +492,7 @@
             <class name="SoundRequest" />
         </bindings>
         <bindings node="//xs:complexType[@name='SoundResponseType']">
+            <inheritance:implements>com.aevi.sdk.nexo.model.ResponseHolder</inheritance:implements>
             <class name="SoundResponse" />
         </bindings>
         <bindings node="//xs:complexType[@name='SponsoredMerchantType']">
@@ -482,6 +511,7 @@
             <class name="StoredValueRequest" />
         </bindings>
         <bindings node="//xs:complexType[@name='StoredValueResponseType']">
+            <inheritance:implements>com.aevi.sdk.nexo.model.ResponseHolder</inheritance:implements>
             <class name="StoredValueResponse" />
         </bindings>
         <bindings node="//xs:complexType[@name='StoredValueResultType']">
@@ -503,6 +533,7 @@
             <class name="TransactionReportRequest" />
         </bindings>
         <bindings node="//xs:complexType[@name='TransactionReportResponseType']">
+            <inheritance:implements>com.aevi.sdk.nexo.model.ResponseHolder</inheritance:implements>
             <class name="TransactionReportResponse" />
         </bindings>
         <bindings node="//xs:complexType[@name='TransactionReportType']">
@@ -512,6 +543,7 @@
             <class name="TransactionStatusRequest" />
         </bindings>
         <bindings node="//xs:complexType[@name='TransactionStatusResponseType']">
+            <inheritance:implements>com.aevi.sdk.nexo.model.ResponseHolder</inheritance:implements>
             <class name="TransactionStatusResponse" />
         </bindings>
         <bindings node="//xs:complexType[@name='TransactionToPerformType']">
@@ -524,6 +556,7 @@
             <class name="TransmitRequest" />
         </bindings>
         <bindings node="//xs:complexType[@name='TransmitResponseType']">
+            <inheritance:implements>com.aevi.sdk.nexo.model.ResponseHolder</inheritance:implements>
             <class name="TransmitResponse" />
         </bindings>
         <bindings node="//xs:complexType[@name='UTMCoordinatesType']">

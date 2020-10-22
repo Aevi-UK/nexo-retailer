@@ -1,9 +1,11 @@
 apply plugin: 'java'
 apply plugin: 'java-library'
 apply plugin: 'org.unbroken-dome.xjc'
+apply plugin: 'org.anarres.jarjar'
 
 group = 'com.aevi.nexo'
 version = "${apiVersion}"
+def jacksonDir = "build/jackson"
 
 apply from: '../publish-repo.gradle'
 
@@ -18,9 +20,67 @@ repositories {
 
 xjcGenerate {
     extension = true
+    extraArgs = [
+            '-Xinheritance'
+    ]
+    includeInMainCompilation = false
 }
 
-sourceSets.main.java.srcDirs = ['src/main/java']
+task jacksonify(type: Copy) {
+    dependsOn "xjcGenerate"
+    from xjcGenerate.outputDirectory
+    into jacksonDir
+
+    filter {
+        line ->
+            def pattern = /(?<ws>\s*)@XmlElement\(name = \"(?<name>[^\"]*)\"(, required = (?<req>\w*))?(, type = ((?<type>\S*)))?\)/
+            def pattern2 = /(?<ws>\s*)@XmlAttribute\(name = \"(?<name>[^\"]*)\"(, required = (?<req>\w*))?(, type = ((?<type>\S*)))?\)/
+            def xmlElement = line =~ pattern
+            def xmlAttribute = line =~ pattern2
+            if (xmlElement.matches()) {
+                if (xmlElement.group("req") == null) {
+                    return line + "\n" + xmlElement.replaceAll("\${ws}@JsonProperty(\"\${name}\")")
+                } else {
+                    return line + "\n" + xmlElement.replaceAll("\${ws}@JsonProperty(value = \"\${name}\", required = \${req})")
+                }
+            } else if (xmlAttribute.matches()) {
+                if (xmlAttribute.group("req") == null) {
+                    return line + "\n" + xmlAttribute.replaceAll("\${ws}@JsonProperty(\"\${name}\")") + "\n" + xmlAttribute.replaceAll("\${ws}@JacksonXmlProperty(isAttribute = true)")
+                } else {
+                    return line + "\n" + xmlAttribute.replaceAll("\${ws}@JsonProperty(value = \"\${name}\", required = \${req})") + "\n" + xmlAttribute.replaceAll("\${ws}@JacksonXmlProperty(isAttribute = true)")
+                }
+            } else if (line.contains("@XmlAccessorType")) {
+                return null
+            } else if (line.contains("@XmlValue")) {
+                return line + "\n@JacksonXmlText";
+            } else if ((line.contains("@XmlElements(") || line.contains("@XmlType(")) && line.endsWith("{")) {
+                return "/* " + line
+            } else if (line.contains("import javax.xml.bind.JAXBElement")) {
+                return "import com.aevi.javax.xml.bind.JAXBElement;"
+            } else if (line.trim().equals("})")) {
+                return line + "*/"
+            } else if (line.contains("import javax.xml.bind.annotation.XmlAccessType;")) {
+                return line + "\nimport com.fasterxml.jackson.annotation.JsonProperty;"
+            } else if (line.contains("import javax.xml.bind.annotation.XmlValue;")) {
+                return line + "\nimport com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlText;"
+            } else if (line.contains("import javax.xml.bind.annotation.XmlAttribute;")) {
+                return line + "\nimport com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;"
+            }
+
+            return line
+    }
+
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir file(jacksonDir)
+        }
+    }
+}
+
+compileJava.dependsOn.add("jacksonify")
 
 sourceCompatibility = "1.8"
 targetCompatibility = "1.8"
@@ -32,11 +92,25 @@ dependencies {
     implementation domainDependencies.appFlowPaymentApi
     implementation domainDependencies.appFlowPrintApi
     implementation domainDependencies.zxing
-    compileOnly testDependencies.mockableAndroid
+
+    implementation jarjar.repackage {
+        from 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.11.1'
+        from 'com.fasterxml:aalto-xml:1.2.2'
+        from 'javax.xml.stream:stax-api:1.0-2'
+        from 'org.codehaus.woodstox:stax2-api:4.2.1'
+        from 'com.fasterxml.jackson.module:jackson-module-jaxb-annotations:2.11.3'
+        from 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.11.2'
+
+        classRename 'javax.xml.stream.**', 'com.aevi.javax.xml.stream.@1'
+        classRename 'javax.xml.bind.**', 'com.aevi.javax.xml.bind.@1'
+        classRename 'com.bea.xml.stream.MXParserFactory', 'com.fasterxml.aalto.stax.InputFactoryImpl'
+        classRename 'com.bea.xml.stream.XMLOutputFactoryBase', 'com.fasterxml.aalto.stax.OutputFactoryImpl'
+    }
+
+    xjcClasspath 'org.jvnet.jaxb2_commons:jaxb2-basics:0.11.1'
 
     testImplementation testDependencies.junit
     testImplementation testDependencies.assertJ
-    testImplementation testDependencies.mockableAndroid
     testImplementation testDependencies.opencsv
     testImplementation testDependencies.xpay
     testImplementation testDependencies.mockito

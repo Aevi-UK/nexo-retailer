@@ -1,0 +1,1 @@
+<SaleToPOIResponse><MessageHeader MessageClass="Service" MessageCategory="Logout" MessageType="Response" ServiceID="613" SaleID="SaleTermA"/><LogoutResponse><Response Result="Success"/></LogoutResponse></SaleToPOIResponse>

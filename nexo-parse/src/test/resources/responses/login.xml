@@ -1,0 +1,1 @@
+<SaleToPOIResponse><MessageHeader ProtocolVersion="3.0" MessageClass="Service" MessageCategory="Login" MessageType="Response" ServiceID="498" SaleID="SaleTermA"/><LoginResponse><Response Result="Success"/></LoginResponse></SaleToPOIResponse>

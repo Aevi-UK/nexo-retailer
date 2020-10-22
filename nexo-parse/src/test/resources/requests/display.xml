@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SaleToPOIRequest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="NexoSaleToPOIMessages.xsd">
+    <MessageHeader MessageClass="Device" MessageCategory="Display"
+        MessageType="Request" ServiceID="674" DeviceID="2" SaleID="SaleTermA"
+        POIID="POITerm1"/>
+    <DisplayRequest>
+        <DisplayOutput Device="CashierDisplay" InfoQualify="Status">
+            <OutputContent OutputFormat="Text">
+                <OutputText>Bank Authorization</OutputText>
+            </OutputContent>
+        </DisplayOutput>
+        <DisplayOutput ResponseRequiredFlag="false" Device="CashierDisplay"
+            InfoQualify="POIReplication">
+            <OutputContent OutputFormat="Text">
+                <OutputText>EMV Payment Processing</OutputText>
+            </OutputContent>
+        </DisplayOutput>
+        <DisplayOutput Device="CashierDisplay" InfoQualify="Error">
+            <OutputContent OutputFormat="Text">
+                <OutputText>Card request online authorisation</OutputText>
+            </OutputContent>
+        </DisplayOutput>
+    </DisplayRequest>
+</SaleToPOIRequest>

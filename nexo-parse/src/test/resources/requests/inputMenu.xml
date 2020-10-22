@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SaleToPOIRequest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="NexoSaleToPOIMessages.xsd">
+    <MessageHeader MessageClass="Device" MessageCategory="Input"
+        MessageType="Request" ServiceID="675" DeviceID="4" SaleID="SaleTermA"
+        POIID="POITerm1"/>
+    <InputRequest>
+        <DisplayOutput Device="CustomerDisplay" InfoQualify="Display">
+            <OutputContent OutputFormat="Text">
+                <OutputText>Choose the report:</OutputText>
+            </OutputContent>
+            <MenuEntry OutputFormat="Text">
+                <OutputText>1: Daily Payment Report</OutputText>
+            </MenuEntry>
+            <MenuEntry OutputFormat="Text" MenuEntryTag="NonSelectable">
+                <OutputText>2: Daily Loyalty Report</OutputText>
+            </MenuEntry>
+            <MenuEntry OutputFormat="Text" MenuEntryTag="SubMenu">
+                <OutputText>3: Other Reports</OutputText>
+            </MenuEntry>
+        </DisplayOutput>
+        <InputData Device="CustomerInput" InfoQualify="Input"
+            InputCommand="GetMenuEntry"/>
+    </InputRequest>
+</SaleToPOIRequest>

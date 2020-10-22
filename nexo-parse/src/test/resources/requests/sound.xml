@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SaleToPOIRequest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="NexoSaleToPOIMessages.xsd">
+    <MessageHeader MessageClass="Device" MessageCategory="Sound"
+        MessageType="Request" DeviceID="259" SaleID="SaleTermA" POIID="POITerm1"/>
+    <SoundRequest ResponseMode="Immediate" SoundAction="StartSound" SoundVolume="50">
+        <SoundContent SoundFormat="SoundRef" ReferenceID="ambiance02.mp3"/>
+    </SoundRequest>
+</SaleToPOIRequest>

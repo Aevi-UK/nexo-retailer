@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SaleToPOIRequest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="NexoSaleToPOIMessages.xsd">
+    <MessageHeader MessageClass="Device" MessageCategory="Input"
+        MessageType="Request" DeviceID="1375" SaleID="SaleTermA" POIID="POITerm1"/>
+    <InputRequest>
+        <DisplayOutput Device="CustomerDisplay" InfoQualify="Display">
+            <OutputContent OutputFormat="Text">
+                <OutputText>Enter the mileage in miles :</OutputText>
+            </OutputContent>
+        </DisplayOutput>
+        <InputData Device="CustomerInput" InfoQualify="Input"
+            InputCommand="DigitString"/>
+    </InputRequest>
+</SaleToPOIRequest>

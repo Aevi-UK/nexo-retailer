@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SaleToPOIRequest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="NexoSaleToPOIMessages.xsd">
+    <MessageHeader MessageCategory="Payment" MessageClass="Service" MessageType="Request"
+        POIID="POITerm1" SaleID="SaleTermA" ServiceID="642" />
+    <PaymentRequest>
+        <SaleData>
+            <SaleTransactionID TimeStamp="2010-06-10T22:53:12.6+01:00" TransactionID="580" />
+        </SaleData>
+        <PaymentTransaction>
+            <AmountsReq Currency="EUR" RequestedAmount="31.00" />
+            <TransactionConditions LoyaltyHandling="Forbidden" />
+        </PaymentTransaction>
+    </PaymentRequest>
+    <SecurityTrailer ContentType="id-ct-authData">
+        <AuthenticatedData MAC="86A1C31A5E413DDF" Version="v0">
+            <KEK EncryptedKey="nPTi3hKiYORdCC1dzOTQUA==" Version="v4">
+                <KEKIdentifier KeyIdentifier="SpecV1TestMACKey" KeyVersion="2010060715" />
+                <KeyEncryptionAlgorithm Algorithm="des-ede3-cbc" />
+            </KEK>
+            <MACAlgorithm Algorithm="id-retail-cbc-mac-sha-256" />
+            <EncapsulatedContent ContentType="id-data" />
+        </AuthenticatedData>
+    </SecurityTrailer>
+</SaleToPOIRequest>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SaleToPOIRequest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="NexoSaleToPOIMessages.xsd">
+    <MessageHeader MessageClass="Service" MessageCategory="GetTotals"
+        MessageType="Request" ServiceID="619" SaleID="SaleServer"
+        POIID="POIServer"/>
+    <GetTotalsRequest>
+        <TotalDetails>SaleID ShiftNumber</TotalDetails>
+        <TotalFilter OperatorID="213"/>
+    </GetTotalsRequest>
+</SaleToPOIRequest>
