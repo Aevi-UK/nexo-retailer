@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.dataformat.xml.JacksonXmlModule;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.dataformat.xml.deser.FromXmlParser;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -22,9 +23,12 @@ public class NexoDeserialiser {
                 .configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true);
     }
 
-    private ObjectMapper configureXml(XmlMapper objectMapper) {
+    private ObjectMapper configureXml() {
+        JacksonXmlModule module = new JacksonXmlModule();
+        module.setDefaultUseWrapper(false);
+        XmlMapper mapper = new XmlMapper(module);
 //        objectMapper.configOverride(BalanceInquiryRequest.class).setSetterInfo(Nulls.AS_EMPTY);
-        return configure(objectMapper.disable(FromXmlParser.Feature.EMPTY_ELEMENT_AS_NULL));
+        return configure(mapper.disable(FromXmlParser.Feature.EMPTY_ELEMENT_AS_NULL));
     }
 
     private ObjectMapper configure(ObjectMapper objectMapper) {
@@ -57,7 +61,7 @@ public class NexoDeserialiser {
 
     public SaleToPOIRequest deserialiseXML(String xml) {
         try {
-            ObjectMapper objectMapper = configureXml(new XmlMapper());
+            ObjectMapper objectMapper = configureXml();
 
             SaleToPOIRequestType value = objectMapper.readValue(xml, SaleToPOIRequest.class);
             return value == null ? null : new SaleToPOIRequest(value);
@@ -81,7 +85,7 @@ public class NexoDeserialiser {
 
     public SaleToPOIResponseType deserialiseResponseXML(String xml) {
         try {
-            ObjectMapper objectMapper = configureXml(new XmlMapper());
+            ObjectMapper objectMapper = configureXml();
 
             SaleToPOIResponseType value = objectMapper.readValue(xml, SaleToPOIResponseType.class);
             return value;
@@ -107,7 +111,7 @@ public class NexoDeserialiser {
 
     public String serialiseRequest(Object object) {
         try {
-            XmlMapper objectMapper = ((XmlMapper) configureXml(new XmlMapper()))
+            XmlMapper objectMapper = ((XmlMapper) configureXml())
                     .setDefaultUseWrapper(false);
 //            objectMapper.registerModule(new JaxbAnnotationModule());
 

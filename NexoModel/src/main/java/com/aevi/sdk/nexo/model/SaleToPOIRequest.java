@@ -48,8 +48,14 @@ public class SaleToPOIRequest extends SaleToPOIRequestType {
                 loyaltyRequest, paymentRequest, pinRequest, printRequest, reconciliationRequest,
                 reversalRequest, soundRequest, storedValueRequest, transactionReportRequest,
                 transactionStatusRequest, transmitRequest)) {
-            if (messageHeader != null && MessageCategory.BALANCE_INQUIRY.value().equals(messageHeader.getMessageCategory())) {
-                setBalanceInquiryRequest(new BalanceInquiryRequest());
+            if (messageHeader != null) {
+                if (MessageCategory.BALANCE_INQUIRY.value().equals(messageHeader.getMessageCategory())) {
+                    setBalanceInquiryRequest(new BalanceInquiryRequest());
+                } else if (MessageCategory.ADMIN.value().equals(messageHeader.getMessageCategory())) {
+                    setAdminRequest(new AdminRequest());
+                } else if (MessageCategory.BATCH.value().equals(messageHeader.getMessageCategory())) {
+                    setBatchRequest(new BatchRequest());
+                }
             }
         }
     }

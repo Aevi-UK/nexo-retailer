@@ -9,7 +9,9 @@ public class UnsupportedRequestTranslator extends ResponseTranslator<RejectedReq
     @Override
     public SaleToPOIResponse translate(SaleToPOIRequest originalRequest, RejectedRequest rejectedRequest) {
         SaleToPOIResponse response = rejectedRequest.generateResponse();
-        response.setMessageHeader(copyMessageHeader(originalRequest));
+        if (response != null) {
+            response.setMessageHeader(copyMessageHeader(originalRequest));
+        }
         return response;
     }
 
