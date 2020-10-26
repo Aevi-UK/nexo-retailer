@@ -177,7 +177,7 @@ public class NexoManager {
         // 1) The Sale System has to wait for the response of the messages in progress before to
         //    send the Logout request. If there are transactions in progress on the POI Terminal or
         //    the Sale Terminal, the POI Terminal refuses the Logout, and a Logout response is sent
-        //    with Result=”Failure” and ErrorCondition=” Busy”
+        //    with Result="Failure" and ErrorCondition=" Busy"
         // 2) The POI may send Display, Input or Print message during the processing of the Logout
         //    request message, before to send the Logout response.
         // 3) The POI must to accept Logout request messages if the Sale Terminal (or Sale System)
