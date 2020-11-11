@@ -27,6 +27,11 @@ public class NexoDeserialiser {
     private ObjectMapper configureXml() {
         JacksonXmlModule module = new JacksonXmlModule();
         module.setDefaultUseWrapper(false);
+
+        // Custom deserialization of CardData is required to prevent crashes from attempting to
+        // deserialize an attribute as a list.
+        module.addDeserializer(CardData.class, new CardDataDeserializer());
+
         // Add a modifier to deserialise ContentInformation with our ProtectedDataDeserialiser.
         // Note that we can't simply add it as a deserializer, as we need access to the default
         // deserializer for classes that can safely contain protected data.
@@ -41,8 +46,10 @@ public class NexoDeserialiser {
                 return configuredDeserializer;
             }
         });
+
         module.addDeserializer(SensitiveMobileData.class, new ProtectedDataDeserializer(SensitiveMobileData.class));
         module.addDeserializer(SensitiveCardData.class, new ProtectedDataDeserializer(SensitiveCardData.class));
+
         XmlMapper mapper = new XmlMapper(module);
         return configure(mapper.disable(FromXmlParser.Feature.EMPTY_ELEMENT_AS_NULL));
     }
@@ -124,7 +131,6 @@ public class NexoDeserialiser {
         try {
             XmlMapper objectMapper = ((XmlMapper) configureXml())
                     .setDefaultUseWrapper(false);
-//            objectMapper.registerModule(new JaxbAnnotationModule());
 
             String value = objectMapper.writeValueAsString(object);
             return value;
