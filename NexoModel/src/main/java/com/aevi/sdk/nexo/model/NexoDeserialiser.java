@@ -2,19 +2,20 @@ package com.aevi.sdk.nexo.model;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonSetter;
-import com.fasterxml.jackson.annotation.Nulls;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.BeanDescription;
+import com.fasterxml.jackson.databind.DeserializationConfig;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.deser.BeanDeserializerModifier;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.dataformat.xml.JacksonXmlModule;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.dataformat.xml.deser.FromXmlParser;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-//import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
 
 public class NexoDeserialiser {
     private ObjectMapper configureJson(ObjectMapper objectMapper) {
@@ -26,8 +27,23 @@ public class NexoDeserialiser {
     private ObjectMapper configureXml() {
         JacksonXmlModule module = new JacksonXmlModule();
         module.setDefaultUseWrapper(false);
+        // Add a modifier to deserialise ContentInformation with our ProtectedDataDeserialiser.
+        // Note that we can't simply add it as a deserializer, as we need access to the default
+        // deserializer for classes that can safely contain protected data.
+        module.setDeserializerModifier(new BeanDeserializerModifier() {
+            @Override
+            public JsonDeserializer<?> modifyDeserializer(DeserializationConfig config, BeanDescription beanDesc, JsonDeserializer<?> deserializer) {
+                JsonDeserializer<?> configuredDeserializer = super.modifyDeserializer(config, beanDesc, deserializer);
+                if (ContentInformation.class.isAssignableFrom(beanDesc.getBeanClass())) {
+                    configuredDeserializer = new ContentInformationDeserializer(configuredDeserializer);
+                }
+
+                return configuredDeserializer;
+            }
+        });
+        module.addDeserializer(SensitiveMobileData.class, new ProtectedDataDeserializer(SensitiveMobileData.class));
+        module.addDeserializer(SensitiveCardData.class, new ProtectedDataDeserializer(SensitiveCardData.class));
         XmlMapper mapper = new XmlMapper(module);
-//        objectMapper.configOverride(BalanceInquiryRequest.class).setSetterInfo(Nulls.AS_EMPTY);
         return configure(mapper.disable(FromXmlParser.Feature.EMPTY_ELEMENT_AS_NULL));
     }
 
@@ -48,7 +64,7 @@ public class NexoDeserialiser {
         return objectMapper;
     }
 
-    public SaleToPOIRequest deserialise(String message, MessageFormat format) {
+    public SaleToPOIRequest deserialise(String message, MessageFormat format) throws NexoException {
         switch (format) {
             case XML:
                 return deserialiseXML(message);
@@ -59,43 +75,40 @@ public class NexoDeserialiser {
         }
     }
 
-    public SaleToPOIRequest deserialiseXML(String xml) {
+    public SaleToPOIRequest deserialiseXML(String xml) throws NexoException {
         try {
             ObjectMapper objectMapper = configureXml();
 
             SaleToPOIRequestType value = objectMapper.readValue(xml, SaleToPOIRequest.class);
             return value == null ? null : new SaleToPOIRequest(value);
         } catch (JsonProcessingException jpe) {
-            jpe.printStackTrace();
-            return null;
+            throw mapAsNexoException(jpe);
         }
     }
 
-    public SaleToPOIRequest deserialiseJSON(String json) {
+    public SaleToPOIRequest deserialiseJSON(String json) throws NexoException {
         try {
             ObjectMapper objectMapper = configureJson(new JsonMapper());
 
             SaleToPOIRequestType value = objectMapper.readValue(json, SaleToPOIRequest.class);
             return value == null ? null : new SaleToPOIRequest(value);
         } catch (JsonProcessingException jpe) {
-            jpe.printStackTrace();
-            return null;
+            throw mapAsNexoException(jpe);
         }
     }
 
-    public SaleToPOIResponseType deserialiseResponseXML(String xml) {
+    public SaleToPOIResponseType deserialiseResponseXML(String xml) throws NexoException {
         try {
             ObjectMapper objectMapper = configureXml();
 
             SaleToPOIResponseType value = objectMapper.readValue(xml, SaleToPOIResponseType.class);
             return value;
         } catch (JsonProcessingException jpe) {
-            jpe.printStackTrace();
-            return null;
+            throw mapAsNexoException(jpe);
         }
     }
 
-    public SaleToPOIResponseType deserialiseResponseJSON(String xml) {
+    public SaleToPOIResponseType deserialiseResponseJSON(String xml) throws NexoException {
         try {
             ObjectMapper objectMapper = configureJson(new JsonMapper());
 
@@ -103,13 +116,11 @@ public class NexoDeserialiser {
             System.err.println("!! " + value);
             return value;
         } catch (JsonProcessingException jpe) {
-            System.err.println("BOOM!");
-            jpe.printStackTrace();
-            return null;
+            throw mapAsNexoException(jpe);
         }
     }
 
-    public String serialiseRequest(Object object) {
+    public String serialiseRequest(Object object) throws NexoException {
         try {
             XmlMapper objectMapper = ((XmlMapper) configureXml())
                     .setDefaultUseWrapper(false);
@@ -118,20 +129,26 @@ public class NexoDeserialiser {
             String value = objectMapper.writeValueAsString(object);
             return value;
         } catch (JsonProcessingException jpe) {
-            jpe.printStackTrace();
-            return null;
+            throw mapAsNexoException(jpe);
         }
     }
 
-    public String serialiseRequestJSON(Object object) {
+    public String serialiseRequestJSON(Object object) throws NexoException {
         try {
             ObjectMapper objectMapper = configureJson(new JsonMapper());
 
             String value = objectMapper.writeValueAsString(object);
             return value;
         } catch (JsonProcessingException jpe) {
-            jpe.printStackTrace();
-            return null;
+            throw mapAsNexoException(jpe);
+        }
+    }
+
+    private NexoException mapAsNexoException(JsonProcessingException jpe) {
+        if (jpe instanceof ProtectedDataException || jpe.getCause() instanceof ProtectedDataException) {
+            return new ProtectedInformationException();
+        } else {
+            return new InvalidMessageException(jpe);
         }
     }
 }

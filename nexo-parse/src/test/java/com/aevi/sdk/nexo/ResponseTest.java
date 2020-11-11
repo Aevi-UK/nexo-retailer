@@ -1,6 +1,7 @@
 package com.aevi.sdk.nexo;
 
 import com.aevi.sdk.nexo.model.NexoDeserialiser;
+import com.aevi.sdk.nexo.model.NexoException;
 import com.aevi.sdk.nexo.model.ObjectFactory;
 import com.aevi.sdk.nexo.model.Response;
 import com.aevi.sdk.nexo.model.SaleToPOIRequest;
@@ -37,7 +38,7 @@ public abstract class ResponseTest {
 
     protected NexoDeserialiser deserialiser = new NexoDeserialiser();
 
-    protected SaleToPOIResponseType parseResponse(String xml) {
+    protected SaleToPOIResponseType parseResponse(String xml) throws NexoException {
         return deserialiser.deserialiseResponseXML(xml);
     }
 

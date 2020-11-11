@@ -3,6 +3,7 @@ package com.aevi.sdk.nexo;
 import com.aevi.sdk.flow.model.FlowEvent;
 import com.aevi.sdk.flow.model.Request;
 import com.aevi.sdk.nexo.extramodel.NexoModel;
+import com.aevi.sdk.nexo.model.NexoException;
 import com.aevi.sdk.pos.flow.model.Payment;
 
 public abstract class NexoRequest {
@@ -48,5 +49,5 @@ public abstract class NexoRequest {
         return request;
     }
 
-    public abstract void sendResponse(Object response);
+    public abstract void sendResponse(Object response) throws NexoException;
 }

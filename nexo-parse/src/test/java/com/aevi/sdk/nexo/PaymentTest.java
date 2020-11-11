@@ -1,5 +1,6 @@
 package com.aevi.sdk.nexo;
 
+import com.aevi.sdk.nexo.model.NexoException;
 import com.aevi.sdk.pos.flow.model.Payment;
 
 import org.junit.Before;
@@ -27,13 +28,13 @@ public class PaymentTest extends ResponseTest {
     private NexoManager nexoManager;
 
     @Before
-    public void loginManager() {
+    public void loginManager() throws NexoException {
         nexoManager = new NexoManager();
         nexoManager.sendXmlMessage(LOGIN);
     }
 
     @Test
-    public void simplePayment() {
+    public void simplePayment() throws NexoException {
         TestObserver<NexoRequest> testObserver = new TestObserver();
         nexoManager.getRequests().subscribe(testObserver);
 

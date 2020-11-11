@@ -1,6 +1,7 @@
 package com.aevi.sdk.nexo;
 
 import com.aevi.sdk.nexo.model.NexoDeserialiser;
+import com.aevi.sdk.nexo.model.NexoException;
 import com.aevi.sdk.nexo.model.SaleToPOIRequest;
 
 import org.junit.Test;
@@ -64,7 +65,7 @@ public class TestNexoDeserialiser {
             + "}";
 
     @Test
-    public void testDeserialiseJson() {
+    public void testDeserialiseJson() throws NexoException {
         NexoDeserialiser deserialiser = new NexoDeserialiser();
         SaleToPOIRequest request = deserialiser.deserialiseJSON(JSON);
     }
