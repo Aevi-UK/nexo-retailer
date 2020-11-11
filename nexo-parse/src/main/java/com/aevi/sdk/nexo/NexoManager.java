@@ -15,6 +15,7 @@ import com.aevi.sdk.nexo.model.ErrorCondition;
 import com.aevi.sdk.nexo.model.LoginRequest;
 import com.aevi.sdk.nexo.model.MessageFormat;
 import com.aevi.sdk.nexo.model.NexoDeserialiser;
+import com.aevi.sdk.nexo.model.NexoException;
 import com.aevi.sdk.nexo.model.POISoftware;
 import com.aevi.sdk.nexo.model.POIStatus;
 import com.aevi.sdk.nexo.model.POISystemData;
@@ -43,15 +44,15 @@ public class NexoManager {
     private LoginRequest loginRequest;
     private NexoDeserialiser deserialiser = new NexoDeserialiser();
 
-    public void sendXmlMessage(String xml) {
+    public void sendXmlMessage(String xml) throws NexoException {
         sendMessage(xml, MessageFormat.XML);
     }
 
-    public void sendJSONMessage(String json) {
+    public void sendJSONMessage(String json) throws NexoException {
         sendMessage(json, MessageFormat.JSON);
     }
 
-    public void sendMessage(String message, MessageFormat format) {
+    public void sendMessage(String message, MessageFormat format) throws NexoException {
         SaleToPOIRequest saleToPOIRequest = deserialiser.deserialise(message, format);
         if (saleToPOIRequest != null) {
             Object request = nexoFlow.decodeNexoRequest(saleToPOIRequest, loginRequest);
@@ -65,7 +66,7 @@ public class NexoManager {
         }
     }
 
-    private void sendAppflowObject(SaleToPOIRequest request, Object object, MessageFormat format) {
+    private void sendAppflowObject(SaleToPOIRequest request, Object object, MessageFormat format) throws NexoException {
         SaleToPOIResponse response = nexoFlow.encodeAppFlowObject(request, object);
         if (response != null) {
             switch (format) {
@@ -101,7 +102,7 @@ public class NexoManager {
         return requestEmitter;
     }
 
-    private void emit(SaleToPOIRequest nexoRequest, Object request, MessageFormat format) {
+    private void emit(SaleToPOIRequest nexoRequest, Object request, MessageFormat format) throws NexoException {
         boolean emitRequest = true;
 
         // Handle special cases
@@ -130,7 +131,7 @@ public class NexoManager {
     private NexoRequest createRequest(final SaleToPOIRequest nexoRequest, Object request, MessageFormat format) {
         return new NexoRequest(request) {
             @Override
-            public void sendResponse(Object response) {
+            public void sendResponse(Object response) throws NexoException {
                 sendAppflowObject(nexoRequest, response, format);
             }
         };

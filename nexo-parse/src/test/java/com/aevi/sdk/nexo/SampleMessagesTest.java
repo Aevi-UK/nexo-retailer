@@ -6,6 +6,9 @@ import com.aevi.sdk.flow.model.FlowEvent;
 import com.aevi.sdk.nexo.extramodel.requests.Login;
 import com.aevi.sdk.nexo.extramodel.requests.Logout;
 import com.aevi.sdk.nexo.model.MessageFormat;
+import com.aevi.sdk.nexo.model.NexoException;
+import com.aevi.sdk.nexo.model.ProtectedDataException;
+import com.aevi.sdk.nexo.model.ProtectedInformationException;
 import com.aevi.sdk.pos.flow.model.Amounts;
 import com.aevi.sdk.pos.flow.model.Payment;
 import com.aevi.sdk.pos.flow.model.PaymentBuilder;
@@ -18,6 +21,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import io.reactivex.observers.TestObserver;
+
+import static org.assertj.core.api.Assertions.fail;
 
 public class SampleMessagesTest extends ResponseTest {
     private static final String PREFIX_REQUESTS = "requests/";
@@ -78,12 +83,6 @@ public class SampleMessagesTest extends ResponseTest {
     public void testEnableService() throws IOException {
         testUnsupported("enableService.xml");
     }
-
-// Shouldn't come from client, not currently supported, no response...
-//    @Test
-//    public void testEventNotification() throws IOException {
-//        testUnsupported("eventNotification.xml");
-//    }
 
     @Test
     public void testGetTotals() throws IOException {
@@ -196,8 +195,27 @@ public class SampleMessagesTest extends ResponseTest {
         testUnsupported("transmit.xml");
     }
 
+    @Test
+    public void testUnsupportedProtectedDataClear() throws IOException {
+        testException("unsupportedProtectedDataUnencrypted.xml", ProtectedInformationException.class);
+    }
+
+    @Test
+    public void testUnsupportedProtectedDataMissing() throws IOException {
+        testUnsupported("unsupportedProtectedDataMissing.xml");
+    }
+
+    @Test
+    public void testUnsupportedProtectedDataEncrypted() throws IOException {
+        testException("unsupportedProtectedDataEncrypted.xml", ProtectedInformationException.class);
+    }
+
     private void testUnsupported(String input) throws IOException {
         testSampleMessage(input, false, null, null, true);
+    }
+
+    private void testException(String input, Class<? extends Exception> expectedException) throws IOException {
+        testSampleMessage(input, false, null, null, true, expectedException);
     }
 
     private void testSendAppflowMessage(String input, Object expected) throws IOException {
@@ -213,10 +231,18 @@ public class SampleMessagesTest extends ResponseTest {
     }
 
     private void testSampleMessage(String input, boolean supported, Object expected, String output, boolean login) throws IOException {
+        testSampleMessage(input, supported, expected, output, login, null);
+    }
+
+    private void testSampleMessage(String input, boolean supported, Object expected, String output, boolean login, Class<? extends Exception> expectedException) throws IOException {
         NexoManager nexoManager = new NexoManager();
 
-        if (login) {
-            nexoManager.sendXmlMessage(LOGIN);
+        try {
+            if (login) {
+                nexoManager.sendXmlMessage(LOGIN);
+            }
+        } catch (NexoException nexoException) {
+            fail("Exception logging in", nexoException);
         }
 
         TestObserver<NexoRequest> testObserver = new TestObserver();
@@ -227,7 +253,20 @@ public class SampleMessagesTest extends ResponseTest {
         nexoManager.getOutputXML().subscribe(xmlOutput);
 
         String message = loadResource(PREFIX_REQUESTS + input);
-        nexoManager.sendMessage(message, formatFromName(input));
+        try {
+            nexoManager.sendMessage(message, formatFromName(input));
+        } catch (Exception e) {
+            if (e.getClass().equals(expectedException)) {
+                // This was an expected exception - return now
+                return;
+            } else {
+                if (expectedException == null) {
+                    fail("Unexpected exception sending message", e);
+                } else {
+                    fail("Wrong type of exception sending message - expected " + expectedException.getCanonicalName(), e);
+                }
+            }
+        }
 
         testObserver.assertNoErrors();
         xmlOutput.assertNoErrors();
