@@ -1,5 +1,6 @@
 package com.aevi.sdk.nexo;
 
+import com.aevi.sdk.nexo.model.NexoException;
 import com.aevi.sdk.nexo.model.SaleToPOIResponseType;
 
 import org.junit.Test;
@@ -41,7 +42,7 @@ public class FormatTest extends ResponseTest {
             + "}";
 
     @Test
-    public void jsonReturnsJson() {
+    public void jsonReturnsJson() throws NexoException {
         TestObserver<String> responseObserver = new TestObserver<>();
         NexoManager manager = new NexoManager();
         manager.getOutputJSON().subscribe(responseObserver);
@@ -57,7 +58,7 @@ public class FormatTest extends ResponseTest {
     }
 
     @Test
-    public void xmlReturnsXml() {
+    public void xmlReturnsXml() throws NexoException {
         TestObserver<String> responseObserver = new TestObserver<>();
         NexoManager manager = new NexoManager();
         manager.getOutputXML().subscribe(responseObserver);

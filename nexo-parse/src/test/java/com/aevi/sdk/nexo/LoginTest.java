@@ -1,5 +1,6 @@
 package com.aevi.sdk.nexo;
 
+import com.aevi.sdk.nexo.model.NexoException;
 import com.aevi.sdk.nexo.model.SaleToPOIResponse;
 import com.aevi.sdk.nexo.model.SaleToPOIResponseType;
 
@@ -17,7 +18,7 @@ public class LoginTest extends ResponseTest {
             + "</SaleToPOIRequest>";
 
     @Test
-    public void loginShouldSucceed() {
+    public void loginShouldSucceed() throws NexoException {
         TestObserver<String> responseObserver = new TestObserver<>();
         NexoManager manager = new NexoManager();
         manager.getOutputXML().subscribe(responseObserver);
@@ -35,7 +36,7 @@ public class LoginTest extends ResponseTest {
     }
 
     @Test
-    public void doubleLoginShouldFail() {
+    public void doubleLoginShouldFail() throws NexoException {
         TestObserver<String> responseObserver = new TestObserver<>();
         NexoManager manager = new NexoManager();
         manager.getOutputXML().subscribe(responseObserver);
@@ -62,7 +63,7 @@ public class LoginTest extends ResponseTest {
     }
 
     @Test
-    public void initialLogoutShouldFail() {
+    public void initialLogoutShouldFail() throws NexoException {
         TestObserver<String> responseObserver = new TestObserver<>();
         NexoManager manager = new NexoManager();
         manager.getOutputXML().subscribe(responseObserver);
@@ -80,7 +81,7 @@ public class LoginTest extends ResponseTest {
     }
 
     @Test
-    public void logoutAfterLoginShouldSucceed() {
+    public void logoutAfterLoginShouldSucceed() throws NexoException {
         TestObserver<String> responseObserver = new TestObserver<>();
         NexoManager manager = new NexoManager();
         manager.getOutputXML().subscribe(responseObserver);
@@ -99,7 +100,7 @@ public class LoginTest extends ResponseTest {
     }
 
     @Test
-    public void doubleLogoutShouldFail() {
+    public void doubleLogoutShouldFail() throws NexoException {
         TestObserver<String> responseObserver = new TestObserver<>();
         NexoManager manager = new NexoManager();
         manager.getOutputXML().subscribe(responseObserver);

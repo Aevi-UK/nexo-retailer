@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SaleToPOIRequest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="NexoSaleToPOIMessages.xsd">
+    <MessageHeader MessageCategory="Payment" MessageClass="Service" MessageType="Request"
+        POIID="POITerm1" SaleID="SaleTermA" ServiceID="642" />
+    <BalanceInquiryRequest>
+        <PaymentAccountReq>
+            <PaymentInstrumentData>
+                <CardData>
+                    <SensitiveCardData PAN="5411111111111115" ExpiryDate="0628"/>
+                </CardData>
+            </PaymentInstrumentData>
+        </PaymentAccountReq>
+    </BalanceInquiryRequest>
+</SaleToPOIRequest>
