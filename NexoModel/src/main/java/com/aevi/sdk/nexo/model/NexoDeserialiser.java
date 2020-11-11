@@ -2,36 +2,16 @@ package com.aevi.sdk.nexo.model;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonSetter;
-import com.fasterxml.jackson.annotation.Nulls;
-import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.BeanDescription;
-import com.fasterxml.jackson.databind.DeserializationConfig;
-import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.deser.BeanDeserializerBuilder;
-import com.fasterxml.jackson.databind.deser.BeanDeserializerFactory;
-import com.fasterxml.jackson.databind.deser.BeanDeserializerModifier;
-import com.fasterxml.jackson.databind.deser.DeserializerFactory;
-import com.fasterxml.jackson.databind.deser.SettableBeanProperty;
-import com.fasterxml.jackson.databind.introspect.BasicBeanDescription;
 import com.fasterxml.jackson.databind.json.JsonMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.dataformat.xml.JacksonXmlModule;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.dataformat.xml.deser.FromXmlParser;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-//import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
 
 public class NexoDeserialiser {
     private ObjectMapper configureJson(ObjectMapper objectMapper) {
@@ -134,7 +114,6 @@ public class NexoDeserialiser {
         try {
             XmlMapper objectMapper = ((XmlMapper) configureXml())
                     .setDefaultUseWrapper(false);
-//            objectMapper.registerModule(new JaxbAnnotationModule());
 
             String value = objectMapper.writeValueAsString(object);
             return value;
@@ -153,35 +132,6 @@ public class NexoDeserialiser {
         } catch (JsonProcessingException jpe) {
             jpe.printStackTrace();
             return null;
-        }
-    }
-
-    private static class EntryModeDeserializer extends JsonDeserializer<Object> {
-        @Override
-        public Object deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException, JsonProcessingException {
-            System.err.println("BORTLES: Custom deserialiser");
-            List<String> values = new ArrayList();
-            values.add("monkeys");
-            return values;
-        }
-    }
-
-    private static class CardDataDeserializerModifier extends BeanDeserializerModifier {
-        @Override
-        public BeanDeserializerBuilder updateBuilder(DeserializationConfig config, BeanDescription beanDesc, BeanDeserializerBuilder builder) {
-            if (beanDesc.getBeanClass() == CardData.class) {
-                Iterator<SettableBeanProperty> beanPropertyIterator = builder.getProperties();
-                while (beanPropertyIterator.hasNext()) {
-                    SettableBeanProperty settableBeanProperty = beanPropertyIterator.next();
-                    if ("EntryMode".equals(settableBeanProperty.getName())) {
-                        System.err.println("BORTLES: Adding custom deserializer");
-                        SettableBeanProperty newSettableBeanProperty = settableBeanProperty.withValueDeserializer(new EntryModeDeserializer());
-                        builder.addOrReplaceProperty(newSettableBeanProperty, true);
-                        break;
-                    }
-                }
-            }
-            return builder;
         }
     }
 }
