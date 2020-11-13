@@ -1,0 +1,96 @@
+version: 2
+generic:
+  - &job_config
+    docker:
+      - image: circleci/android:api-28
+    working_directory: ~/repo
+    environment:
+      _JAVA_OPTIONS: "-Xms516m -Xmx1024m"
+      GRADLE_OPTS: -Dorg.gradle.daemon=false
+
+  - &attach_workspace
+    attach_workspace:
+      at: ~/
+
+experimental:
+  notify:
+    branches:
+      only:
+        - develop
+        - master
+        - /release\/.*/
+
+workflows:
+  version: 2
+  build-deploy:
+    jobs:
+      - build
+      - assemble-deploy-qa:
+          requires:
+            - build
+          filters:
+            branches:
+              only: /release\/.*/
+      - assemble-deploy-release:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
+
+jobs:
+  build:
+    <<: *job_config
+    steps:
+      - run:
+          name: Setup AWS CLI
+          command: sudo pip install awscli
+      - checkout
+      - run:
+          name: Write gradle properties
+          command: /bin/bash writegradleprops.sh
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "dependencies.gradle" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
+      - run:
+          name: Download Android Dependencies
+          command: ./gradlew androidDependencies
+      - save_cache:
+          paths:
+            - ~/.gradle
+            - ~/.android
+          key: v1-dependencies-{{ checksum "dependencies.gradle" }}
+      - run:
+          name: Test
+          command: ./gradlew clean lint testReleaseUnitTest
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - repo
+            - .gradle
+            - .android
+
+  assemble-deploy-qa:
+    <<: *job_config
+    steps:
+      - *attach_workspace
+      # ********************************************
+      # Define tasks to run on qa branches (release/*)
+      # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+      - run: ./gradlew clean assembleRelease
+      - run: ./gradlew publishReleasePublicationToQaRepository
+      # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+  assemble-deploy-release:
+    <<: *job_config
+    steps:
+      - *attach_workspace
+      # ********************************************
+      # Define tasks to run on master branch
+      # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+      - run: ./gradlew clean assembleReleaseUnsigned assembleRelease
+      - run: ./gradlew publishReleaseUnsignedPublicationToReleaseRepository publishReleasePublicationToReleaseRepository
+      # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

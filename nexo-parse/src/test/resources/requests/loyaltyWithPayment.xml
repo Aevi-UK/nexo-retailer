@@ -13,9 +13,7 @@
         </PaymentTransaction>
         <PaymentData PaymentType="Normal">
             <PaymentInstrumentData PaymentInstrumentType="Card">
-                <CardData EntryMode="Scanned">
-                    <SensitiveCardData PAN="7011014570541535"/>
-                </CardData>
+                <CardData EntryMode="Scanned"/>
             </PaymentInstrumentData>
         </PaymentData>
         <LoyaltyData>

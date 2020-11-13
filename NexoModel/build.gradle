@@ -1,13 +1,16 @@
 apply plugin: 'java'
 apply plugin: 'java-library'
 apply plugin: 'org.unbroken-dome.xjc'
-apply plugin: 'org.anarres.jarjar'
 
 group = 'com.aevi.nexo'
 version = "${apiVersion}"
 def jacksonDir = "build/jackson"
 
-apply from: '../publish-repo.gradle'
+ext.applicationName = 'NexoModel'
+ext.artifactGroupId = 'com.aevi.nexo'
+ext.artifactId = 'NexoModel'
+
+apply from: '../publish-repo-library.gradle'
 
 repositories {
     mavenCentral()
@@ -39,20 +42,20 @@ task jacksonify(type: Copy) {
             def xmlAttribute = line =~ pattern2
             if (xmlElement.matches()) {
                 if (xmlElement.group("req") == null) {
-                    return line + "\n" + xmlElement.replaceAll("\${ws}@JsonProperty(\"\${name}\")")
+                    return xmlElement.replaceAll("\${ws}@JsonProperty(\"\${name}\")")
                 } else {
-                    return line + "\n" + xmlElement.replaceAll("\${ws}@JsonProperty(value = \"\${name}\", required = \${req})")
+                    return xmlElement.replaceAll("\${ws}@JsonProperty(value = \"\${name}\", required = \${req})")
                 }
             } else if (xmlAttribute.matches()) {
                 if (xmlAttribute.group("req") == null) {
-                    return line + "\n" + xmlAttribute.replaceAll("\${ws}@JsonProperty(\"\${name}\")") + "\n" + xmlAttribute.replaceAll("\${ws}@JacksonXmlProperty(isAttribute = true)")
+                    return xmlAttribute.replaceAll("\${ws}@JsonProperty(\"\${name}\")") + "\n" + xmlAttribute.replaceAll("\${ws}@JacksonXmlProperty(isAttribute = true)")
                 } else {
-                    return line + "\n" + xmlAttribute.replaceAll("\${ws}@JsonProperty(value = \"\${name}\", required = \${req})") + "\n" + xmlAttribute.replaceAll("\${ws}@JacksonXmlProperty(isAttribute = true)")
+                    return xmlAttribute.replaceAll("\${ws}@JsonProperty(value = \"\${name}\", required = \${req})") + "\n" + xmlAttribute.replaceAll("\${ws}@JacksonXmlProperty(isAttribute = true)")
                 }
             } else if (line.contains("@XmlAccessorType")) {
                 return null
             } else if (line.contains("@XmlValue")) {
-                return line + "\n@JacksonXmlText";
+                return "@JacksonXmlText";
             } else if ((line.contains("@XmlElements(") || line.contains("@XmlType(")) && line.endsWith("{")) {
                 return "/* " + line
             } else if (line.contains("import javax.xml.bind.JAXBElement")) {
@@ -60,11 +63,33 @@ task jacksonify(type: Copy) {
             } else if (line.trim().equals("})")) {
                 return line + "*/"
             } else if (line.contains("import javax.xml.bind.annotation.XmlAccessType;")) {
-                return line + "\nimport com.fasterxml.jackson.annotation.JsonProperty;"
+                return "import com.fasterxml.jackson.annotation.JsonProperty;"
             } else if (line.contains("import javax.xml.bind.annotation.XmlValue;")) {
-                return line + "\nimport com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlText;"
+                return "import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlText;"
             } else if (line.contains("import javax.xml.bind.annotation.XmlAttribute;")) {
-                return line + "\nimport com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;"
+                return "import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;"
+            } else if (line.contains("com.aevi.jaxb.DateTimeAdapter")) {
+                return null;
+            } else if (line.contains("javax.xml.bind")) {
+                return null;
+            } else if (line.contains("@XmlType")) {
+                return null;
+            } else if (line.contains("@XmlEnum")) {
+                return null;
+            } else if (line.contains("@XmlSchemaType")) {
+                return null;
+            } else if (line.contains("@XmlJavaTypeAdapter")) {
+                return null;
+            } else if (line.contains("@XmlList")) {
+                return null;
+            } else if (line.contains("@XmlElementDecl")) {
+                return null;
+            } else if (line.contains("@XmlElementRef")) {
+                return null;
+            } else if (line.contains("@XmlRegistry")) {
+                return null;
+            } else if (line.contains("@XmlRootElement")) {
+                return null;
             }
 
             return line
@@ -93,19 +118,7 @@ dependencies {
     implementation domainDependencies.appFlowPrintApi
     implementation domainDependencies.zxing
 
-    implementation jarjar.repackage {
-        from 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.11.1'
-        from 'com.fasterxml:aalto-xml:1.2.2'
-        from 'javax.xml.stream:stax-api:1.0-2'
-        from 'org.codehaus.woodstox:stax2-api:4.2.1'
-        from 'com.fasterxml.jackson.module:jackson-module-jaxb-annotations:2.11.3'
-        from 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.11.2'
-
-        classRename 'javax.xml.stream.**', 'com.aevi.javax.xml.stream.@1'
-        classRename 'javax.xml.bind.**', 'com.aevi.javax.xml.bind.@1'
-        classRename 'com.bea.xml.stream.MXParserFactory', 'com.fasterxml.aalto.stax.InputFactoryImpl'
-        classRename 'com.bea.xml.stream.XMLOutputFactoryBase', 'com.fasterxml.aalto.stax.OutputFactoryImpl'
-    }
+    api 'com.aevi.sdk:xml-rename:1.0.0-SNAPSHOT'
 
     xjcClasspath 'org.jvnet.jaxb2_commons:jaxb2-basics:0.11.1'
 
