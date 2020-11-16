@@ -34,10 +34,8 @@ dependencies {
 
     implementation project(':NexoModel')
 
-    api 'com.aevi.sdk:xml-rename:1.0.0-SNAPSHOT'
+    api domainDependencies.renamedXml
 
-    testImplementation 'org.skyscreamer:jsonassert:1.4.0'
-    testImplementation 'org.xmlunit:xmlunit-matchers:2.7.0'
     testImplementation testDependencies.mockableAndroid
     testImplementation testDependencies.junit
     testImplementation testDependencies.assertJ
