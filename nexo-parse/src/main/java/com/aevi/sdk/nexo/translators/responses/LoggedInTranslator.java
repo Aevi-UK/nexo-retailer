@@ -2,7 +2,6 @@ package com.aevi.sdk.nexo.translators.responses;
 
 import com.aevi.sdk.nexo.extramodel.responses.LoggedIn;
 import com.aevi.sdk.nexo.model.LoginResponse;
-import com.aevi.sdk.nexo.model.Response;
 import com.aevi.sdk.nexo.model.SaleToPOIRequest;
 import com.aevi.sdk.nexo.model.SaleToPOIResponse;
 
