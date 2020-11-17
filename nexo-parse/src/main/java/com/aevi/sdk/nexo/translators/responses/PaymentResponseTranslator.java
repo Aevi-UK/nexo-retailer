@@ -19,6 +19,7 @@ import com.aevi.sdk.nexo.model.SaleData;
 import com.aevi.sdk.nexo.model.SaleToPOIRequest;
 import com.aevi.sdk.nexo.model.SaleToPOIResponse;
 import com.aevi.sdk.nexo.model.SaleToPOIResponseType;
+import com.aevi.sdk.nexo.model.SensitiveCardData;
 import com.aevi.sdk.nexo.model.TransactionIdentification;
 import com.aevi.sdk.pos.flow.model.Amounts;
 import com.aevi.sdk.pos.flow.model.Card;

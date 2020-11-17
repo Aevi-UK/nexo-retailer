@@ -1,8 +1,6 @@
 package com.aevi.sdk.nexo.translators.responses;
 
 import com.aevi.sdk.nexo.extramodel.responses.AdminResponse;
-import com.aevi.sdk.nexo.extramodel.responses.LoggedIn;
-import com.aevi.sdk.nexo.model.LoginResponse;
 import com.aevi.sdk.nexo.model.SaleToPOIRequest;
 import com.aevi.sdk.nexo.model.SaleToPOIResponse;
 
@@ -19,6 +17,6 @@ public class AdminResponseTranslator extends ResponseTranslator<AdminResponse, S
 
     @Override
     public boolean translatesFrom(Object appFlowObject) {
-        return appFlowObject instanceof LoggedIn;
+        return appFlowObject instanceof AdminResponse;
     }
 }
