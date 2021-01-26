@@ -24,14 +24,17 @@ workflows:
   version: 2
   build-deploy:
     jobs:
-      - build
+      - build:
+          context: AEVI Android App
       - assemble-deploy-qa:
+          context: AEVI Android App
           requires:
             - build
           filters:
             branches:
               only: /release\/.*/
       - assemble-deploy-release:
+          context: AEVI Android App
           requires:
             - build
           filters:
