@@ -16,6 +16,8 @@ ext {
     appFlowConstantsVersion = '2.3.5'
     appFlowPrintVersion = '1.1.5'
     nexoModelVersion = '0.0.1-SNAPSHOT'
+    renamedXmlVersion = '1.0.0-RC1'
+    jaxbVersion = '0.11.1'
 
     xpapVersion = '4.2.4'
 
@@ -25,6 +27,8 @@ ext {
             appFlowConstants : "com.aevi.sdk.flow:api-constants:$appFlowConstantsVersion",
             appFlowPrintApi  : "com.aevi.print:print-api:$appFlowPrintVersion",
             zxing            : "com.google.zxing:core:$zxingVersion",
+            renamedXml       : "com.aevi.sdk:java-xml-rename:$renamedXmlVersion",
+            jaxbBasics       : "org.jvnet.jaxb2_commons:jaxb2-basics:$jaxbVersion",
             nexo             : "com.aevi.nexo:nexo-model:$nexoModelVersion",
             gson             : "com.google.code.gson:gson:$gsonVersion"
     ]

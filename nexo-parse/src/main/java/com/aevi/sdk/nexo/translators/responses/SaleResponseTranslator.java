@@ -1,6 +1,5 @@
 package com.aevi.sdk.nexo.translators.responses;
 
-import com.aevi.sdk.nexo.model.PaymentResponse;
 import com.aevi.sdk.nexo.model.SaleToPOIRequest;
 import com.aevi.sdk.nexo.model.SaleToPOIResponse;
 import com.aevi.sdk.nexo.translators.AppFlowToNexo;

@@ -2,17 +2,8 @@ package com.aevi.sdk.nexo;
 
 import com.aevi.sdk.nexo.model.NexoDeserialiser;
 import com.aevi.sdk.nexo.model.NexoException;
-import com.aevi.sdk.nexo.model.ObjectFactory;
 import com.aevi.sdk.nexo.model.Response;
-import com.aevi.sdk.nexo.model.SaleToPOIRequest;
-import com.aevi.sdk.nexo.model.SaleToPOIResponse;
 import com.aevi.sdk.nexo.model.SaleToPOIResponseType;
-
-import java.io.StringReader;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
 
 public abstract class ResponseTest {
     protected static final String LOGIN = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"

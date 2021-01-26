@@ -1,6 +1,5 @@
 apply plugin: 'java'
 apply plugin: 'java-library'
-apply plugin: 'org.anarres.jarjar'
 
 group = 'com.aevi.nexo'
 version = "${apiVersion}"
@@ -31,22 +30,8 @@ dependencies {
 
     implementation domainDependencies.nexo
 
-    implementation jarjar.repackage {
-        from 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.11.1'
-        from 'com.fasterxml:aalto-xml:1.2.2'
-        from 'javax.xml.stream:stax-api:1.0-2'
-        from 'org.codehaus.woodstox:stax2-api:4.2.1'
-        from 'com.fasterxml.jackson.module:jackson-module-jaxb-annotations:2.11.3'
-        from 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.11.2'
+    api domainDependencies.renamedXml
 
-        classRename 'javax.xml.stream.**', 'com.aevi.javax.xml.stream.@1'
-        classRename 'javax.xml.bind.**', 'com.aevi.javax.xml.bind.@1'
-        classRename 'com.bea.xml.stream.MXParserFactory', 'com.fasterxml.aalto.stax.InputFactoryImpl'
-        classRename 'com.bea.xml.stream.XMLOutputFactoryBase', 'com.fasterxml.aalto.stax.OutputFactoryImpl'
-    }
-
-    testImplementation 'org.skyscreamer:jsonassert:1.4.0'
-    testImplementation 'org.xmlunit:xmlunit-matchers:2.7.0'
     testImplementation testDependencies.mockableAndroid
     testImplementation testDependencies.junit
     testImplementation testDependencies.assertJ
