@@ -25,7 +25,7 @@ ext {
             appFlowConstants : "com.aevi.sdk.flow:api-constants:$appFlowConstantsVersion",
             appFlowPrintApi  : "com.aevi.print:print-api:$appFlowPrintVersion",
             zxing            : "com.google.zxing:core:$zxingVersion",
-            nexo             : "com.aevi.nexo:NexoModel:$nexoModelVersion",
+            nexo             : "com.aevi.nexo:nexo-model:$nexoModelVersion",
             gson             : "com.google.code.gson:gson:$gsonVersion"
     ]
 
