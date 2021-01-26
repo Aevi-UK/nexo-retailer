@@ -1,1 +1,1 @@
-include ':NexoModel', ':nexo-parse'
+include ':nexo-model', ':nexo-parse'
