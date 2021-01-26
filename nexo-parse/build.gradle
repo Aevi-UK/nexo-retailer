@@ -32,7 +32,7 @@ dependencies {
     implementation domainDependencies.appFlowPrintApi
     implementation domainDependencies.zxing
 
-    implementation project(':NexoModel')
+    implementation domainDependencies.nexo
 
     api domainDependencies.renamedXml
 

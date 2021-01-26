@@ -6,11 +6,11 @@ group = 'com.aevi.nexo'
 version = "${apiVersion}"
 def jacksonDir = "build/jackson"
 
-ext.applicationName = 'NexoModel'
-ext.artifactGroupId = 'com.aevi.nexo'
-ext.artifactId = 'NexoModel'
+//ext.applicationName = 'nexo-model'
+//ext.artifactGroupId = 'com.aevi.nexo'
+//ext.artifactId = 'nexo-model'
 
-apply from: '../publish-repo-library.gradle'
+apply from: '../publish-repo.gradle'
 
 repositories {
     mavenCentral()

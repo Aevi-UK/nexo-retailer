@@ -27,10 +27,10 @@ ext {
             appFlowConstants : "com.aevi.sdk.flow:api-constants:$appFlowConstantsVersion",
             appFlowPrintApi  : "com.aevi.print:print-api:$appFlowPrintVersion",
             zxing            : "com.google.zxing:core:$zxingVersion",
-            nexo             : "com.aevi.nexo:NexoModel:$nexoModelVersion",
-            gson             : "com.google.code.gson:gson:$gsonVersion",
             renamedXml       : "com.aevi.sdk:java-xml-rename:$renamedXmlVersion",
-            jaxbBasics       : "org.jvnet.jaxb2_commons:jaxb2-basics:$jaxbVersion"
+            jaxbBasics       : "org.jvnet.jaxb2_commons:jaxb2-basics:$jaxbVersion",
+            nexo             : "com.aevi.nexo:nexo-model:$nexoModelVersion",
+            gson             : "com.google.code.gson:gson:$gsonVersion"
     ]
 
     testDependencies = [
