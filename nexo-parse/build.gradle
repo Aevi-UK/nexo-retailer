@@ -4,11 +4,7 @@ apply plugin: 'java-library'
 group = 'com.aevi.nexo'
 version = "${apiVersion}"
 
-ext.applicationName = 'nexo-parse'
-ext.artifactGroupId = 'com.aevi.nexo'
-ext.artifactId = 'nexo-parse'
-
-apply from: '../publish-repo-library.gradle'
+apply from: '../publish-repo.gradle'
 
 repositories {
     mavenCentral()
